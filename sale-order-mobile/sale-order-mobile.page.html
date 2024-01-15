@@ -12,7 +12,7 @@
 		<!-- <span class="header-icon ">
 			<ion-icon name="qr-code-outline"></ion-icon>
 		</span> -->
-		<ion-searchbar [(ngModel)]="query.CustomerName" (ionChange)="search($event)" placeholder="{{'erp.app.pages.sale.sale-order-mobile.search-placeholder' | translate}}"></ion-searchbar>
+		<ion-searchbar [(ngModel)]="query.CustomerName" (ionInput)="search($event)" placeholder="{{'erp.app.pages.sale.sale-order-mobile.search-placeholder' | translate}}"></ion-searchbar>
 	</ion-toolbar>
 </ion-header>
 
