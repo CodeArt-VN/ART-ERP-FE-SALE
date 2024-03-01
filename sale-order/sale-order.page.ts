@@ -114,6 +114,13 @@ export class SaleOrderPage extends PageBase {
             
             i.OriginalTotalAfterTaxText = lib.currencyFormat(i.OriginalTotalAfterTax);
             i.TotalAfterTaxText = lib.currencyFormat(i.TotalAfterTax);
+            i._SubOrders = [...this.items.filter(d=>d.IDParent == i.Id)]
+            i._SubOrders = [...this.items.filter(d=>d.IDParent == i.Id)]
+                       if(i._SubOrders.length>0){
+                           i._ShowSubOrder = true;
+                           i._LoadFromSearch = true;
+                           this.toggleRow(i,null);
+                       }
         });
         super.loadedData(event);
     }
@@ -743,15 +750,20 @@ export class SaleOrderPage extends PageBase {
         if (!i._HasSubOrder) {
             return;
         }
-        event.stopPropagation();
+        if(event != null)  event.stopPropagation();
+       
 
         if (i._ShowSubOrder) {
             this.hideSubRows(i);
+            if(i._LoadFromSearch){
+                i._LoadFromSearch = false;
+                this. toggleRow(i,null)
+            }
         }
         else {
             let idx = this.items.indexOf(i, 0) + 1;
 
-            if (i._SubOrders) {
+            if (i._SubOrders.length>0) {
                 this.items = [...this.items.slice(0, idx), ...i._SubOrders, ...this.items.slice(idx)];
                 i._ShowSubOrder = true;
             }
