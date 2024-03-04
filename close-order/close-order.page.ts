@@ -122,6 +122,7 @@ export class CloseOrderPage extends PageBase {
             input$: new Subject<string>(),
             selected: [...this.preLoadItems],
             items$: null,
+            id: this.id,
             initSearch() {
                 this.loading = false;
                 this.items$ = concat(

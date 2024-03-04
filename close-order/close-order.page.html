@@ -118,7 +118,7 @@
 
 											<div class="col-name cell">
 												<ng-select formControlName="_Item" class="c-input" (change)="changedIDItem(g, $event)" 
-												appendTo="#order-detail-page"
+												appendTo="#ng-select-holder"
 												[clearable]="false" 
 												[labelForId]="'IDItem'+idx" 
 												[items]="g.controls._IDItemDataSource.value.items$ | async" 
@@ -180,7 +180,7 @@
 								</ng-container>
 							</ion-reorder-group>
 
-							<div class="row" *ngIf="item?.OrderLines?.length > 1">
+							<div class="row">
 								<div class="col-reorder cell" *ngIf="pageConfig.canEdit"></div>
 
 
