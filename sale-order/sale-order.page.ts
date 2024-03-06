@@ -114,21 +114,9 @@ export class SaleOrderPage extends PageBase {
             
             i.OriginalTotalAfterTaxText = lib.currencyFormat(i.OriginalTotalAfterTax);
             i.TotalAfterTaxText = lib.currencyFormat(i.TotalAfterTax);
-            i._SubOrders = [...this.items.filter(d=>d.IDParent == i.Id)]
-                       if(i._SubOrders.length>0){
-                           i._ShowSubOrder = true;
-                           i._LoadFromSearch = true;
-                         
-                       }
-        });
-        if(this.items.some(i=> i._LoadFromSearch)){
-            this.items = this.items.filter(d=> d.IDParent == null || d._SubOrders.length>0)
-        } 
-        this.items.forEach(i=> {
-            if(i._LoadFromSearch){
-                this.toggleRow(i,null)
-            }
-        })
+
+         });
+   
         
         super.loadedData(event);
     }
