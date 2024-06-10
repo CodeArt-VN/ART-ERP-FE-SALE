@@ -18,6 +18,9 @@
 					<!-- <ion-segment-button value="s3">
                         <ion-label>Xem theo SO</ion-label>
                     </ion-segment-button> -->
+					<ion-segment-button value="s3">
+						<ion-label>{{'Payment history' | translate}}</ion-label>
+					</ion-segment-button>
                 </ion-segment>
             </ion-toolbar>
 
@@ -217,6 +220,94 @@
 				</ng-container>
 			</form>
 		
+			<form [formGroup]="formGroup" *ngIf="segmentView == 's3'">
+				<ng-container>
+					<div class="table-contain">
+						<section class="table">
+							<header class="bold" style="padding-right: 0;">
+								<div class="col-id cell">#</div>
+								<div class="col-percent cell">%</div>
+								<div class="col-money cell">{{'Amount'| translate}}</div>
+								<div class="col-money cell">{{'Payment completed'|translate}}</div>
+								<div class="col-date-trading cell">{{'Date trading' | translate}}</div>
+								<div class="col-money cell">{{'Remaining' | translate}}</div>
+								<div class="col-payment-deadline cell">{{'Payment deadline' | translate}}</div>
+								<div class="col-note cell">{{'Note'| translate }}</div>
+								<div class="col-status cell">{{'Status'| translate }}</div>
+							</header>
+
+							<ng-container
+								*ngFor="let g of formGroup.get('PaymentHistory')['controls']; let idx = index;">
+								<ng-container [formGroup]="g">
+									<div class="row">
+										<div class="col-id cell">{{idx+1}}</div>
+										<div class="col-percent cell">
+											<app-input-control
+												[field]="{id:'Percent', type : 'span-number', form : g }"></app-input-control>
+											<!-- <input formControlName="Percent" class="c-input" type="number" min="0"
+												step="1" max="100" /> -->
+										</div>
+										<div class="col-money cell">
+											<app-input-control
+												[field]="{id:'Amount', type : 'span-number', form : g }"></app-input-control>
+											<!-- <input formControlName="Amount" class="c-input" mask="separator.2"
+												thousandSeparator="," /> -->
+										</div>
+										<div class="col-money cell">
+											<app-input-control
+												[field]="{id:'AmountPaid', type : 'span-number', form : g }"></app-input-control>
+											<!-- <input formControlName="AmountPaid" class="c-input" mask="separator.2"
+												thousandSeparator="," /> -->
+										</div>
+										<div class="col-date-trading cell">
+											<app-input-control
+												[field]="{id:'DateTrading', type : 'span-date', form : g }"></app-input-control>
+											<!-- <app-input-control
+												[field]="{id:'DateTrading', type : 'date', form : g }"></app-input-control> -->
+										</div>
+										<div class="col-money cell">
+											<app-input-control
+												[field]="{id:'RemainingAmount', type : 'span-number', form : g }"></app-input-control>
+											<!-- <input formControlName="RemainingAmount" class="c-input" mask="separator.2"
+												thousandSeparator="," /> -->
+
+										</div>
+										<div class="col-payment-deadline cell">
+											<app-input-control
+												[field]="{id:'PaymentDeadline', type : 'span-date', form : g }"></app-input-control>
+											<!-- <app-input-control
+												[field]="{id:'PaymentDeadline', type : 'date', form : g  }"></app-input-control> -->
+										</div>
+										<div class="col-remark cell">
+											<app-input-control
+												[field]="{id:'Remark', type : 'span-text', form : g }"></app-input-control>
+											<!-- <app-input-control
+												[field]="{id:'Remark', type : 'text', form : g }"></app-input-control> -->
+										</div>
+										<div class="col-status cell">
+											<app-input-control
+												[field]="{id:'Status', type : 'span-text', form : g }"></app-input-control>
+											<!-- <app-input-control
+												[field]="{id:'Status', type : 'text', form : g }"></app-input-control> -->
+										</div>
+									</div>
+								</ng-container>
+							</ng-container>
+						</section>
+					</div>
+
+					<div class="table-contain" *ngIf="this.item.IDStatus == 114 && this.item.Debt > 0">
+						<div class="row">
+							<div class="cell">
+								<ion-button fill="clear" size="small" (click)="goToPayment()">
+									<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+									{{'Payment' | translate}}
+								</ion-button>
+							</div>
+						</div>
+					</div>
+				</ng-container>
+			</form>
 		</div>
 	</div>
 	<app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>

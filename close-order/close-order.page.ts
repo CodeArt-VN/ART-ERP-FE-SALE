@@ -3,11 +3,12 @@ import { NavController, LoadingController, AlertController } from '@ionic/angula
 import { PageBase } from 'src/app/page-base';
 import { ActivatedRoute } from '@angular/router';
 import { EnvService } from 'src/app/services/core/env.service';
-import { SALE_OrderDetailProvider, SALE_OrderProvider, WMS_ItemProvider } from 'src/app/services/static/services.service';
+import { BANK_IncomingPaymentDetailProvider, SALE_OrderDetailProvider, SALE_OrderProvider, WMS_ItemProvider } from 'src/app/services/static/services.service';
 import { FormBuilder, Validators, FormControl, FormArray, FormGroup } from '@angular/forms';
 import { CommonService } from 'src/app/services/core/common.service';
 import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class CloseOrderPage extends PageBase {
     childSOList = [];
     allLines = [];
     preLoadItems = [];
+    listPaymentHistory = [];
     constructor(
         public pageProvider: SALE_OrderProvider,
         public saleOrderDetailProvider: SALE_OrderDetailProvider,
@@ -31,6 +33,7 @@ export class CloseOrderPage extends PageBase {
         public cdr: ChangeDetectorRef,
         public loadingController: LoadingController,
         public commonService: CommonService,
+        public IncomingPaymentDetailProvider: BANK_IncomingPaymentDetailProvider,
     ) {
         super();
         this.pageConfig.isDetailPage = true;
@@ -54,49 +57,56 @@ export class CloseOrderPage extends PageBase {
 
     preLoadData(event?: any): void {
 
-        this.pageProvider.read({ IDParent: this.id }).then(resp => {
+        this.pageProvider.read({ IDParent: this.id }).then((resp) => {
             this.childSOList = resp['data'];
-            this.childSOList = this.childSOList.filter(d=>d.Status != 'Cancelled');
-            let queryLines = this.childSOList.map(m => m.Id);
+            this.childSOList = this.childSOList.filter((d) => d.Status != 'Cancelled');
+            let queryLines = this.childSOList.map((m) => m.Id);
             queryLines.push(parseInt(this.id));
-
-            this.saleOrderDetailProvider.read({ IDOrder: JSON.stringify(queryLines) }).then(rows => {
-                this.allLines = rows['data'];
-                let helper = {};
-
-                this.allLines = this.allLines.reduce(function (r, o) {
-                    var key = o.IDUoM + '-' + o.UoMPrice;
-
-                    if (!helper[key]) {
-                        helper[key] = Object.assign({}, o); // create a copy of o
-                        r.push(helper[key]);
-                    } else {
-                        helper[key].Quantity += o.Quantity;
-                        helper[key].ShippedQuantity += o.ShippedQuantity;
-                    }
-
-                    return r;
-                }, []);
-
-                let itemIds = this.allLines.map(m => m.IDItem);
-                this.itemProvider.search({ Id: JSON.stringify(itemIds), IDSO: this.id }).toPromise().then((resp: any) => {
-                    this.preLoadItems = resp;
-
-                    super.preLoadData(event);
-                })
-
-            })
-
-        })
+      
+            Promise.all([
+              this.saleOrderDetailProvider.read({ IDOrder: JSON.stringify(queryLines) }),
+              this.IncomingPaymentDetailProvider.read({ IDSaleOrder: JSON.stringify(queryLines) }),
+            ]).then((results: any) => {
+              this.allLines = results[0]['data'];
+              this.listPaymentHistory = results[1]['data'];
+              let helper = {};
+      
+              this.allLines = this.allLines.reduce(function (r, o) {
+                var key = o.IDUoM + '-' + o.UoMPrice;
+      
+                if (!helper[key]) {
+                  helper[key] = Object.assign({}, o); // create a copy of o
+                  r.push(helper[key]);
+                } else {
+                  helper[key].Quantity += o.Quantity;
+                  helper[key].ShippedQuantity += o.ShippedQuantity;
+                }
+      
+                return r;
+              }, []);
+      
+              let itemIds = this.allLines.map((m) => m.IDItem);
+              this.itemProvider
+                .search({ Id: JSON.stringify(itemIds), IDSO: this.id })
+                .toPromise()
+                .then((resp: any) => {
+                  this.preLoadItems = resp;
+      
+                  super.preLoadData(event);
+                });
+            });
+          });
     }
 
     loadedData(event?: any, ignoredFromGroup?: boolean): void {
         this.item.OrderLines = this.allLines;
+        this.item.PaymentHistory = this.listPaymentHistory;
         this.pageConfig.canEdit = !(this.item.Status == 'Done' || this.item.Status == 'Cancelled');
         
         super.loadedData(event, ignoredFromGroup);
 
         this.patchOrderLinesValue();
+        this.patchPaymentHistoryLinesValue();
     }
 
     refresh(event?: any): void {
@@ -385,4 +395,61 @@ export class CloseOrderPage extends PageBase {
 
         //this.saveChange();
     }
+    patchPaymentHistoryLinesValue() {
+        this.formGroup.controls.PaymentHistory = new FormArray([]);
+        if (this.item.PaymentHistory?.length) {
+          for (let i of this.item.PaymentHistory) {
+            this.addPaymentHistoryLine(i);
+          }
+        }
+      }
+    
+      addPaymentHistoryLine(line) {
+        let groups = <FormArray>this.formGroup.controls.PaymentHistory;
+        let group = this.formBuilder.group({
+          AmountPaid: [line.Amount],
+          Remark: [line.IncomingPayment.Remark],
+          Status: [line.IncomingPayment.Status],
+          Percent: null, // %
+          Amount: null, // số tiền
+          DateTrading: null, // ngày giao dịch
+          RemainingAmount: null, //còn lại
+          PaymentDeadline: null, // hạn thanh toán
+        });
+        groups.push(group);
+      }
+    
+      goToPayment() {
+        if (this.item.IDStatus != 114) {
+          this.env.showTranslateMessage('Please close the party and issue an invoice', 'warning');
+          return;
+        }
+    
+        if (this.item.Debt <= 0) {
+          this.env.showTranslateMessage('You currently have no debt', 'warning');
+          return;
+        }
+    
+        let payment = {
+          IDBranch: this.item.IDBranch,
+          IDStaff: this.env.user.StaffID,
+          IDCustomer: this.item.IDContact,
+          IDSaleOrder: this.item.Id,
+          DebtAmount: this.item.Debt,
+          IsActiveInputAmount: true,
+          IsActiveTypeCash: true,
+          ReturnUrl: window.location.href,
+          Lang: this.env.language.current,
+          Timestamp: Date.now(),
+          CreatedBy: this.env.user.Email,
+        };
+        let str = window.btoa(JSON.stringify(payment));
+        let code = this.convertUrl(str);
+        let url = environment.appDomain + 'Payment?Code=' + code;
+        window.open(url, '_blank');
+      }
+    
+      private convertUrl(str) {
+        return str.replace('=', '').replace('=', '').replace('+', '-').replace('_', '/');
+      }
 }
