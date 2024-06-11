@@ -21,6 +21,7 @@ export class CloseOrderPage extends PageBase {
     allLines = [];
     preLoadItems = [];
     listPaymentHistory = [];
+    queryLinesPaymentHistory ;
     constructor(
         public pageProvider: SALE_OrderProvider,
         public saleOrderDetailProvider: SALE_OrderDetailProvider,
@@ -56,12 +57,21 @@ export class CloseOrderPage extends PageBase {
     }
 
     ngOnInit(): void {
-        this.pageConfig.subscribePOSOrderDetail = this.env.getEvents().subscribe((data) => {
-          if (data.Code === 'app:POSOrderPaymentUpdate') {
-            this.refresh();
+        this.pageConfig.subscribeSOPaymentUpdate = this.env.getEvents().subscribe((data) => {
+          if (data.Code === 'app:SOPaymentUpdate') {
+             this.IncomingPaymentDetailProvider.read({ IDSaleOrder:JSON.stringify(this.queryLinesPaymentHistory) }).then((results:any) =>{
+                this.item.PaymentHistory = results.data;
+                this.patchPaymentHistoryLinesValue();
+                this.item.Debt =this.item.Debt - results.data.map(e=>e.Amount).pop()
+             });
           }
         });
         super.ngOnInit();
+    }
+
+    ngOnDestroy() {
+        this.pageConfig?.subscribeSOPaymentUpdate?.unsubscribe();
+        super.ngOnDestroy();
     }
 
     preLoadData(event?: any): void {
@@ -71,6 +81,8 @@ export class CloseOrderPage extends PageBase {
             this.childSOList = this.childSOList.filter((d) => d.Status != 'Cancelled');
             let queryLines = this.childSOList.map((m) => m.Id);
             queryLines.push(parseInt(this.id));
+            this.queryLinesPaymentHistory = "";
+            this.queryLinesPaymentHistory =  queryLines;
       
             Promise.all([
               this.saleOrderDetailProvider.read({ IDOrder: JSON.stringify(queryLines) }),
@@ -419,11 +431,11 @@ export class CloseOrderPage extends PageBase {
           AmountPaid: [line.Amount],
           Remark: [line.IncomingPayment.Remark],
           Status: [line.IncomingPayment.Status],
-          Percent: null, // %
-          Amount: null, // số tiền
-          DateTrading: null, // ngày giao dịch
-          RemainingAmount: null, //còn lại
-          PaymentDeadline: null, // hạn thanh toán
+          Percent: [], // %
+          Amount: [], // số tiền
+          DateTrading: [], // ngày giao dịch
+          RemainingAmount: [], //còn lại
+          PaymentDeadline: [], // hạn thanh toán
         });
         groups.push(group);
       }
