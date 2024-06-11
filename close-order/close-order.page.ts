@@ -419,22 +419,13 @@ export class CloseOrderPage extends PageBase {
         groups.push(group);
       }
     
-      goToPayment() {
-        if (this.item.IDStatus != 114) {
-          this.env.showTranslateMessage('Please close the party and issue an invoice', 'warning');
-          return;
-        }
-    
-        if (this.item.Debt <= 0) {
-          this.env.showTranslateMessage('You currently have no debt', 'warning');
-          return;
-        }
-    
+      goToPayment() {    
         let payment = {
           IDBranch: this.item.IDBranch,
           IDStaff: this.env.user.StaffID,
           IDCustomer: this.item.IDContact,
           IDSaleOrder: this.item.Id,
+          TypeSO : "FMCGSalesOrder",
           DebtAmount: this.item.Debt,
           IsActiveInputAmount: true,
           IsActiveTypeCash: true,
