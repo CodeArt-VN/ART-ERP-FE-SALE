@@ -55,6 +55,15 @@ export class CloseOrderPage extends PageBase {
         });
     }
 
+    ngOnInit(): void {
+        this.pageConfig.subscribePOSOrderDetail = this.env.getEvents().subscribe((data) => {
+          if (data.Code === 'app:POSOrderPaymentUpdate') {
+            this.refresh();
+          }
+        });
+        super.ngOnInit();
+    }
+
     preLoadData(event?: any): void {
 
         this.pageProvider.read({ IDParent: this.id }).then((resp) => {
@@ -425,7 +434,6 @@ export class CloseOrderPage extends PageBase {
           IDStaff: this.env.user.StaffID,
           IDCustomer: this.item.IDContact,
           IDSaleOrder: this.item.Id,
-          TypeSO : "FMCGSalesOrder",
           DebtAmount: this.item.Debt,
           IsActiveInputAmount: true,
           IsActiveTypeCash: true,
