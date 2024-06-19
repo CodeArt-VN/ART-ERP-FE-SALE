@@ -431,11 +431,11 @@ export class CloseOrderPage extends PageBase {
           AmountPaid: [line.Amount],
           Remark: [line.IncomingPayment.Remark],
           Status: [line.IncomingPayment.Status],
-          Percent: [], // %
-          Amount: [], // số tiền
-          DateTrading: [], // ngày giao dịch
-          RemainingAmount: [], //còn lại
-          PaymentDeadline: [], // hạn thanh toán
+          Percent: [''], // %
+          Amount: [line.Amount], // số tiền
+          DueDate: [line.IncomingPayment.DueDate], // ngày giao dịch
+          RemainingAmount: [''], //còn lại
+          PaymentDeadline: [''], // hạn thanh toán
         });
         groups.push(group);
       }
