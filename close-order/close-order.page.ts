@@ -58,7 +58,7 @@ export class CloseOrderPage extends PageBase {
 
     ngOnInit(): void {
         this.pageConfig.subscribeSOPaymentUpdate = this.env.getEvents().subscribe((data) => {
-          if (data.Code === 'app:SOPaymentUpdate') {
+          if (data.code === 'app:SOPaymentUpdate') {
              this.IncomingPaymentDetailProvider.read({ IDSaleOrder:JSON.stringify(this.queryLinesPaymentHistory) }).then((results:any) =>{
                 this.item.PaymentHistory = results.data;
                 this.patchPaymentHistoryLinesValue();
