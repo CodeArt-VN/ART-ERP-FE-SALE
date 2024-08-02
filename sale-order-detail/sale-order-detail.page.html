@@ -1,9 +1,9 @@
 <ion-header>
-  <app-detail-toolbar [page]="this">
+  <app-toolbar [page]="this">
     <ion-button (click)="closeOrder()" title="Chốt tiệc" *ngIf="pageConfig.canCloseOrder && id">
       <ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
     </ion-button>
-  </app-detail-toolbar>
+  </app-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme class="ion-padding">
