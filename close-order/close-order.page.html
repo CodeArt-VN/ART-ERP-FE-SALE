@@ -193,7 +193,7 @@
 								
 								
 								<div class="col-name cell">
-									<b (click)="addOrderLine({  })" *ngIf="pageConfig.canEdit">Thêm SP/DV</b>
+									<b (click)="addOrderLine({  })" *ngIf="pageConfig.canEdit">{{'Thêm SP/DV' | translate}}</b>
 								</div>
 								<div class="col-code cell">
 									<div style="height: 35px;"></div>
@@ -201,7 +201,7 @@
 								<div class="col-number cell disable" ><b></b></div>
 								<div class="col-number cell disable" ><b></b></div>
 								<div class="col-icon cell" *ngIf="pageConfig.canEdit"></div>
-								<div class="col-number cell"><b>Tổng cộng:</b></div>
+								<div class="col-number cell"><b>{{'Tổng cộng' | translate}}:</b></div>
 								<div class="col-money cell disable" ><b>{{ item.subTotal | number: '1.0-0' }}</b></div>
 								<div class="col-icon cell disable" *ngIf="pageConfig.canEdit"></div>
 							</div>
@@ -210,9 +210,9 @@
 
 						<div class="c-control ion-text-right"  style="padding-right: 30px;">
 							<label class="c-label" for=""></label>
-							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="saveChange()">Ghi nhận số lượng</ion-button>
-							<ion-button size="small" [disabled]="submitAttempt" (click)="openSONote()">In bảng kê</ion-button>
-							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="closeOrder()">Chốt tiệc & xuất hóa đơn</ion-button>
+							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="saveChange()">{{'Ghi nhận số lượng' | translate}}</ion-button>
+							<ion-button size="small" [disabled]="submitAttempt" (click)="openSONote()">{{'In bảng kê'| translate}}</ion-button>
+							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="closeOrder()">{{'Chốt tiệc & xuất hóa đơn' | translate}}</ion-button>
 						</div>
 
 					</div>

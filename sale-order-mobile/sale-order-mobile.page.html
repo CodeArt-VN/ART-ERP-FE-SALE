@@ -145,11 +145,11 @@
       <ion-item-options>
         <ion-item-option (click)="i.checked =!i.checked; changeSelection(i)">
           <ion-icon slot="top" [name]="i.checked? 'checkbox': 'git-pull-request'"></ion-icon>
-          Gộp
+          {{'Gộp' | translate}}
         </ion-item-option>
         <ion-item-option (click)="splitOrder(i)">
           <ion-icon slot="top" name="git-branch"></ion-icon>
-          Chia
+          {{'Chia' | translate}}
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>

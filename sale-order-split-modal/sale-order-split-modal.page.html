@@ -211,7 +211,7 @@
                       </tr>
                       <!-- <tr *ngIf="i.Quantity && pageConfig.canEditPrice && !i.IsPromotionItem">
                                                 <td class="label">
-                                                    <span *ngIf="!pageConfig.canEdit || i.UoMPrice == i._UoMPrice">Đơn giá</span>
+                                                    <span *ngIf="!pageConfig.canEdit || i.UoMPrice == i._UoMPrice">{{'Unit price' | translate}}</span>
                                                 </td>
                                                 <td>
                                                     <input type="tel" (focus)="$event.target.select()" (blur)="changedCalc(i, o, 'UoMPrice')" class="c-input" mask="separator.2" thousandSeparator="," [(ngModel)]="o.UoMPrice">
