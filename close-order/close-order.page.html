@@ -10,10 +10,10 @@
 			<ion-toolbar color="primary">
                 <ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
                     <ion-segment-button value="s1">
-                        <ion-label>Thông tin chung</ion-label>
+                        <ion-label>{{'Thông tin chung' | translate}}</ion-label>
                     </ion-segment-button>
                     <ion-segment-button value="s2">
-                        <ion-label>DS sản phẩm</ion-label>
+                        <ion-label>{{'DS sản phẩm' | translate}}</ion-label>
                     </ion-segment-button>
 					<!-- <ion-segment-button value="s3">
                         <ion-label>Xem theo SO</ion-label>
@@ -99,15 +99,15 @@
 							<header class="bold" style="padding-right: 0;">
 								<div class="col-reorder cell" *ngIf="pageConfig.canEdit"></div>
 								<div class="col-id cell">#</div>
-								<div class="col-name cell">Sản phẩm / dịch vụ</div>
-								<div class="col-code cell">Đơn vị</div>
-								<div class="col-number cell" title="Số lượng đặt mua">SL đặt</div>
-								<div class="col-number cell" title="Số lượng thực giao">SL thực</div>
+								<div class="col-name cell">{{'Sản phẩm / dịch vụ' | translate}}</div>
+								<div class="col-code cell">{{'Đơn vị' | translate}}</div>
+								<div class="col-number cell" title="Số lượng đặt mua">{{'SL đặt' | translate}}</div>
+								<div class="col-number cell" title="Số lượng thực giao">{{'SL thực' | translate}}</div>
 								<div class="col-icon cell clickable" *ngIf="pageConfig.canEdit" (click)="toggleAllShippedQty()">
 									<ion-icon [color]="item._IsShippedAll? 'danger': 'success'" [name]="item._IsShippedAll? 'remove-circle-outline': 'checkmark-done-circle-outline' "></ion-icon>
 								</div>
-								<div class="col-number cell">Đơn giá</div>
-								<div class="col-money cell" title="Số lượng thực giao x Đơn giá">SL x ĐG</div>
+								<div class="col-number cell">{{'Đơn giá' | translate}}</div>
+								<div class="col-money cell" title="Số lượng thực giao x Đơn giá">{{'SL x ĐG' | translate}}</div>
 								<div class="col-icon cell" *ngIf="pageConfig.canEdit"></div>
 							</header>
 							<ion-reorder-group (ionItemReorder)="doReorder($event, formGroup.get('OrderLines')['controls'])" [disabled]="!pageConfig.canEdit">
