@@ -314,7 +314,7 @@
           ></ion-icon>
         </div>
 
-        <button mat-raised-button type="submit" style="display: none">Search</button>
+        <button mat-raised-button type="submit" style="display: none">{{'Search' | translate}}</button>
       </header>
     </form>
   </section>
@@ -356,7 +356,7 @@
     <div *ngIf="segmentView=='s1'">
       <div class="ion-padding">
         <div class="c-control">
-          <label class="c-label" for="DeliveryDate">Ngày giao hàng</label>
+          <label class="c-label" for="DeliveryDate">{{'Ngày giao hàng' | translate}}</label>
           <input
             class="c-input"
             (change)="loadShipmentList()"
@@ -422,7 +422,7 @@
             class="add"
             slot="end"
             (click)="addSOtoShipment(i)"
-            >+ {{selectedItems.length}} đơn</ion-button
+            >+ {{selectedItems.length}} {{'đơn' | translate}}</ion-button
           >
         </ion-item>
       </ion-list>
@@ -522,7 +522,7 @@
             (click)="query.IsSampleOrder=true; refresh(); $event.stopPropagation();"
             *ngIf="i.IsSampleOrder"
           >
-            <ion-text color="primary">Sa</ion-text>
+            <ion-text color="primary">{{'Sa' | translate}}</ion-text>
           </small>
           <small
             title="{{'Coverage' | translate}}"
@@ -530,7 +530,7 @@
             (click)="query.IsShipBySaleMan=true; refresh(); $event.stopPropagation();"
             *ngIf="i.IsShipBySaleMan"
           >
-            <ion-text color="primary">BP</ion-text>
+            <ion-text color="primary">{{'BP' | translate}}</ion-text>
           </small>
         </div>
         <div

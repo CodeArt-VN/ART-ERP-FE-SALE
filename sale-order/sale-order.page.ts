@@ -208,7 +208,7 @@ export class SaleOrderPage extends PageBase {
         });
         //this.refresh();
         if (err.error.Message != null && err.error != null) {
-          this.env.showMessage(err.message, 'danger');
+          this.env.showTranslateMessage(err.message, 'danger');
         } else {
           this.env.showTranslateMessage('Import error, please check again', 'danger');
         }
@@ -772,11 +772,11 @@ export class SaleOrderPage extends PageBase {
       this.EInvoiceServiceProvider.CreateARInvoiceFromSOs(ids)
         .then((resp: any) => {
           if (resp != '') {
-            this.env.showMessage(resp[0].errorMsg, 'warning');
+            this.env.showTranslateMessage(resp[0].errorMsg, 'warning');
             this.submitAttempt = false;
           } else {
             this.env.showTranslateMessage('Invoice created!', 'success');
-            //this.env.showMessage('Đã cập nhật hóa đơn điện tử thành công!', 'success');
+            //this.env.showTranslateMessage('Đã cập nhật hóa đơn điện tử thành công!', 'success');
             this.submitAttempt = false;
           }
         })
@@ -887,7 +887,7 @@ export class SaleOrderPage extends PageBase {
           })
           .catch((err) => {
             if (err.message != null) {
-              this.env.showMessage(err.message, 'danger');
+              this.env.showTranslateMessage(err.message, 'danger');
             } else {
               this.env.showTranslateMessage('Cannot extract data', 'danger');
             }

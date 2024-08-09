@@ -301,7 +301,7 @@ export class CloseOrderPage extends PageBase {
             this.saveChange();
         }
         else{
-            this.env.showMessage('Sản phẩm chưa có giá bán, xin vui lòng liên hệ quản trị để được hỗ trợ.');
+            this.env.showTranslateMessage('Sản phẩm chưa có giá bán, xin vui lòng liên hệ quản trị để được hỗ trợ.');
         }
     }
 
