@@ -96,7 +96,7 @@ export class SaleOrderNotePage extends PageBase {
     let newURL = `#/sale-order-note/${this.id}`;
     history.pushState({}, null, newURL);
 
-    this.env.showLoading('Đang tạo bảng kê', this.pageProvider.read({ IDParent: this.id })).then((resp) => {
+    this.env.showLoading2('Đang tạo bảng kê', this.pageProvider.read({ IDParent: this.id })).then((resp) => {
       let SOList = resp['data'];
       SOList = SOList.filter((d) => d.Status != 'Cancelled');
 

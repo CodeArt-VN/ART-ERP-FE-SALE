@@ -192,7 +192,7 @@ export class SaleOrderMobilePage extends PageBase {
         header: 'Gửi duyệt',
         //subHeader: '---',
         message:
-          'Sau khi gửi duyệt, bạn không thể chỉnh sửa đơn hàng được nữa. Bạn chắc muốn gửi duyệt tất cả đơn hàng?',
+          'Sau khi gửi duyệt, bạn không thể chỉnh sửa đơn hàng được nữa. Bạn có chắc muốn gửi duyệt tất cả đơn hàng?',
         buttons: [
           {
             text: 'Không',

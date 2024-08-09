@@ -356,7 +356,7 @@ export class CloseOrderPage extends PageBase {
             this.removeTempProperties(submitItem);
             submitItem.IsClosedOrder = isClosed;
             
-            this.env.showLoading('Xin vui lòng chờ xử lý chốt tiệc!', this.pageProvider.commonService.put('SALE/Order/CloseOrder/' + this.item.Id, submitItem))
+            this.env.showLoading2('Xin vui lòng chờ xử lý chốt tiệc!', this.pageProvider.commonService.put('SALE/Order/CloseOrder/' + this.item.Id, submitItem))
                 .then(_ => {
                     this.preLoadData();
                     this.env.publishEvent({ Code: publishEventCode });
@@ -370,7 +370,7 @@ export class CloseOrderPage extends PageBase {
     }
 
     async closeOrder() {
-        this.env.showPrompt('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
+        this.env.showPrompt2('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
         .then(_=>{
             this.saveChange(true);
         })
@@ -383,7 +383,7 @@ export class CloseOrderPage extends PageBase {
     openSONote(){
         var dirty:any = this.getDirtyValues(this.formGroup);
         if (dirty?.OrderLines) {
-            this.env.showPrompt('Bạn chưa lưu thay đổi, bạn có muốn lưu lại các thay đổi?',null, 'In bảng kê')
+            this.env.showPrompt2('Bạn chưa lưu thay đổi, bạn có muốn lưu lại các thay đổi?',null, 'In bảng kê')
             .then(_=>{
                 this.saveChange().then(_=>{
                     this.nav('sale-order-note/'+this.id);
@@ -398,7 +398,7 @@ export class CloseOrderPage extends PageBase {
     }
 
     removeOrderLine(index) {
-        this.env.showPrompt('Bạn chắc muốn bỏ item phần này?', null, 'Xóa item').then(_=>{
+        this.env.showPrompt2('Bạn có chắc muốn bỏ item phần này?', null, 'Xóa item').then(_=>{
             let groups = <FormArray>this.formGroup.controls.OrderLines;
             groups.removeAt(index);
             this.calcSubTotal();
