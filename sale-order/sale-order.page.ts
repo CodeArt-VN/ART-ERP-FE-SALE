@@ -337,7 +337,7 @@ export class SaleOrderPage extends PageBase {
         .create({
           header: 'Gửi duyệt ' + this.selectedItems.length + ' đơn hàng',
           //subHeader: '---',
-          message: 'Bạn chắc muốn gửi duyệt ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+          message: 'Bạn có chắc muốn gửi duyệt ' + this.selectedItems.length + ' đơn hàng đang chọn?',
           buttons: [
             {
               text: 'Không',
@@ -412,7 +412,7 @@ export class SaleOrderPage extends PageBase {
         .create({
           header: 'Duyệt ' + this.selectedItems.length + ' đơn hàng',
           //subHeader: '---',
-          message: 'Bạn chắc muốn xác nhận ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+          message: 'Bạn có chắc muốn xác nhận ' + this.selectedItems.length + ' đơn hàng đang chọn?',
           buttons: [
             {
               text: 'Không',
@@ -487,7 +487,7 @@ export class SaleOrderPage extends PageBase {
         .create({
           header: 'Trả lại ' + this.selectedItems.length + ' đơn hàng',
           //subHeader: '---',
-          message: 'Bạn chắc muốn trả lại ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+          message: 'Bạn có chắc muốn trả lại ' + this.selectedItems.length + ' đơn hàng đang chọn?',
           buttons: [
             {
               text: 'Không',
@@ -566,7 +566,7 @@ export class SaleOrderPage extends PageBase {
         .create({
           header: 'HỦY ' + this.selectedItems.length + ' đơn hàng',
           //subHeader: '---',
-          message: 'Bạn chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+          message: 'Bạn có chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
           buttons: [
             {
               text: 'Không',
@@ -875,7 +875,7 @@ export class SaleOrderPage extends PageBase {
         i._ShowSubOrder = true;
       } else {
         this.env
-          .showLoading('Đang tải dữ liệu...', this.pageProvider.read({ IDParent: i.Id }))
+          .showLoading2('Đang tải dữ liệu...', this.pageProvider.read({ IDParent: i.Id }))
           .then((result: any) => {
             i._SubOrders = result.data;
             i._SubOrders.forEach((so) => {
