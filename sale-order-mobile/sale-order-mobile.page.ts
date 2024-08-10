@@ -140,7 +140,7 @@ export class SaleOrderMobilePage extends PageBase {
   async splitSaleOrder() {
     let IDStatus = this.selectedItems[0].IDStatus;
     if (!(IDStatus == 101 || IDStatus == 102 || IDStatus == 103)) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected order cannot be split. Please choose draft, new, pending for approval or disaaproved order',
         'warning',
       );
@@ -165,7 +165,7 @@ export class SaleOrderMobilePage extends PageBase {
       (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103),
     );
     if (itemsCanNotProcess.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be combined. Please select new or disapproved invoice',
         'warning',
       );
@@ -225,7 +225,7 @@ export class SaleOrderMobilePage extends PageBase {
                         Code: publishEventCode,
                       });
                     }
-                    this.env.showTranslateMessage('Saving completed!', 'success');
+                    this.env.showMessage('Saving completed!', 'success');
                     this.submitAttempt = false;
                   })
                   .catch((err) => {
@@ -245,7 +245,7 @@ export class SaleOrderMobilePage extends PageBase {
   deleteItems() {
     let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
     if (itemsCanNotDelete.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be deleted. Please only delete new or disapproved invoice',
         'warning',
       );
@@ -351,7 +351,7 @@ export class SaleOrderMobilePage extends PageBase {
   scanning = false;
   scanQRCode() {
     if (!Capacitor.isPluginAvailable('BarcodeScanner') || Capacitor.platform == 'web') {
-      this.env.showTranslateMessage('This function is only available on phone', 'warning');
+      this.env.showMessage('This function is only available on phone', 'warning');
       return;
     }
     BarcodeScanner.prepare().then(() => {
@@ -381,7 +381,7 @@ export class SaleOrderMobilePage extends PageBase {
                 this.query.CustomerName = IDSaleOrder;
                 this.closeCamera();
               } else {
-                this.env.showTranslateMessage(
+                this.env.showMessage(
                   'You just scanned: {{value}}, please scanned QR code on paid delivery notes',
                   '',
                   result.content,

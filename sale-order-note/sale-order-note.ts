@@ -96,7 +96,7 @@ export class SaleOrderNotePage extends PageBase {
     let newURL = `#/sale-order-note/${this.id}`;
     history.pushState({}, null, newURL);
 
-    this.env.showLoading2('Đang tạo bảng kê', this.pageProvider.read({ IDParent: this.id })).then((resp) => {
+    this.env.showLoading('Please wait for a few moments', this.pageProvider.read({ IDParent: this.id })).then((resp) => {
       let SOList = resp['data'];
       SOList = SOList.filter((d) => d.Status != 'Cancelled');
 
@@ -184,8 +184,8 @@ export class SaleOrderNotePage extends PageBase {
           })
           .catch((err) => {
             console.log(err);
-            if (err.message != null) this.env.showTranslateMessage(err.message, 'danger');
-            else this.env.showTranslateMessage('Không tạo được bảng kê, xin vui lòng kiểm tra lại.', 'danger');
+            if (err.message != null) this.env.showMessage(err.message, 'danger');
+            else this.env.showMessage('Không tạo được bảng kê, xin vui lòng kiểm tra lại.', 'danger');
           });
 
         // let itemIds = allLines.map(m => m.IDItem);

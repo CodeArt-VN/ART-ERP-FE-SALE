@@ -164,7 +164,7 @@ export class SaleOrderPage extends PageBase {
 
   masanImport() {
     if (this.submitAttempt) {
-      this.env.showTranslateMessage('Order from Masan being imported, please wait till complete', 'primary');
+      this.env.showMessage('Order from Masan being imported, please wait till complete', 'primary');
       return;
     }
     this.submitAttempt = true;
@@ -208,9 +208,9 @@ export class SaleOrderPage extends PageBase {
         });
         //this.refresh();
         if (err.error.Message != null && err.error != null) {
-          this.env.showTranslateMessage(err.message, 'danger');
+          this.env.showMessage(err.message, 'danger');
         } else {
-          this.env.showTranslateMessage('Import error, please check again', 'danger');
+          this.env.showMessage('Import error, please check again', 'danger');
         }
       });
   }
@@ -223,7 +223,7 @@ export class SaleOrderPage extends PageBase {
 
   async import2(event) {
     if (this.submitAttempt) {
-      this.env.showTranslateMessage('File being imported, please wait till complete', 'primary');
+      this.env.showMessage('File being imported, please wait till complete', 'primary');
       return;
     }
     this.submitAttempt = true;
@@ -263,14 +263,14 @@ export class SaleOrderPage extends PageBase {
           Id: 'FileImport',
         });
         this.refresh();
-        this.env.showTranslateMessage('Import error, please check again', 'danger');
+        this.env.showMessage('Import error, please check again', 'danger');
       });
   }
 
   async splitSaleOrder() {
     let IDStatus = this.selectedItems[0].IDStatus;
     if (!(IDStatus == 101 || IDStatus == 102 || IDStatus == 103)) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected order cannot be split. Please choose draft, new, pending for approval or disaaproved order',
         'warning',
       );
@@ -295,7 +295,7 @@ export class SaleOrderPage extends PageBase {
       (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103),
     );
     if (itemsCanNotProcess.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be combined. Please select new or disapproved invoice',
         'warning',
       );
@@ -323,7 +323,7 @@ export class SaleOrderPage extends PageBase {
 
     let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be approved. Please select new or draft or disapproved ones',
         'warning',
       );
@@ -373,7 +373,7 @@ export class SaleOrderPage extends PageBase {
                           Code: publishEventCode,
                         });
                       }
-                      this.env.showTranslateMessage('Saving completed!', 'warning');
+                      this.env.showMessage('Saving completed!', 'warning');
                       this.submitAttempt = false;
                     })
                     .catch((err) => {
@@ -398,7 +398,7 @@ export class SaleOrderPage extends PageBase {
 
     let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 103 || i.IDStatus == 110));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected order cannot be approved. Please only select pending for approval order',
         'warning',
       );
@@ -448,7 +448,7 @@ export class SaleOrderPage extends PageBase {
                           Code: publishEventCode,
                         });
                       }
-                      this.env.showTranslateMessage('Saving completed!', 'success');
+                      this.env.showMessage('Saving completed!', 'success');
                       this.submitAttempt = false;
                     })
                     .catch((err) => {
@@ -473,7 +473,7 @@ export class SaleOrderPage extends PageBase {
 
     let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 103 || i.IDStatus == 104));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be disaaproved. Please select approved or pending for approval invoice',
         'warning',
       );
@@ -523,7 +523,7 @@ export class SaleOrderPage extends PageBase {
                           Code: publishEventCode,
                         });
                       }
-                      this.env.showTranslateMessage('Saving completed!', 'success');
+                      this.env.showMessage('Saving completed!', 'success');
                       this.submitAttempt = false;
                     })
                     .catch((err) => {
@@ -550,7 +550,7 @@ export class SaleOrderPage extends PageBase {
       (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110),
     );
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your chosen invoice cannot be canceled. Please only select draft and waiting for approval invoices.',
         'warning',
       );
@@ -602,7 +602,7 @@ export class SaleOrderPage extends PageBase {
                           Code: publishEventCode,
                         });
                       }
-                      this.env.showTranslateMessage('Saving completed!', 'success');
+                      this.env.showMessage('Saving completed!', 'success');
                       this.submitAttempt = false;
                     })
                     .catch((err) => {
@@ -623,7 +623,7 @@ export class SaleOrderPage extends PageBase {
   deleteItems() {
     let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
     if (itemsCanNotDelete.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your selected invoices cannot be deleted. Please only delete new or disapproved invoice',
         'warning',
       );
@@ -666,7 +666,7 @@ export class SaleOrderPage extends PageBase {
     let OrderIds = this.selectedItems.filter((i) => i.IDStatus == 104 || i.IDStatus == 110); //Đã duyệt || chờ giao lại
     let DebtOrderIds = this.selectedItems.filter((i) => i.IDStatus == 113); // Đang nợ
     if (!(OrderIds.length || DebtOrderIds.length)) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Your chosen order cannot be allocated for delivery. Please only select approved or pending for delivery orders.',
         'warning',
       );
@@ -697,14 +697,14 @@ export class SaleOrderPage extends PageBase {
           if (publishEventCode) {
             this.env.publishEvent({ Code: publishEventCode });
           }
-          this.env.showTranslateMessage('Saving completed!', 'success');
+          this.env.showMessage('Saving completed!', 'success');
           this.loadShipmentList();
           this.submitAttempt = false;
         })
         .catch((err) => {
           this.submitAttempt = false;
           this.loadShipmentList();
-          this.env.showTranslateMessage('Cannot save, please try again', 'danger');
+          this.env.showMessage('Cannot save, please try again', 'danger');
           //console.log(err);
         });
     }
@@ -726,7 +726,7 @@ export class SaleOrderPage extends PageBase {
         i.IDStatus == 115,
     );
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Cannot generate invoice from your chosen orders. Please only select approved orders!',
         'warning',
       );
@@ -766,16 +766,16 @@ export class SaleOrderPage extends PageBase {
     console.log(ids);
 
     if (!ids) {
-      this.env.showTranslateMessage('Your chosen orders have their invoices generated. Please check again!', 'warning');
+      this.env.showMessage('Your chosen orders have their invoices generated. Please check again!', 'warning');
     } else {
       //return new Promise(resolve => {
       this.EInvoiceServiceProvider.CreateARInvoiceFromSOs(ids)
         .then((resp: any) => {
           if (resp != '') {
-            this.env.showTranslateMessage(resp[0].errorMsg, 'warning');
+            this.env.showMessage(resp[0].errorMsg, 'warning');
             this.submitAttempt = false;
           } else {
-            this.env.showTranslateMessage('Invoice created!', 'success');
+            this.env.showMessage('Invoice created!', 'success');
             //this.env.showTranslateMessage('Đã cập nhật hóa đơn điện tử thành công!', 'success');
             this.submitAttempt = false;
           }
@@ -794,7 +794,7 @@ export class SaleOrderPage extends PageBase {
 
     let itemsCanNotProcess = this.selectedItems.filter((i) => i.IDStatus != 104);
     if (itemsCanNotProcess.length == this.selectedItems.length) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Cannot generate merged invoice from your chosen orders. Please only select approved orders!',
         'warning',
       );
@@ -838,7 +838,7 @@ export class SaleOrderPage extends PageBase {
   async createSplitARInvoices() {
     let IDStatus = this.selectedItems[0].IDStatus;
     if (IDStatus != 104) {
-      this.env.showTranslateMessage(
+      this.env.showMessage(
         'Cannot split invoice from your chosen order. Please only select approved orders!',
         'warning',
       );
@@ -875,7 +875,7 @@ export class SaleOrderPage extends PageBase {
         i._ShowSubOrder = true;
       } else {
         this.env
-          .showLoading2('Đang tải dữ liệu...', this.pageProvider.read({ IDParent: i.Id }))
+          .showLoading('Please wait for a few moments', this.pageProvider.read({ IDParent: i.Id }))
           .then((result: any) => {
             i._SubOrders = result.data;
             i._SubOrders.forEach((so) => {
@@ -887,9 +887,9 @@ export class SaleOrderPage extends PageBase {
           })
           .catch((err) => {
             if (err.message != null) {
-              this.env.showTranslateMessage(err.message, 'danger');
+              this.env.showMessage(err.message, 'danger');
             } else {
-              this.env.showTranslateMessage('Cannot extract data', 'danger');
+              this.env.showMessage('Cannot extract data', 'danger');
             }
           });
       }

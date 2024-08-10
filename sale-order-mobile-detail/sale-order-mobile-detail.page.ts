@@ -826,7 +826,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
     }
 
     if (this.item.OriginalDiscountFromSalesman < 0) {
-      this.env.showTranslateMessage('Order not saved as discount from sales man less than 0', 'danger', null, 0, true);
+      this.env.showMessage('Order not saved as discount from sales man less than 0', 'danger', null, 0, true);
     } else {
       this.formGroup.patchValue(this.item);
       this.saveChange();

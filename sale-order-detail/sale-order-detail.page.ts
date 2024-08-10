@@ -839,7 +839,7 @@ export class SaleOrderDetailPage extends PageBase {
     }
 
     if (this.item.OriginalDiscountFromSalesman < 0) {
-      this.env.showTranslateMessage('Order not saved as discount from sales man less than 0', 'danger', null, 0, true);
+      this.env.showMessage('Order not saved as discount from sales man less than 0', 'danger', null, 0, true);
     } else {
       this.formGroup.patchValue(this.item);
       this.saveChange();
@@ -928,7 +928,7 @@ export class SaleOrderDetailPage extends PageBase {
       IDStatus == 112 ||
       IDStatus == 115
     ) {
-      this.env.showTranslateMessage('Cannot generate invoice with this orders status', 'warning');
+      this.env.showMessage('Cannot generate invoice with this orders status', 'warning');
       return;
     }
 
@@ -941,11 +941,11 @@ export class SaleOrderDetailPage extends PageBase {
     });
 
     if ((ids.length = 0)) {
-      this.env.showTranslateMessage('Your chosen orders have their invoices generated. Please check again!', 'warning');
+      this.env.showMessage('Your chosen orders have their invoices generated. Please check again!', 'warning');
     } else {
       this.EInvoiceServiceProvider.CreateARInvoiceFromSOs(ids).then((resp: any) => {
         console.log(resp);
-        this.env.showTranslateMessage('Invoice created!', 'success');
+        this.env.showMessage('Invoice created!', 'success');
       });
     }
 

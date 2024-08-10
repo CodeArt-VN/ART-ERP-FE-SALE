@@ -205,12 +205,12 @@ export class SaleOrderMergeARInvoiceModalPage extends PageBase {
 
     return new Promise((resolve, reject) => {
       if (!this.item.Ids.length || !this.item.IDContact) {
-        this.env.showTranslateMessage('Please check the invoice to combine and select customer', 'warning');
+        this.env.showMessage('Please check the invoice to combine and select customer', 'warning');
         return;
       }
 
       if (!this.isCanSplit) {
-        this.env.showTranslateMessage(
+        this.env.showMessage(
           'Please check customer name and split order must have at least 01 item.',
           'warning',
         );
@@ -237,13 +237,13 @@ export class SaleOrderMergeARInvoiceModalPage extends PageBase {
             if (publishEventCode) {
               this.env.publishEvent({ Code: publishEventCode });
             }
-            this.env.showTranslateMessage('Invoice created!', 'success');
+            this.env.showMessage('Invoice created!', 'success');
             resolve(true);
             this.submitAttempt = false;
             this.closeModal();
           })
           .catch((err) => {
-            this.env.showTranslateMessage('Cannot generate invoice, please try again.', 'danger');
+            this.env.showMessage('Cannot generate invoice, please try again.', 'danger');
             this.cdr.detectChanges();
             this.submitAttempt = false;
             reject(err);

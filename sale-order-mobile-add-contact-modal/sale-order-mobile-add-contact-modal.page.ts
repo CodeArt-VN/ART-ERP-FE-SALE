@@ -76,7 +76,7 @@ export class SaleOrderMobileAddContactModalPage extends PageBase {
         this.formGroup.controls.Status.markAsDirty();
         this.PhoneCheck = null;
       } else {
-        this.env.showTranslateMessage('Business Partner Exist, Please Confirm!', 'warning', null, null, true);
+        this.env.showMessage('Business Partner Exist, Please Confirm!', 'warning', null, null, true);
         // this.BPExist = true;
         // this.env.showTranslateMessage("erp.app.pages.sale.add-contact-modal.message.business-partner-existed", "warning");
         // let personalInfo = results[0];

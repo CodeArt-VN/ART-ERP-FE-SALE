@@ -322,7 +322,7 @@ export class SaleOrderARInvoiceModalPage extends PageBase {
 
     return new Promise((resolve, reject) => {
       if (!this.isCanSplit) {
-        this.env.showTranslateMessage('Please check again, orders must have at least 1 item to be approved', 'warning');
+        this.env.showMessage('Please check again, orders must have at least 1 item to be approved', 'warning');
       } else if (this.submitAttempt == false) {
         this.submitAttempt = true;
 
@@ -341,13 +341,13 @@ export class SaleOrderARInvoiceModalPage extends PageBase {
             if (publishEventCode) {
               this.env.publishEvent({ Code: publishEventCode });
             }
-            this.env.showTranslateMessage('Invoice created!', 'success');
+            this.env.showMessage('Invoice created!', 'success');
             resolve(true);
             this.submitAttempt = false;
             this.closeModal();
           })
           .catch((err) => {
-            this.env.showTranslateMessage(
+            this.env.showMessage(
               'Please check again, orders must have at least 1 item to be approved',
               'danger',
             );

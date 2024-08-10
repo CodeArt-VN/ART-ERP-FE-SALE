@@ -111,7 +111,7 @@ export class SalemanDebtModalPage extends PageBase {
 
     return new Promise((resolve, reject) => {
       if (!this.item.IDOwner || !this.item.Amount) {
-        this.env.showTranslateMessage('Please information of payer and amount paid.', 'warning');
+        this.env.showMessage('Please information of payer and amount paid.', 'warning');
       } else if (this.submitAttempt == false) {
         this.submitAttempt = true;
 
@@ -128,13 +128,13 @@ export class SalemanDebtModalPage extends PageBase {
             if (publishEventCode) {
               this.env.publishEvent({ Code: publishEventCode });
             }
-            this.env.showTranslateMessage('Saving completed!', 'success');
+            this.env.showMessage('Saving completed!', 'success');
             resolve(resp);
             this.submitAttempt = false;
             this.modalController.dismiss(this.item);
           })
           .catch((err) => {
-            this.env.showTranslateMessage('Cannot save, please try again', 'success');
+            this.env.showMessage('Cannot save, please try again', 'success');
             this.cdr.detectChanges();
             this.submitAttempt = false;
             reject(err);
