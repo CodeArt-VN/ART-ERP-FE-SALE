@@ -500,7 +500,7 @@
           >
         </div>
         <div class="col-status cell">
-          <ion-badge [color]="i._Status.Color" [title]="i._Status.Name"> {{i._Status.Name}} </ion-badge>
+          <ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name"> {{i._Status?.Name}} </ion-badge>
           <ng-container *ngFor="let s of i.ShipmentIds">
             <small class="clickable" *ngIf="s" [title]="'Shipment: '+s" (click)="nav('shipment/'+s,'forward')">
               <ion-icon name="shipping-fast"></ion-icon>
@@ -522,7 +522,7 @@
             (click)="query.IsSampleOrder=true; refresh(); $event.stopPropagation();"
             *ngIf="i.IsSampleOrder"
           >
-            <ion-text color="primary">{{'Sa' | translate}}</ion-text>
+            <ion-text color="primary">Sa</ion-text>
           </small>
           <small
             title="{{'Coverage' | translate}}"
@@ -530,7 +530,7 @@
             (click)="query.IsShipBySaleMan=true; refresh(); $event.stopPropagation();"
             *ngIf="i.IsShipBySaleMan"
           >
-            <ion-text color="primary">{{'BP' | translate}}</ion-text>
+            <ion-text color="primary">BP</ion-text>
           </small>
         </div>
         <div
