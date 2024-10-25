@@ -16,5 +16,7 @@ export const SALERoutes: Routes = [
   
     { path: 'sale-order-note', loadChildren: () => import('./sale-order-note/sale-order-note.module').then(m => m.SaleOrderNotePageModule), canActivate: [AuthGuard] },
     { path: 'sale-order-note/:id', loadChildren: () => import('./sale-order-note/sale-order-note.module').then(m => m.SaleOrderNotePageModule), canActivate: [AuthGuard] },
+   
+    { path: 'inventory-balance', loadChildren: () => import('./inventory-balance/inventory-balance.module').then(m => m.InventoryBalancePageModule), canActivate: [AuthGuard] },
   
 ];
