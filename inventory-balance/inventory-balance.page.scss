@@ -1,11 +1,17 @@
 .smallDanger{
  font-weight: 400 !important;
 }
-.hide-desktop{
-  display: none;
+:host ::ng-deep {
+  .hide-desktop{
+    display: none !important;
+  }
 }
+
 :host ::ng-deep {
 @media screen and (max-width: 1164px) {
+  app-data-table.responsive .row, .table.responsive .row{
+    padding: 16px 100px 16px 16px;
+  }
   .smallDanger.bold{
     font-weight: bold !important;
    }
@@ -13,7 +19,7 @@
     display:none !important;
   }
   .hide-desktop{
-    display: flex;
+    display: flex  !important;
   }
   .smallDanger{
     color: var(--ion-color-danger)  !important;

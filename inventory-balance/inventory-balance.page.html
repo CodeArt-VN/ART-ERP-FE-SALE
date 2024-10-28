@@ -11,15 +11,6 @@
 		[showFilter]="pageConfig.isShowSearch"
 		[showSpinner]="pageConfig.showSpinner" >
 
-		<!-- <datatable-column [checkbox]="true"></datatable-column> -->
-		<!-- <datatable-column class="col-name"  name="BranchName" property="BranchName"> </datatable-column> -->
-		 	
-		<datatable-column *ngIf="isShowBranch" class="col-name" name="Warehouse" property="IDBranch"  [canFilter]="false">
-			<ng-template let-i="row" datatable-cell-template>
-			  {{i?.BranchName}}
-			</ng-template>
-		</datatable-column>
-
 		<datatable-column class="col-id" name="ID item" property="ItemId">
 		  <ng-template let-i="row" datatable-cell-template>
 			<a [routerLink]="['/item/'+i?.ItemId]">{{i?.ItemId}}</a>
@@ -29,12 +20,19 @@
 	
 		<datatable-column class="col-name"  name="Item name" property="ItemName">
 			<ng-template let-i="row" datatable-cell-template>
-				<a style="color:var(--ion-color-dark)" [routerLink]="['/item/'+i?.ItemId]"><span [ngClass]="{'bold': !i.UoMs.length==0}">{{i.ItemName}}</span></a>
+				<a style="color:var(--ion-color-dark)" [routerLink]="['/item/'+i?.ItemId]"><span [ngClass]="{'bold': !i.UoMs.length==0}">{{i.ItemName}}</span>
+					<p class="ion-no-margin hideSmall"  *ngIf="isShowBranch">{{i?.BranchName}}</p>
+				</a>
+			</ng-template>
+		</datatable-column>
+
+		<datatable-column class="col-name hide-desktop"  name="Warehouse" property="IDBranch">
+			<ng-template let-i="row" datatable-cell-template>
+					{{i?.BranchName}}
 			</ng-template>
 		</datatable-column>
 	
-
-		<datatable-column class="col-name"  name="Quantity" property="ItemId" [canFilter]="false">
+		<datatable-column class="col-name"  name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs; let j = index">
 				<span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
@@ -44,7 +42,7 @@
 				<span *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</span>
 			  </ng-template>
 		</datatable-column>
-		<datatable-column class="col-name " name="Price" property="ItemId"  [canFilter]="false">
+		<datatable-column class="col-name " name="Price" property="ItemId"  [canFilter]="false"  [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs;let j = index">
 					<div *ngIf="uom.Price != null" class="smallDanger" [ngStyle]="{'font-weight':uom.Quantity >0? 'bold':''}">
