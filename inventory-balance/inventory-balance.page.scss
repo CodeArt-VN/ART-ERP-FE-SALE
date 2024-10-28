@@ -1,7 +1,9 @@
 .smallDanger{
  font-weight: 400 !important;
 }
-
+.hide-desktop{
+  display: none;
+}
 :host ::ng-deep {
 @media screen and (max-width: 1164px) {
   .smallDanger.bold{
@@ -10,8 +12,8 @@
   .hideSmall{
     display:none !important;
   }
-  .hide-all{
-    display: block !important;
+  .hide-desktop{
+    display: flex;
   }
   .smallDanger{
     color: var(--ion-color-danger)  !important;

@@ -16,7 +16,7 @@ import { ActivatedRoute, Route } from '@angular/router';
 })
 export class InventoryBalancePage extends PageBase {
   branchList = [];
-  IDBranch ;
+  isShowBranch = false;
   constructor(
     //public pageProvider: SALE_OrderProvider,
     public commonService: CommonService,
@@ -31,21 +31,12 @@ export class InventoryBalancePage extends PageBase {
   ) {
     super();
     // this.pageConfig.isShowFeature = true;
-    this.pageConfig.isShowSearch = true;
-  }
-
-  preLoadData(event) {
-    super.preLoadData(event);
-    this.IDBranch = this.route.snapshot?.paramMap?.get('id');
-    if(!this.IDBranch) this.IDBranch = this.env.selectedBranch;
+    // this.pageConfig.isShowSearch = true;
   }
 
   loadData(event) {
-    // this.pageProvider.apiPath.getList.url = function () {
-    //   return ApiSetting.apiDomain('SALE/Inventory/Balance');
-    // };
       if (event == 'search') {
-        this.commonService.connect('GET','SALE/Forecast/Balance/'+this.env.user.Id+'/'+this.IDBranch,this.query, ).toPromise().then((result: any) => {
+        this.commonService.connect('GET','SALE/Forecast/Balance',this.query, ).toPromise().then((result: any) => {
           if (result.length == 0) {
             this.pageConfig.isEndOfData = true;
           }
@@ -54,7 +45,7 @@ export class InventoryBalancePage extends PageBase {
         });
       } else {
         this.query.Skip = this.items.length;
-        this.commonService.connect('GET','SALE/Forecast/Balance/'+this.env.user.Id+'/'+this.IDBranch,this.query, ).toPromise().then((result: any) => {
+        this.commonService.connect('GET','SALE/Forecast/Balance',this.query, ).toPromise().then((result: any) => {
             if (result.length == 0) {
               this.pageConfig.isEndOfData = true;
             }
@@ -66,7 +57,6 @@ export class InventoryBalancePage extends PageBase {
                 this.items = [...this.items, ...result];
               }
             }
-
             this.loadedData(event);
           })
           .catch((err) => {
@@ -84,9 +74,25 @@ export class InventoryBalancePage extends PageBase {
   loadedData(event) {
     super.loadedData(event);
     this.items.forEach(i=> {
-      let branchName = this.env.branchList.find(d=> d.Id == i.IDBranch)?.Name;
-      i.BranchName = branchName;
+      let branch = this.env.branchList.find(d=> d.Id == i.IDBranch);
+      if(branch) i.BranchName = branch.Name;
     })
+    this.isShowBranch = false;
+    let selectedBranch =this.env.branchList.find(d=> d.Id == this.env.selectedBranch);
+    if(selectedBranch.Type == 'Warehouse')  return;
+    else{
+      if(this.countWarehouse(0,this.env.selectedBranch)>1)  this.isShowBranch =  true;
+    }
   }
-
+  countWarehouse(numberWhs, IDBranch){
+    let currentBranch = this.env.branchList.find(d=> d.Id == IDBranch);
+    if(currentBranch.Type == "Warehouse"){
+      numberWhs+=1;
+    }
+    let childs = this.env.branchList.filter(d=> d.IDParent == currentBranch.Id);
+    for(let c of childs){
+      numberWhs+=this.countWarehouse(numberWhs,c.Id);
+    }
+    return numberWhs;
+  }
 }
