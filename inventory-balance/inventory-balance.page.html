@@ -1,0 +1,59 @@
+<ion-header>
+	<app-toolbar [page]="this"></app-toolbar>
+
+</ion-header>
+
+<ion-content appScrollbarTheme class="header-table">
+	<app-data-table class="box-shadow responsive" *ngIf ="items" [rows]="items" [(selectedRows)]="selectedItems" (dataInfinite)="loadData($event)"
+		[(query)]="query"
+		(filter)="onDatatableFilter($event)"
+		(sort)="onSort($event)" 
+		[showFilter]="pageConfig.isShowSearch"
+		[showSpinner]="pageConfig.showSpinner" >
+
+		<!-- <datatable-column [checkbox]="true"></datatable-column> -->
+		<!-- <datatable-column class="col-name"  name="BranchName" property="BranchName"> </datatable-column> -->
+		 
+		<datatable-column class="col-id hideSmall" name="ID item" property="ItemId">
+		  <ng-template let-i="row" datatable-cell-template>
+			<a [routerLink]="['/item/'+i?.ItemId]">{{i?.ItemId}}</a>
+		  </ng-template>
+		</datatable-column>
+	
+		<datatable-column class="col-name"  name="Item name" property="ItemName">
+			<ng-template let-i="row" datatable-cell-template>
+				<span [ngClass]="{'bold': !i.UoMs.length==0}">{{i.ItemName}}
+					<small class="hide-all" label>{{i.ItemId}}</small>
+					<small label *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</small>
+				</span>
+			</ng-template>
+		</datatable-column>
+		<datatable-column class="col-name"  name="Quantity" property="ItemId">
+			<ng-template let-i="row" datatable-cell-template>
+				<ng-container *ngFor="let uom of i.UoMs; let j = index">
+				<span *ngIf="j != 0">&nbsp;+&nbsp;</span>	<span >{{uom?.Quantity | number}} {{uom?.UoMName}} </span> 
+					<!-- <span class="hideSmall">{{i.UoM?.Name}}</span> -->
+				</ng-container>
+				
+			  </ng-template>
+		</datatable-column>
+		<datatable-column class="col-name " name="Price" property="ItemId">
+			<ng-template let-i="row" datatable-cell-template>
+				<ng-container *ngFor="let uom of i.UoMs;let j = index">
+					<div *ngIf="uom.Price" class="smallDanger" [ngStyle]="{'font-weight':uom.Quantity >0? 'bold':''}"><span *ngIf="j != 0">&nbsp;-&nbsp;</span><span >{{uom.UoMName}} {{uom.Price | number}}</span></div>
+					<!-- <span class="hideSmall">{{uom.Price | number}}</span> -->
+				</ng-container>
+			
+			</ng-template>
+		</datatable-column>
+<!-- 
+    <datatable-column class="col-name" name="Warehouse" property="WarehouseName">
+		  <ng-template let-i="row" datatable-cell-template>
+			{{i.WarehouseName}}
+			<small class="address" *ngIf="i.WarehouseCode">
+			  <ion-text color="dark">{{i.WarehouseCode}}</ion-text>
+			</small>
+		  </ng-template>
+		</datatable-column> -->
+	  </app-data-table>
+</ion-content>

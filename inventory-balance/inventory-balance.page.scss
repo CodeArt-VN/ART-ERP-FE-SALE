@@ -1,0 +1,40 @@
+.smallDanger{
+ font-weight: 400 !important;
+}
+
+:host ::ng-deep {
+@media screen and (max-width: 1164px) {
+  .smallDanger.bold{
+    font-weight: bold !important;
+   }
+  .hideSmall{
+    display:none !important;
+  }
+  .hide-all{
+    display: block !important;
+  }
+  .smallDanger{
+    color: var(--ion-color-danger)  !important;
+  }
+  
+  app-data-table.responsive .row .col-id, .table.responsive .row .col-id
+   {
+      order: 0;
+  }
+
+  app-data-table.responsive .row .col-name, .table.responsive .row .col-name {
+    order: 2;
+}
+app-data-table.responsive .row .col-number, .table.responsive .row .col-number {
+  order: 3;
+  position: unset;
+  margin-top : unset;
+  color: var(--ion-color-danger)  !important;
+    font-size: 110%;
+}
+app-data-table.responsive .row .col-code, .table.responsive .row .col-code {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+  }
+}
