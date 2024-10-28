@@ -73,18 +73,26 @@ export class InventoryBalancePage extends PageBase {
   }
   loadedData(event) {
     super.loadedData(event);
-    this.isShowBranch = false;
-    let warehouses = new Set<number>();
     this.items.forEach(i=> {
       let branch = this.env.branchList.find(d=> d.Id == i.IDBranch);
-      if(branch){
-        i.BranchName = branch.Name;
-        if(branch.Type == 'Warehouse') warehouses.add(branch.Id);
-      }
+      if(branch) i.BranchName = branch.Name;
     })
-    if(warehouses.size >1){
-      this.isShowBranch = true;
+    this.isShowBranch = false;
+    let selectedBranch =this.env.branchList.find(d=> d.Id == this.env.selectedBranch);
+    if(selectedBranch.Type == 'Warehouse')  return;
+    else{
+      if(this.countWarehouse(0,this.env.selectedBranch)>1)  this.isShowBranch =  true;
     }
   }
-
+  countWarehouse(numberWhs, IDBranch){
+    let currentBranch = this.env.branchList.find(d=> d.Id == IDBranch);
+    if(currentBranch.Type == "Warehouse"){
+      numberWhs+=1;
+    }
+    let childs = this.env.branchList.filter(d=> d.IDParent == currentBranch.Id);
+    for(let c of childs){
+      numberWhs+=this.countWarehouse(numberWhs,c.Id);
+    }
+    return numberWhs;
+  }
 }
