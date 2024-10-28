@@ -31,7 +31,7 @@ export class InventoryBalancePage extends PageBase {
   ) {
     super();
     // this.pageConfig.isShowFeature = true;
-    this.pageConfig.isShowSearch = true;
+    // this.pageConfig.isShowSearch = true;
   }
 
   loadData(event) {

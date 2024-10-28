@@ -14,7 +14,7 @@
 		<!-- <datatable-column [checkbox]="true"></datatable-column> -->
 		<!-- <datatable-column class="col-name"  name="BranchName" property="BranchName"> </datatable-column> -->
 		 	
-		<datatable-column *ngIf="isShowBranch" class="col-name" name="Warehouse" property="IDBranch">
+		<datatable-column *ngIf="isShowBranch" class="col-name" name="Warehouse" property="IDBranch"  [canFilter]="false">
 			<ng-template let-i="row" datatable-cell-template>
 			  {{i?.BranchName}}
 			</ng-template>
@@ -34,7 +34,7 @@
 		</datatable-column>
 	
 
-		<datatable-column class="col-name"  name="Quantity" property="ItemId">
+		<datatable-column class="col-name"  name="Quantity" property="ItemId" [canFilter]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs; let j = index">
 				<span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
@@ -44,7 +44,7 @@
 				<span *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</span>
 			  </ng-template>
 		</datatable-column>
-		<datatable-column class="col-name " name="Price" property="ItemId">
+		<datatable-column class="col-name " name="Price" property="ItemId"  [canFilter]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs;let j = index">
 					<div *ngIf="uom.Price != null" class="smallDanger" [ngStyle]="{'font-weight':uom.Quantity >0? 'bold':''}">
