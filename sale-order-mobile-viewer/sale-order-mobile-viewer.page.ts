@@ -20,9 +20,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { SaleOrderMobileAddContactModalPage } from '../sale-order-mobile-add-contact-modal/sale-order-mobile-add-contact-modal.page';
 
 @Component({
-  selector: 'app-sale-order-mobile-viewer',
-  templateUrl: './sale-order-mobile-viewer.page.html',
-  styleUrls: ['./sale-order-mobile-viewer.page.scss'],
+    selector: 'app-sale-order-mobile-viewer',
+    templateUrl: './sale-order-mobile-viewer.page.html',
+    styleUrls: ['./sale-order-mobile-viewer.page.scss'],
+    standalone: false
 })
 export class SaleOrderMobileViewerPage extends PageBase {
   constructor(

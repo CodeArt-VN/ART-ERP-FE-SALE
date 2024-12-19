@@ -10,9 +10,10 @@ import { CommonService } from 'src/app/services/core/common.service';
 import { ActivatedRoute, Route } from '@angular/router';
 
 @Component({
-  selector: 'app-inventory-balance',
-  templateUrl: 'inventory-balance.page.html',
-  styleUrls: ['inventory-balance.page.scss'],
+    selector: 'app-inventory-balance',
+    templateUrl: 'inventory-balance.page.html',
+    styleUrls: ['inventory-balance.page.scss'],
+    standalone: false
 })
 export class InventoryBalancePage extends PageBase {
   branchList = [];

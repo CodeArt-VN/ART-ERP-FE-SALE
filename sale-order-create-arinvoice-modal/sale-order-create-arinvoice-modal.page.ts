@@ -17,9 +17,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 
 @Component({
-  selector: 'app-sale-order-create-arinvoice-modal',
-  templateUrl: './sale-order-create-arinvoice-modal.page.html',
-  styleUrls: ['./sale-order-create-arinvoice-modal.page.scss'],
+    selector: 'app-sale-order-create-arinvoice-modal',
+    templateUrl: './sale-order-create-arinvoice-modal.page.html',
+    styleUrls: ['./sale-order-create-arinvoice-modal.page.scss'],
+    standalone: false
 })
 export class SaleOrderARInvoiceModalPage extends PageBase {
   @Input() selectedOrder;

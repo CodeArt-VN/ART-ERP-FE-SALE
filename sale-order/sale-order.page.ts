@@ -19,9 +19,10 @@ import { SaleOrderMergeARInvoiceModalPage } from '../sale-order-merge-arinvoice-
 import { EInvoiceService } from 'src/app/services/einvoice.service';
 
 @Component({
-  selector: 'app-sale-order',
-  templateUrl: 'sale-order.page.html',
-  styleUrls: ['sale-order.page.scss'],
+    selector: 'app-sale-order',
+    templateUrl: 'sale-order.page.html',
+    styleUrls: ['sale-order.page.scss'],
+    standalone: false
 })
 export class SaleOrderPage extends PageBase {
   branchList = [];

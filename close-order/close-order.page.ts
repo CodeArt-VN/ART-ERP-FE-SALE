@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-close-order',
     templateUrl: './close-order.page.html',
     styleUrls: ['./close-order.page.scss'],
+    standalone: false
 })
 export class CloseOrderPage extends PageBase {
     childSOList = [];

@@ -24,9 +24,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { EInvoiceService } from 'src/app/services/einvoice.service';
 
 @Component({
-  selector: 'app-sale-order-detail',
-  templateUrl: './sale-order-detail.page.html',
-  styleUrls: ['./sale-order-detail.page.scss'],
+    selector: 'app-sale-order-detail',
+    templateUrl: './sale-order-detail.page.html',
+    styleUrls: ['./sale-order-detail.page.scss'],
+    standalone: false
 })
 export class SaleOrderDetailPage extends PageBase {
   //m3Mask = ['PPP-PPP', this.pattern];

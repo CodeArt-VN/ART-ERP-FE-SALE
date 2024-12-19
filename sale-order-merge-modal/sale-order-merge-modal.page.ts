@@ -12,9 +12,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 
 @Component({
-  selector: 'app-sale-order-merge-modal',
-  templateUrl: './sale-order-merge-modal.page.html',
-  styleUrls: ['./sale-order-merge-modal.page.scss'],
+    selector: 'app-sale-order-merge-modal',
+    templateUrl: './sale-order-merge-modal.page.html',
+    styleUrls: ['./sale-order-merge-modal.page.scss'],
+    standalone: false
 })
 export class SaleOrderMergeModalPage extends PageBase {
   @Input() selectedOrders;

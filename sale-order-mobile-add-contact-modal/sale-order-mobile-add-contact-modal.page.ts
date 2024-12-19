@@ -6,9 +6,10 @@ import { CRM_ContactProvider } from 'src/app/services/static/services.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'app-sale-order-mobile-add-contact-modal',
-  templateUrl: './sale-order-mobile-add-contact-modal.page.html',
-  styleUrls: ['./sale-order-mobile-add-contact-modal.page.scss'],
+    selector: 'app-sale-order-mobile-add-contact-modal',
+    templateUrl: './sale-order-mobile-add-contact-modal.page.html',
+    styleUrls: ['./sale-order-mobile-add-contact-modal.page.scss'],
+    standalone: false
 })
 export class SaleOrderMobileAddContactModalPage extends PageBase {
   SelectedContact;

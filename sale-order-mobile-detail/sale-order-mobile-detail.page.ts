@@ -21,9 +21,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { SaleOrderMobileAddContactModalPage } from '../sale-order-mobile-add-contact-modal/sale-order-mobile-add-contact-modal.page';
 
 @Component({
-  selector: 'app-sale-order-mobile-detail',
-  templateUrl: './sale-order-mobile-detail.page.html',
-  styleUrls: ['./sale-order-mobile-detail.page.scss'],
+    selector: 'app-sale-order-mobile-detail',
+    templateUrl: './sale-order-mobile-detail.page.html',
+    styleUrls: ['./sale-order-mobile-detail.page.scss'],
+    standalone: false
 })
 export class SaleOrderMobileDetailPage extends PageBase {
   //m3Mask = ['PPP-PPP', this.pattern];

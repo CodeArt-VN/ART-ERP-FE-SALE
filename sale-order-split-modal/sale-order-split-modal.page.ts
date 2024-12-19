@@ -17,9 +17,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 
 @Component({
-  selector: 'app-sale-order-split-modal',
-  templateUrl: './sale-order-split-modal.page.html',
-  styleUrls: ['./sale-order-split-modal.page.scss'],
+    selector: 'app-sale-order-split-modal',
+    templateUrl: './sale-order-split-modal.page.html',
+    styleUrls: ['./sale-order-split-modal.page.scss'],
+    standalone: false
 })
 export class SaleOrderSplitModalPage extends PageBase {
   @Input() selectedOrder;

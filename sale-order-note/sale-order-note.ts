@@ -15,9 +15,10 @@ import QRCode from 'qrcode';
 import { lib } from 'src/app/services/static/global-functions';
 
 @Component({
-  selector: 'app-sale-order-note',
-  templateUrl: 'sale-order-note.page.html',
-  styleUrls: ['sale-order-note.page.scss'],
+    selector: 'app-sale-order-note',
+    templateUrl: 'sale-order-note.page.html',
+    styleUrls: ['sale-order-note.page.scss'],
+    standalone: false
 })
 export class SaleOrderNotePage extends PageBase {
   statusList = [];

@@ -18,9 +18,10 @@ import { ApiSetting } from 'src/app/services/static/api-setting';
 import { AnyComponent } from 'preact';
 
 @Component({
-  selector: 'app-sale-order-merge-arinvoice-modal',
-  templateUrl: './sale-order-merge-arinvoice-modal.page.html',
-  styleUrls: ['./sale-order-merge-arinvoice-modal.page.scss'],
+    selector: 'app-sale-order-merge-arinvoice-modal',
+    templateUrl: './sale-order-merge-arinvoice-modal.page.html',
+    styleUrls: ['./sale-order-merge-arinvoice-modal.page.scss'],
+    standalone: false
 })
 export class SaleOrderMergeARInvoiceModalPage extends PageBase {
   @Input() selectedOrders;

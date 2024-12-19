@@ -12,9 +12,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 
 @Component({
-  selector: 'app-saleman-debt-modal',
-  templateUrl: './saleman-debt-modal.page.html',
-  styleUrls: ['./saleman-debt-modal.page.scss'],
+    selector: 'app-saleman-debt-modal',
+    templateUrl: './saleman-debt-modal.page.html',
+    styleUrls: ['./saleman-debt-modal.page.scss'],
+    standalone: false
 })
 export class SalemanDebtModalPage extends PageBase {
   @Input() selectedOrders;

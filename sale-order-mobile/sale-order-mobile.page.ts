@@ -17,14 +17,15 @@ import { lib } from 'src/app/services/static/global-functions';
 import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
 import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-merge-modal.page';
 import { PopoverPage } from '../../SYS/popover/popover.page';
-import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
+import { BarcodeScannerService } from 'src/app/services/barcode-scanner.service';
 import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-sale-order-mobile',
-  templateUrl: 'sale-order-mobile.page.html',
-  styleUrls: ['sale-order-mobile.page.scss'],
+    selector: 'app-sale-order-mobile',
+    templateUrl: 'sale-order-mobile.page.html',
+    styleUrls: ['sale-order-mobile.page.scss'],
+    standalone: false
 })
 export class SaleOrderMobilePage extends PageBase {
   selectedStatus = {
@@ -350,85 +351,85 @@ export class SaleOrderMobilePage extends PageBase {
 
   scanning = false;
   scanQRCode() {
-    if (!Capacitor.isPluginAvailable('BarcodeScanner') || Capacitor.platform == 'web') {
-      this.env.showMessage('This function is only available on phone', 'warning');
-      return;
-    }
-    BarcodeScanner.prepare().then(() => {
-      BarcodeScanner.checkPermission({ force: true })
-        .then((status) => {
-          if (status.granted) {
-            this.scanning = true;
-            document.querySelector('ion-app').style.backgroundColor = 'transparent';
-            BarcodeScanner.startScan().then((result) => {
-              console.log(result);
-              let close: any = document.querySelector('#closeCamera');
+    // if (!Capacitor.isPluginAvailable('BarcodeScanner') || Capacitor.platform == 'web') {
+    //   this.env.showMessage('This function is only available on phone', 'warning');
+    //   return;
+    // }
+    // BarcodeScanner.prepare().then(() => {
+    //   BarcodeScanner.checkPermission({ force: true })
+    //     .then((status) => {
+    //       if (status.granted) {
+    //         this.scanning = true;
+    //         document.querySelector('ion-app').style.backgroundColor = 'transparent';
+    //         BarcodeScanner.startScan().then((result) => {
+    //           console.log(result);
+    //           let close: any = document.querySelector('#closeCamera');
 
-              if (!result.hasContent) {
-                close.click();
-              }
+    //           if (!result.hasContent) {
+    //             close.click();
+    //           }
 
-              let IDSaleOrder = '';
-              if (result.content.indexOf('O:') == 0 || result.content.indexOf('000201') == 0) {
-                if (result.content.indexOf('O:') == 0) {
-                  IDSaleOrder = result.content.replace('O:', '');
-                } else {
-                  let qrContent = lib.readVietQRCode(result.content);
-                  IDSaleOrder = qrContent.message.replace('SO', '');
-                }
-              }
-              if (IDSaleOrder) {
-                this.query.CustomerName = IDSaleOrder;
-                this.closeCamera();
-              } else {
-                this.env.showMessage(
-                  'You just scanned: {{value}}, please scanned QR code on paid delivery notes',
-                  '',
-                  result.content,
-                );
-                setTimeout(() => this.scanQRCode(), 0);
-              }
-            });
-          } else {
-            this.alertCtrl
-              .create({
-                header: 'Quét QR code',
-                //subHeader: '---',
-                message: 'Bạn chưa cho phép sử dụng camera, Xin vui lòng cấp quyền cho ứng dụng.',
-                buttons: [
-                  {
-                    text: 'Không',
-                    role: 'cancel',
-                    handler: () => {},
-                  },
-                  {
-                    text: 'Đồng ý',
-                    cssClass: 'danger-btn',
-                    handler: () => {
-                      BarcodeScanner.openAppSettings();
-                    },
-                  },
-                ],
-              })
-              .then((alert) => {
-                alert.present();
-              });
-          }
-        })
-        .catch((e: any) => console.log('Error is', e));
-    });
+    //           let IDSaleOrder = '';
+    //           if (result.content.indexOf('O:') == 0 || result.content.indexOf('000201') == 0) {
+    //             if (result.content.indexOf('O:') == 0) {
+    //               IDSaleOrder = result.content.replace('O:', '');
+    //             } else {
+    //               let qrContent = lib.readVietQRCode(result.content);
+    //               IDSaleOrder = qrContent.message.replace('SO', '');
+    //             }
+    //           }
+    //           if (IDSaleOrder) {
+    //             this.query.CustomerName = IDSaleOrder;
+    //             this.closeCamera();
+    //           } else {
+    //             this.env.showMessage(
+    //               'You just scanned: {{value}}, please scanned QR code on paid delivery notes',
+    //               '',
+    //               result.content,
+    //             );
+    //             setTimeout(() => this.scanQRCode(), 0);
+    //           }
+    //         });
+    //       } else {
+    //         this.alertCtrl
+    //           .create({
+    //             header: 'Quét QR code',
+    //             //subHeader: '---',
+    //             message: 'Bạn chưa cho phép sử dụng camera, Xin vui lòng cấp quyền cho ứng dụng.',
+    //             buttons: [
+    //               {
+    //                 text: 'Không',
+    //                 role: 'cancel',
+    //                 handler: () => {},
+    //               },
+    //               {
+    //                 text: 'Đồng ý',
+    //                 cssClass: 'danger-btn',
+    //                 handler: () => {
+    //                   BarcodeScanner.openAppSettings();
+    //                 },
+    //               },
+    //             ],
+    //           })
+    //           .then((alert) => {
+    //             alert.present();
+    //           });
+    //       }
+    //     })
+    //     .catch((e: any) => console.log('Error is', e));
+    // });
   }
 
   closeCamera() {
-    if (!Capacitor.isPluginAvailable('BarcodeScanner') || Capacitor.platform == 'web') {
-      return;
-    }
-    this.scanning = false;
-    this.lighting = false;
-    this.useFrontCamera = false;
-    document.querySelector('ion-app').style.backgroundColor = '';
-    BarcodeScanner.showBackground();
-    BarcodeScanner.stopScan();
+    // if (!Capacitor.isPluginAvailable('BarcodeScanner') || Capacitor.platform == 'web') {
+    //   return;
+    // }
+    // this.scanning = false;
+    // this.lighting = false;
+    // this.useFrontCamera = false;
+    // document.querySelector('ion-app').style.backgroundColor = '';
+    // BarcodeScanner.showBackground();
+    // BarcodeScanner.stopScan();
   }
 
   lighting = false;

@@ -9,9 +9,10 @@ import { lib } from 'src/app/services/static/global-functions';
 import { SalemanDebtModalPage } from '../saleman-debt-modal/saleman-debt-modal.page';
 
 @Component({
-  selector: 'app-saleman-debt',
-  templateUrl: 'saleman-debt.page.html',
-  styleUrls: ['saleman-debt.page.scss'],
+    selector: 'app-saleman-debt',
+    templateUrl: 'saleman-debt.page.html',
+    styleUrls: ['saleman-debt.page.scss'],
+    standalone: false
 })
 export class SalemanDebtPage extends PageBase {
   branchList = [];

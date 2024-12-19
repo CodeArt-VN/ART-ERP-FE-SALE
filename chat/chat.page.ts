@@ -5,9 +5,10 @@ import { EnvService } from 'src/app/services/core/env.service';
 import { NavController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-chat',
-  templateUrl: 'chat.page.html',
-  styleUrls: ['chat.page.scss'],
+    selector: 'app-chat',
+    templateUrl: 'chat.page.html',
+    styleUrls: ['chat.page.scss'],
+    standalone: false
 })
 export class ChatPage extends PageBase {
   constructor(

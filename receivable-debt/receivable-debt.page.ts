@@ -8,9 +8,10 @@ import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
 
 @Component({
-  selector: 'app-receivable-debt',
-  templateUrl: 'receivable-debt.page.html',
-  styleUrls: ['receivable-debt.page.scss'],
+    selector: 'app-receivable-debt',
+    templateUrl: 'receivable-debt.page.html',
+    styleUrls: ['receivable-debt.page.scss'],
+    standalone: false
 })
 export class ReceivableDebtPage extends PageBase {
   branchList = [];
