@@ -46,7 +46,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="!scanning" appScrollbarTheme class="header-table">
+<ion-content appScrollbarTheme class="header-table">
   <ion-refresher
     [disabled]="!pageConfig.refresher"
     [disabled]="!pageConfig.refresher"
@@ -169,20 +169,4 @@
   >
     <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-</ion-content>
-
-<ion-content *ngIf="scanning" no-scroll class="cameraFrame">
-  <div class="frame">
-    <div class="blink-line"></div>
-  </div>
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button id="closeCamera" color="secondary" (click)="closeCamera()">
-      <ion-icon name="close"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-  <!-- <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-		<ion-fab-button color="warning" (click)="lightCamera()">
-			<ion-icon name="flashlight"></ion-icon>
-		</ion-fab-button>
-	</ion-fab> -->
 </ion-content>
