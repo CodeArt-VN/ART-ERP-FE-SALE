@@ -59,7 +59,7 @@
   <app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 
   <div
-    *ngIf="this.query.IDStatus != '[101,102,103,104,110]' || query.OrderDateFrom"
+    *ngIf="this.query.Status != ['New','Unapproved','Submitted','Approved','Redelivery'] || query.OrderDateFrom"
     style="margin: 20px auto 5px auto; text-align: center"
   >
     <ion-chip [color]="selectedStatus.Color" (click)="resetQuery()">

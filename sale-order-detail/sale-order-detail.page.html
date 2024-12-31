@@ -226,7 +226,7 @@
             <div class="c-control ion-text-right">
               <ion-button
                 size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103)) || submitAttempt"
+                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
                 (click)="item.IsSampleOrder = !item.IsSampleOrder; changedSampleOrder()"
                 [fill]=" item.IsSampleOrder? 'solid' : 'outline' "
               >
@@ -234,7 +234,7 @@
               </ion-button>
               <ion-button
                 size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103)) || submitAttempt"
+                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
                 (click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
                 [fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
               >
@@ -242,7 +242,7 @@
               </ion-button>
               <ion-button
                 size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103)) || submitAttempt"
+                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
                 (click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
                 [fill]=" item.IsWholeSale? 'solid' : 'outline' "
               >
@@ -250,7 +250,7 @@
               </ion-button>
               <ion-button
                 size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
+                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted'))|| submitAttempt"
                 (click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
                 [fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
                 color="blue"
@@ -554,7 +554,7 @@
                 >
                   <input
                     *ngIf="i.Quantity && !i.IsPromotionItem"
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103)) || submitAttempt || i.IsPromotionItem"
+                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt || i.IsPromotionItem"
                     (focus)="$event.target.select()"
                     (change)="changedItemUoM(i)"
                     class="c-input"
@@ -571,7 +571,7 @@
                   *ngIf="pageConfig.canUseDiscountFromSalesman"
                 >
                   <input
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103)) || submitAttempt"
+                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
                     (focus)="$event.target.select()"
                     *ngIf="i.Quantity"
                     (change)="changedSalesmanPrice(i)"
@@ -589,7 +589,7 @@
                   *ngIf="pageConfig.canUseDiscountFromSalesman"
                 >
                   <input
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103)) || submitAttempt"
+                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
                     (focus)="$event.target.select()"
                     *ngIf="i.Quantity"
                     (change)="changedOriginalTotalAfterDiscountFromSalesman(i)"
@@ -850,50 +850,21 @@
                       (change)="saveChange()"
                     ></app-form-control>
 
-                    <div class="c-control">
-                      <label class="c-label" for="IDStatus"
-                        >{{'Order Status' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.IDStatus.valid && !formGroup.controls.IDStatus.pending && (formGroup.controls.IDStatus.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select (change)="saveChange()" class="c-input c-dropdown" formControlName="IDStatus">
-                        <option *ngFor="let i of statusList" [value]="i.Id">{{i.Name}}</option>
-                      </select>
-                    </div>
+                    <app-form-control
+                    [field]="{id:'Status', label: 'Order Status', type : 'ng-select', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+                    (change)="saveChange()"
+                  ></app-form-control>
 
-                    <div class="c-control">
-                      <label class="c-label" for="Type"
-                        >Type
-                        <span
-                          *ngIf="!formGroup.controls.Type.valid && !formGroup.controls.Type.pending && (formGroup.controls.Type.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select (change)="saveChange()" class="c-input c-dropdown" formControlName="Type">
-                        <option *ngFor="let t of typeList" [value]="t.Code">{{t.Name}}</option>
-                      </select>
-                    </div>
+                  <app-form-control
+                  [field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+                  (change)="saveChange()"
+                ></app-form-control>
 
-                    <div class="c-control">
-                      <label class="c-label" for="SubType"
-                        >Sub type
-                        <span
-                          *ngIf="!formGroup.controls.SubType.valid && !formGroup.controls.SubType.pending && (formGroup.controls.SubType.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select (change)="saveChange()" class="c-input c-dropdown" formControlName="SubType">
-                        <option *ngFor="let t of subTypeList" [value]="t.Code">{{t.Name}}</option>
-                      </select>
-                    </div>
+                <app-form-control
+                [field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+                (change)="saveChange()"
+              ></app-form-control>
+                  
                   </ion-col>
                   <ion-col size="12" size-sm size-xl="4">
                     <div class="c-control" *ngIf="item.Id">

@@ -1,30 +1,39 @@
 <ion-header>
-  <app-list-toolbar
-    selectedTitle="{{selectedItems.length}} {{'Order' | translate}}"
-    pageTitle="{{'Order' | translate}}"
-    [pageConfig]="pageConfig"
-    [selectedItems]="selectedItems"
-    [query]="query"
-    (createARInvoice)="createARInvoice()"
-    (createSplitARInvoices)="createSplitARInvoices()"
-    (createMergeARInvoice)="createMergeARInvoice()"
-    (add)="add()"
-    (refresh)="refresh()"
-    (export)="export()"
-    (import)="import($event)"
-    (help)="help()"
-    (unselect)="unselect()"
-    (archiveItems)="archiveItems()"
-    (deleteItems)="deleteItems()"
-    (changeBranch)="changeBranch($event)"
-    (mergeOrders)="mergeSaleOrders()"
-    (splitOrder)="splitSaleOrder()"
-    (approveOrders)="approveOrders()"
-    (disapproveOrders)="disapproveOrders()"
-    (cancelOrders)="cancelOrders()"
-    (submitOrdersForApproval)="submitOrdersForApproval()"
+  <app-toolbar
+    [page]="this"
+    [ShowSubmit]="ShowSubmit"
+    [ShowApprove]="ShowApprove"
+    [ShowDisapprove]="ShowDisapprove"
+    [ShowCancel]="ShowCancel"
+    [ShowDelete]="ShowDelete"
   >
-  </app-list-toolbar>
+    <ion-button
+      title="{{ 'createARInvoice' | translate }}"
+      *ngIf="pageConfig.canAddARInvoice && selectedItems.length >= 1 && !query.IsDisabled"
+      (click)="createARInvoice()"
+    >
+      <ion-icon color="success" slot="icon-only" name="receipt-outline"></ion-icon>
+    </ion-button>
+
+    <ion-button
+      title="{{ 'Create split invoice' | translate }}"
+      *ngIf="pageConfig.canSplitARInvoices && selectedItems.length <= 1 && !query.IsDisabled"
+      (click)="createSplitARInvoices()"
+    >
+      <ion-icon color="success" slot="icon-only" name="git-branch"></ion-icon>
+    </ion-button>
+
+    <ion-button
+      title="{{ 'Create merged invoice' | translate }}"
+      *ngIf="pageConfig.canMergeARInvoice && selectedItems.length >= 2 && !query.IsDisabled"
+      (click)="createMergeARInvoice()"
+    >
+      <ion-icon color="success" slot="icon-only" name="git-pull-request"></ion-icon>
+    </ion-button>
+
+
+
+  </app-toolbar>
 
   <section class="table">
     <header class="bold">
@@ -41,17 +50,17 @@
         ></ion-icon>
       </div>
 
-      <div class="col-status cell" (click)="sortToggle('IDStatus')">
+      <div class="col-status cell" (click)="sortToggle('Status')">
         {{'Status' | translate}}
         <ion-icon
           class="min-btn"
-          *ngIf="sort.IDStatus"
-          [name]="sort.IDStatus == 'IDStatus'?'arrow-down': 'arrow-up'"
+          *ngIf="sort.Status"
+          [name]="sort.Status == 'Status'?'arrow-down': 'arrow-up'"
         ></ion-icon>
         <ion-icon
           class="min-btn"
           (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.IDStatus"
+          *ngIf="query.Status"
           name="search"
           color="primary"
         ></ion-icon>
@@ -198,22 +207,20 @@
             (change)="refresh()"
             class="c-input c-dropdown"
             [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.IDStatus"
-            [ngClass]="{active: query.IDStatus}"
+            [(ngModel)]="query.Status"
+            [ngClass]="{active: query.Status}"
           >
             <option value="">{{'All' | translate}}</option>
-            <option value="[103, 110]">{{'Order to be approved' | translate}}</option>
-            <option value="[104,113]">{{'Orders waiting for Driver allocation' | translate}}</option>
-            <option value="[101,102,103,104,110]">{{'Not yet delivered' | translate}}</option>
+            <option value="['Submitted', 'Redelivery']">{{'Order to be approved' | translate}}</option>
+            <option value="['Approved','Debt']">{{'Orders waiting for Driver allocation' | translate}}</option>
+            <option value="['New','Unapproved','Submitted','Approved','Redelivery']">{{'Not yet delivered' | translate}}</option>
             <option disabled value="">----------</option>
-            <option *ngFor="let t of statusList" [value]="t.Id">{{t.Name}}</option>
+            <option *ngFor="let t of statusList" [value]="t.Code">{{t.Name}}</option>
           </select>
-          <ion-icon
-            class="min-btn"
-            (click)="query.IDStatus='[101,102,103,104,110]'; refresh()"
-            *ngIf="query.IDStatus != '[101,102,103,104,110]'"
-            name="close-circle-outline"
-          ></ion-icon>
+          <ion-icon class="min-btn"
+          (click)="query.Status =  ['New','Unapproved','Submitted','Approved','Redelivery']; refresh()"
+            *ngIf="query.Status != ['New','Unapproved','Submitted','Approved','Redelivery']"
+            name="close-circle-outline"></ion-icon>
         </div>
         <div class="col-code cell">
           <input
