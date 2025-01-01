@@ -31,9 +31,17 @@ export class SaleOrderPage extends PageBase {
   shipmentList = [];
   contact: any = {};
 
+  ShowSubmit = false;
+  ShowApprove = false;
+  ShowDisapprove = false;
+  ShowCancel = false;
+  ShowDelete = false;
+
+
   segmentView = 's1';
   shipmentQuery: any = {
-    IDStatus: 301,
+    Status: 'Scheduled',
+    // IDStatus: 301,
     DeliveryDate: '',
     SortBy: 'IDVehicle',
   };
@@ -82,9 +90,13 @@ export class SaleOrderPage extends PageBase {
       this.sort.Id = 'Id';
       this.sortToggle('Id', true);
     }
-    if (!this.query.IDStatus) {
-      this.query.IDStatus = '[101,102,103,104,110]';
-    }
+    // if (!this.query.IDStatus) {
+    //   this.query.IDStatus = '[101,102,103,104,110]';
+    // }
+
+	if (!this.query.Status) {
+		this.query.Status = "['New','Unapproved','Submitted','Approved','Redelivery']";
+	  }
 
     Promise.all([
       this.sysConfigProvider.read({
@@ -125,8 +137,143 @@ export class SaleOrderPage extends PageBase {
 
       i.OriginalTotalAfterTaxText = lib.currencyFormat(i.OriginalTotalAfterTax);
       i.TotalAfterTaxText = lib.currencyFormat(i.TotalAfterTax);
+      i._Status = this.statusList.find((s) => s.Code == i.Status);
     });
     super.loadedData(event);
+
+    this.pageConfig.canSubmit = this.pageConfig.canSubmitOrdersForApproval || this.pageConfig.canSubmitSalesmanOrdersForApproval;
+  }
+
+  changeSelection(i, e = null) {
+    super.changeSelection(i, e);
+
+    this.ShowSubmit = this.pageConfig.canSubmit ;
+    this.ShowApprove = this.pageConfig.canApprove ;
+    this.ShowDisapprove = this.pageConfig.canDisapprove ;
+    this.ShowCancel = this.pageConfig.canCancel;
+    this.ShowDelete = this.pageConfig.canDelete;
+
+    this.selectedItems.forEach((i) => {
+      // 101	new	Mới
+      // 102	unapproved	Không duyệt
+      // 103	submitted	Chờ duyệt
+      // 104	approved	Đã duyệt
+      // 105	scheduled	Đã giao việc
+      // 106	picking	Đang lấy hàng - đóng gói
+      // 107	in-carrier	Đã giao đơn vị vận chuyển
+      // 108	in-delivery	Đang giao hàng
+      // 109	delivered	Đã giao hàng
+      // 110	pending	Chờ xử lý
+      // 111	split	Đơn đã chia
+      // 112	merged	Đơn đã gộp
+      // 113	debt	Còn nợ
+      // 114	done	Đã xong
+      // 115	cancelled	Đã hủy
+
+      // [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115];
+
+      let notShowSubmitOrdersForApproval = [
+        'Submitted',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Redelivery',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowSubmitOrdersForApproval.indexOf(i.Status) > -1) {
+        this.ShowSubmit = false;
+      }
+
+      let notShowApproveOrders = [
+        'New',
+        'Unapproved',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowApproveOrders.indexOf(i.Status) > -1) {
+        this.ShowApprove = false;
+      }
+
+      let notShowDisapproveOrders = [
+        'New',
+        'Unapproved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Redelivery',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowDisapproveOrders.indexOf(i.Status) > -1) {
+        this.ShowDisapprove = false;
+      }
+
+      let notShowCancelOrders = [
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowCancelOrders.indexOf(i.Status) > -1) {
+        this.ShowCancel = false;
+      }
+
+      let notShowDelete = [
+        'Submitted',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+      ];
+      if (notShowDelete.indexOf(i.Status) > -1) {
+        this.ShowDelete = false;
+      }
+
+      // let notShowSplit = [104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115];
+      // if (notShowSplit.indexOf(i.Status) > -1) {
+      // 	this.ShowSplit = false;
+      // }
+
+      // let notShowMerge = [104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115];
+      // if (notShowMerge.indexOf(i.Status) > -1) {
+      // 	this.ShowMerge = false;
+      // }
+    });
+
   }
 
   loadVehicleList() {
@@ -195,7 +342,8 @@ export class SaleOrderPage extends PageBase {
           Id: 'MasanImport',
         });
         this.pageConfig.isShowSearch = true;
-        this.query.IDStatus = '';
+        // this.query.IDStatus = '';
+        this.query.Status = '';
         this.refresh();
         this.download(fileurl);
       })
@@ -268,9 +416,11 @@ export class SaleOrderPage extends PageBase {
       });
   }
 
-  async splitSaleOrder() {
-    let IDStatus = this.selectedItems[0].IDStatus;
-    if (!(IDStatus == 101 || IDStatus == 102 || IDStatus == 103)) {
+  async split() {
+    // let IDStatus = this.selectedItems[0].IDStatus;
+    let Status = this.selectedItems[0].Status;
+	// !(IDStatus == 101 || IDStatus == 102 || IDStatus == 103)
+    if (!(Status == 'New' || Status == 'Unapproved' || Status == 'Submitted')) {
       this.env.showMessage(
         'Your selected order cannot be split. Please choose draft, new, pending for approval or disaaproved order',
         'warning',
@@ -291,9 +441,10 @@ export class SaleOrderPage extends PageBase {
     this.refresh();
   }
 
-  async mergeSaleOrders() {
+  async merge() {
+	// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103)
     let itemsCanNotProcess = this.selectedItems.filter(
-      (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103),
+      (i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted'),
     );
     if (itemsCanNotProcess.length) {
       this.env.showMessage(
@@ -317,12 +468,12 @@ export class SaleOrderPage extends PageBase {
     this.refresh();
   }
 
-  submitOrdersForApproval() {
+  submit() {
     if (!this.pageConfig.canSubmitOrdersForApproval) {
       return;
     }
-
-    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
+	// !(i.IDStatus == 101 || i.IDStatus == 102)
+    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
         'Your selected invoices cannot be approved. Please select new or draft or disapproved ones',
@@ -332,7 +483,8 @@ export class SaleOrderPage extends PageBase {
       itemsCanNotProcess.forEach((i) => {
         i.checked = false;
       });
-      this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 101 || i.IDStatus == 102);
+	//   i.IDStatus == 101 || i.IDStatus == 102
+      this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
 
       this.alertCtrl
         .create({
@@ -392,12 +544,12 @@ export class SaleOrderPage extends PageBase {
     }
   }
 
-  approveOrders() {
+  approve() {
     if (!this.pageConfig.canApprove) {
       return;
     }
-
-    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 103 || i.IDStatus == 110));
+	// !(i.IDStatus == 103 || i.IDStatus == 110)
+    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Redelivery'));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
         'Your selected order cannot be approved. Please only select pending for approval order',
@@ -407,7 +559,8 @@ export class SaleOrderPage extends PageBase {
       itemsCanNotProcess.forEach((i) => {
         i.checked = false;
       });
-      this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 103 || i.IDStatus == 110);
+	//   i.IDStatus == 103 || i.IDStatus == 110
+      this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Redelivery');
 
       this.alertCtrl
         .create({
@@ -467,12 +620,12 @@ export class SaleOrderPage extends PageBase {
     }
   }
 
-  disapproveOrders() {
+  disapprove() {
     if (!this.pageConfig.canApprove) {
       return;
     }
-
-    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.IDStatus == 103 || i.IDStatus == 104));
+	// !(i.IDStatus == 103 || i.IDStatus == 104)
+    let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Approved'));
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
         'Your selected invoices cannot be disaaproved. Please select approved or pending for approval invoice',
@@ -482,7 +635,9 @@ export class SaleOrderPage extends PageBase {
       itemsCanNotProcess.forEach((i) => {
         i.checked = false;
       });
-      this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 103 || i.IDStatus == 104);
+
+	//   i.IDStatus == 103 || i.IDStatus == 104
+      this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Approved');
 
       this.alertCtrl
         .create({
@@ -542,13 +697,13 @@ export class SaleOrderPage extends PageBase {
     }
   }
 
-  cancelOrders() {
+  cancel() {
     if (!this.pageConfig.canCancel) {
       return;
     }
-
+	// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110)
     let itemsCanNotProcess = this.selectedItems.filter(
-      (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110),
+      (i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery'),
     );
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
@@ -559,8 +714,9 @@ export class SaleOrderPage extends PageBase {
       itemsCanNotProcess.forEach((i) => {
         i.checked = false;
       });
+	//   i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110
       this.selectedItems = this.selectedItems.filter(
-        (i) => i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110,
+        (i) => i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery',
       );
 
       this.alertCtrl
@@ -622,7 +778,8 @@ export class SaleOrderPage extends PageBase {
   }
 
   deleteItems() {
-    let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
+	// !(i.IDStatus == 101 || i.IDStatus == 102)
+    let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
     if (itemsCanNotDelete.length == this.selectedItems.length) {
       this.env.showMessage(
         'Your selected invoices cannot be deleted. Please only delete new or disapproved invoice',
@@ -649,7 +806,8 @@ export class SaleOrderPage extends PageBase {
                 itemsCanNotDelete.forEach((i) => {
                   i.checked = false;
                 });
-                this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 101 || i.IDStatus == 102);
+				// i.IDStatus == 101 || i.IDStatus == 102
+                this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
                 super.deleteItems();
               },
             },
@@ -664,8 +822,9 @@ export class SaleOrderPage extends PageBase {
   }
 
   addSOtoShipment(s) {
-    let OrderIds = this.selectedItems.filter((i) => i.IDStatus == 104 || i.IDStatus == 110); //Đã duyệt || chờ giao lại
-    let DebtOrderIds = this.selectedItems.filter((i) => i.IDStatus == 113); // Đang nợ
+	// i.IDStatus == 104 || i.IDStatus == 110
+    let OrderIds = this.selectedItems.filter((i) => i.Status == 'Approved' || i.Status == 'Redelivery'); //Đã duyệt || chờ giao lại
+    let DebtOrderIds = this.selectedItems.filter((i) => i.Status == 'Debt'); // Đang nợ i.IDStatus == 113
     if (!(OrderIds.length || DebtOrderIds.length)) {
       this.env.showMessage(
         'Your chosen order cannot be allocated for delivery. Please only select approved or pending for delivery orders.',
@@ -716,15 +875,24 @@ export class SaleOrderPage extends PageBase {
       return;
     }
 
+	// (i) =>
+    //     i.IDStatus == 101 ||
+    //     i.IDStatus == 102 ||
+    //     i.IDStatus == 103 ||
+    //     i.IDStatus == 110 ||
+    //     i.IDStatus == 111 ||
+    //     i.IDStatus == 112 ||
+    //     i.IDStatus == 115,
+
     let itemsCanNotProcess = this.selectedItems.filter(
       (i) =>
-        i.IDStatus == 101 ||
-        i.IDStatus == 102 ||
-        i.IDStatus == 103 ||
-        i.IDStatus == 110 ||
-        i.IDStatus == 111 ||
-        i.IDStatus == 112 ||
-        i.IDStatus == 115,
+        i.Status == 'New' ||
+        i.Status == 'Unapproved' ||
+        i.Status == 'Submitted' ||
+        i.Status == 'Redelivery' ||
+        i.Status == 'Splitted' ||
+        i.Status == 'Merged' ||
+        i.Status == 'Cancelled',
     );
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
@@ -739,14 +907,14 @@ export class SaleOrderPage extends PageBase {
     });
     this.selectedItems = this.selectedItems.filter(
       (i) =>
-        i.IDStatus == 104 ||
-        i.IDStatus == 105 ||
-        i.IDStatus == 106 ||
-        i.IDStatus == 107 ||
-        i.IDStatus == 108 ||
-        i.IDStatus == 109 ||
-        i.IDStatus == 113 ||
-        i.IDStatus == 114,
+        i.Status == 'Approved' ||
+        i.Status == 'Scheduled' ||
+        i.Status == 'Picking' ||
+        i.Status == 'InCarrier' ||
+        i.Status == 'InDelivery' ||
+        i.Status == 'Delivered' ||
+        i.Status == 'Debt' ||
+        i.Status == 'Done',
     );
 
     let ids = this.selectedItems.map((m) => m.Id);
@@ -792,8 +960,8 @@ export class SaleOrderPage extends PageBase {
     if (!this.pageConfig.canAddARInvoice) {
       return;
     }
-
-    let itemsCanNotProcess = this.selectedItems.filter((i) => i.IDStatus != 104);
+	// i.IDStatus != 104
+    let itemsCanNotProcess = this.selectedItems.filter((i) => i.Status != 'Approved');
     if (itemsCanNotProcess.length == this.selectedItems.length) {
       this.env.showMessage(
         'Cannot generate merged invoice from your chosen orders. Please only select approved orders!',
@@ -805,8 +973,8 @@ export class SaleOrderPage extends PageBase {
     itemsCanNotProcess.forEach((i) => {
       i.checked = false;
     });
-
-    this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 104);
+	// i.IDStatus == 104
+    this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Approved');
 
     let ids = this.selectedItems.map((m) => m.Id);
 
@@ -837,8 +1005,10 @@ export class SaleOrderPage extends PageBase {
   }
 
   async createSplitARInvoices() {
-    let IDStatus = this.selectedItems[0].IDStatus;
-    if (IDStatus != 104) {
+    // let IDStatus = this.selectedItems[0].IDStatus;
+    let Status = this.selectedItems[0].Status;
+	// IDStatus != 104
+    if (Status != 'Approved') {
       this.env.showMessage(
         'Cannot split invoice from your chosen order. Please only select approved orders!',
         'warning',
@@ -882,6 +1052,7 @@ export class SaleOrderPage extends PageBase {
             i._SubOrders.forEach((so) => {
               so._level = (i._level || 0) + 1;
               so._levels = new Array(so._level).fill(null);
+              so._Status = this.statusList.find((s) => s.Code == so.Status);
             });
             this.items = [...this.items.slice(0, idx), ...i._SubOrders, ...this.items.slice(idx)];
             i._ShowSubOrder = true;

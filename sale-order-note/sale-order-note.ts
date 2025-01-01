@@ -13,6 +13,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import QRCode from 'qrcode';
 import { lib } from 'src/app/services/static/global-functions';
+import { printData, PrintingService } from 'src/app/services/printing.service';
 
 @Component({
     selector: 'app-sale-order-note',
@@ -31,6 +32,7 @@ export class SaleOrderNotePage extends PageBase {
     public contactProvider: CRM_ContactProvider,
     public sysConfigProvider: SYS_ConfigProvider,
     public branchProvider: BRA_BranchProvider,
+    public printingService: PrintingService,
     public modalController: ModalController,
     public alertCtrl: AlertController,
     public loadingController: LoadingController,
@@ -362,7 +364,24 @@ export class SaleOrderNotePage extends PageBase {
     }
     return KetQua;
   }
-
+  print(){
+    let contents = document.getElementsByClassName('sheet');
+    for(let content of [...Array.from(contents)]){
+      //let ele = this.printingService.applyAllStyles(content);
+      let data : printData =  {
+        content: content.outerHTML,
+        type: 'html',
+        options: {
+          // tray: '1',
+          jobName:`PrintJob_${new Date().toISOString()}.pdf`,
+          copies: 2,
+          //orientation: 'landscape',
+          duplex : 'duplex',
+          autoStyle:content
+      }}
+      this.printingService.print(data)
+    }
+  }
   DocTienBangChu(SoTien) {
     var Tien = new Array('', ' nghìn', ' triệu', ' tỷ', ' nghìn tỷ', ' triệu tỷ');
 

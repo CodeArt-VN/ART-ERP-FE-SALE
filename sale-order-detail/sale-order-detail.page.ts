@@ -76,6 +76,7 @@ export class SaleOrderDetailPage extends PageBase {
       Name: [''],
       Remark: [''],
       IDStatus: new FormControl({ value: '', disabled: false }),
+	    Status : ['New'],
       Type: new FormControl({ value: 'FMCGSalesOrder', disabled: true }),
       SubType: [''],
       PaymentMethod: [''],
@@ -261,38 +262,56 @@ export class SaleOrderDetailPage extends PageBase {
 
   loadedData(event) {
     if (this.item.Id) {
-      let blockedStatus = [
+    //   let blockedStatus = [
+    //     //101,	// Mới (sale tạo)
+    //     //102,	// Đã trả
+    //     103, // Chờ duyệt
+    //     104, // Đã duyệt
+    //     105, // Đã phân tài
+    //     106, // Đang lấy hàng - đóng gói
+    //     107, // Đã giao đơn vị vận chuyển
+    //     108, // Đang giao hàng
+    //     109, // Đã giao hàng
+    //     110, // Chờ giao lại
+    //     111, // Đã xuất hóa đơn
+    //     112, // Đã có phiếu thu
+    //     113, // Còn nợ
+    //     114, // Đã xong
+    //     115,
+    //   ];
+
+	  let blockedStatus = [
         //101,	// Mới (sale tạo)
         //102,	// Đã trả
-        103, // Chờ duyệt
-        104, // Đã duyệt
-        105, // Đã phân tài
-        106, // Đang lấy hàng - đóng gói
-        107, // Đã giao đơn vị vận chuyển
-        108, // Đang giao hàng
-        109, // Đã giao hàng
-        110, // Chờ giao lại
-        111, // Đã xuất hóa đơn
-        112, // Đã có phiếu thu
-        113, // Còn nợ
-        114, // Đã xong
-        115,
+        'Submitted', // Chờ duyệt
+        'Approved', // Đã duyệt
+        'Scheduled', // Đã phân tài
+        'Picking', // Đang lấy hàng - đóng gói
+        'InCarrier', // Đã giao đơn vị vận chuyển
+        'InDelivery', // Đang giao hàng
+        'Delivered', // Đã giao hàng
+        'Redelivery', // Chờ giao lại
+        'Splitted', // Đã xuất hóa đơn
+        'Merged', // Đã có phiếu thu
+        'Debt', // Còn nợ
+        'Done', // Đã xong
+        'Cancelled',
       ];
 
-      if (blockedStatus.indexOf(this.item.IDStatus) > -1) {
+      if (blockedStatus.indexOf(this.item.Status) > -1) {
         this.pageConfig.canEdit = false;
         this.pageConfig.canDelete = false;
         this.formGroup.get('IDAddress').disable();
       }
 
-      if (this.pageConfig.canEditOrderInDelivery && this.item.IDStatus == 108) {
+      if (this.pageConfig.canEditOrderInDelivery && this.item.Status == 'InDelivery') {
         //Đang giao hàng
         this.pageConfig.canEdit = true;
         this.pageConfig.canDelete = false;
         this.formGroup.get('IDAddress').enable();
       }
 
-      if (this.pageConfig.canChangeCustomerOfReviewOrder && this.item.IDStatus == 103) {
+      if (this.pageConfig.canChangeCustomerOfReviewOrder && this.item.Status == 'Submitted') {
         this.pageConfig.canEdit = false;
         this.pageConfig.canDelete = false;
         this.formGroup.get('IDAddress').enable();
@@ -404,6 +423,9 @@ export class SaleOrderDetailPage extends PageBase {
       this.branchProvider.getAnItem(this.item.IDBranch).then((branch: any) => {
         this.branch = branch;
       });
+    }
+    if(!(this.item?.Id>0)){
+      this.formGroup.get('Status').markAsDirty();
     }
   }
 
@@ -879,7 +901,7 @@ export class SaleOrderDetailPage extends PageBase {
       ((this.pageConfig.canChangeTypeOfReviewOrder ||
         this.pageConfig.canChangeTypeOfReviewOrder ||
         this.pageConfig.canUseDiscountFromSalesman) &&
-        this.item.IDStatus == 103)
+        this.item.Status == 'Submitted')
     ) {
       return super.saveChange();
     } else {
@@ -918,16 +940,16 @@ export class SaleOrderDetailPage extends PageBase {
   }
 
   async createARInvoice(o) {
-    let IDStatus = this.selectedItems[0].Status.IDStatus;
+    let Status = this.selectedItems[0].Status;
 
     if (
-      IDStatus == 101 ||
-      IDStatus == 102 ||
-      IDStatus == 103 ||
-      IDStatus == 110 ||
-      IDStatus == 111 ||
-      IDStatus == 112 ||
-      IDStatus == 115
+      Status == 'New' ||
+      Status == 'Unapproved' ||
+      Status == 'Submitted' ||
+      Status == 'Redelivery' ||
+      Status == 'Splitted' ||
+      Status == 'Merged' ||
+      Status == 'Cancelled'
     ) {
       this.env.showMessage('Cannot generate invoice with this orders status', 'warning');
       return;

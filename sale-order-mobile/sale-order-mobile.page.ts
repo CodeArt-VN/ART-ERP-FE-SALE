@@ -51,7 +51,7 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   preLoadData(event) {
-    this.query.IDStatus = '[101,102,103,104,110]';
+    this.query.Status =  "['New','Unapproved','Submitted','Approved','Redelivery']";
     this.query.IDOwner = this.pageConfig.canViewAllData ? 'all' : this.env.user.StaffID;
     this.query._saleman =
       this.query.IDOwner == 'all'
@@ -96,7 +96,7 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   resetQuery() {
-    this.query.IDStatus = '[101,102,103,104,110]';
+    this.query.Status = "['New','Unapproved','Submitted','Approved','Redelivery']";
     this.query.IDOwner = this.pageConfig.canViewAllData ? 'all' : this.env.user.StaffID;
     this.query._saleman =
       this.query.IDOwner == 'all'
@@ -116,9 +116,9 @@ export class SaleOrderMobilePage extends PageBase {
     if (
       i.Id == 0 ||
       !i.Status ||
-      i.Status.Id == 101 ||
-      i.Status.Id == 102 ||
-      (this.pageConfig.canChangeCustomerOfReviewOrder && i.IDStatus == 103)
+      i.Status == 'New' ||
+      i.Status == 'Unapproved' ||
+      (this.pageConfig.canChangeCustomerOfReviewOrder && i.Status == 'Submitted')
     ) {
       this.nav('sale-order-mobile/' + i.Id, 'forward');
     } else {
@@ -140,8 +140,8 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   async splitSaleOrder() {
-    let IDStatus = this.selectedItems[0].IDStatus;
-    if (!(IDStatus == 101 || IDStatus == 102 || IDStatus == 103)) {
+    let status = this.selectedItems[0].Status;
+    if (!(status == 'New' || status == 'Unapproved' || status == 'Submitted')){
       this.env.showMessage(
         'Your selected order cannot be split. Please choose draft, new, pending for approval or disaaproved order',
         'warning',
@@ -164,7 +164,7 @@ export class SaleOrderMobilePage extends PageBase {
 
   async mergeSaleOrders() {
     let itemsCanNotProcess = this.selectedItems.filter(
-      (i) => !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103),
+      (i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted'),
     );
     if (itemsCanNotProcess.length) {
       this.env.showMessage(
@@ -245,7 +245,7 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   deleteItems() {
-    let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.IDStatus == 101 || i.IDStatus == 102));
+    let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
     if (itemsCanNotDelete.length == this.selectedItems.length) {
       this.env.showMessage(
         'Your selected invoices cannot be deleted. Please only delete new or disapproved invoice',
@@ -273,7 +273,7 @@ export class SaleOrderMobilePage extends PageBase {
                 itemsCanNotDelete.forEach((i) => {
                   i.checked = false;
                 });
-                this.selectedItems = this.selectedItems.filter((i) => i.IDStatus == 101 || i.IDStatus == 102);
+                this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
                 super.deleteItems();
               },
             },
@@ -307,7 +307,7 @@ export class SaleOrderMobilePage extends PageBase {
           selectedBTNDate: this.query.selectedBTNDate,
           fromDate: this.query.OrderDateFrom,
           toDate: this.query._toDate,
-          IDSaleOrderStatus: this.query.IDStatus,
+          saleOrderStatus: this.query.Status,
           staff: this.query._saleman,
         },
       },
@@ -322,7 +322,7 @@ export class SaleOrderMobilePage extends PageBase {
         this.query.OrderDateFrom = result.data.fromDate;
         this.query._toDate = result.data.toDate;
         this.query.OrderDateTo = result.data.toDate + ' 23:59:59';
-        this.query.IDStatus = result.data.IDSaleOrderStatus;
+        this.query.Status = result.data.saleOrderStatus;
         this.query.selectedBTNDate = result.data.selectedBTNDate;
 
         this.selectedStatus = result.data.selectedStatus;
