@@ -81,7 +81,7 @@
 
           <ion-card-header (click)="showDetail(i)">
             <ion-card-title>
-              <ion-text [color]="i.Status.Color"> {{i.OriginalTotalText}} </ion-text>
+              <ion-text [color]="i._Status.Color"> {{i.OriginalTotalText}} </ion-text>
               <ion-text class="ion-float-right" color="medium">
                 <span class="ngay-hd"
                   >{{i.OrderDateText}} <small *ngIf="i.OrderTimeText ">{{i.OrderTimeText}}</small></span
@@ -89,8 +89,8 @@
               </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-              <ion-text [color]="i.Status.Color"> #{{i.Id}} </ion-text>
-              <small> {{i.Status.Name}} </small>
+              <ion-text [color]="i._Status.Color"> #{{i.Id}} </ion-text>
+              <small> {{i._Status.Name}} </small>
             </ion-card-subtitle>
           </ion-card-header>
 
