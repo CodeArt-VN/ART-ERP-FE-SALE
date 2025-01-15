@@ -149,29 +149,11 @@ export class SaleOrderPage extends PageBase {
 
     this.ShowSubmit = this.pageConfig.canSubmit ;
     this.ShowApprove = this.pageConfig.canApprove ;
-    this.ShowDisapprove = this.pageConfig.canDisapprove ;
+    this.ShowDisapprove = this.pageConfig.canApprove ;
     this.ShowCancel = this.pageConfig.canCancel;
     this.ShowDelete = this.pageConfig.canDelete;
 
     this.selectedItems.forEach((i) => {
-      // 101	new	Mới
-      // 102	unapproved	Không duyệt
-      // 103	submitted	Chờ duyệt
-      // 104	approved	Đã duyệt
-      // 105	scheduled	Đã giao việc
-      // 106	picking	Đang lấy hàng - đóng gói
-      // 107	in-carrier	Đã giao đơn vị vận chuyển
-      // 108	in-delivery	Đang giao hàng
-      // 109	delivered	Đã giao hàng
-      // 110	pending	Chờ xử lý
-      // 111	split	Đơn đã chia
-      // 112	merged	Đơn đã gộp
-      // 113	debt	Còn nợ
-      // 114	done	Đã xong
-      // 115	cancelled	Đã hủy
-
-      // [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115];
-
       let notShowSubmitOrdersForApproval = [
         'Submitted',
         'Approved',
