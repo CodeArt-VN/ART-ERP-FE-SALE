@@ -1,25 +1,15 @@
-import { Component } from '@angular/core';
-import {
-  NavController,
-  ModalController,
-  AlertController,
-  LoadingController,
-  PopoverController,
-  NavParams,
-} from '@ionic/angular';
-import { EnvService } from 'src/app/services/core/env.service';
-import { PageBase } from 'src/app/page-base';
-import { BRA_BranchProvider, SALE_OrderProvider } from 'src/app/services/static/services.service';
-import { SaleOrderMobileDetailPage } from '../sale-order-mobile-detail/sale-order-mobile-detail.page';
 import { Location } from '@angular/common';
+import { Component } from '@angular/core';
+import { AlertController, LoadingController, ModalController, NavController, PopoverController } from '@ionic/angular';
+import { PageBase } from 'src/app/page-base';
+import { BarcodeScannerService } from 'src/app/services/barcode-scanner.service';
+import { EnvService } from 'src/app/services/core/env.service';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
-import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
-import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-merge-modal.page';
+import { SALE_OrderProvider } from 'src/app/services/static/services.service';
 import { PopoverPage } from '../../SYS/popover/popover.page';
-import { Capacitor } from '@capacitor/core';
-import { TranslateService } from '@ngx-translate/core';
-import { BarcodeScannerService } from 'src/app/services/barcode-scanner.service';
+import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-merge-modal.page';
+import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
 
 @Component({
   selector: 'app-sale-order-mobile',
@@ -28,6 +18,14 @@ import { BarcodeScannerService } from 'src/app/services/barcode-scanner.service'
   standalone: false,
 })
 export class SaleOrderMobilePage extends PageBase {
+  statusList = [];
+
+  ShowSubmit = false;
+  ShowApprove = false;
+  ShowDisapprove = false;
+  ShowCancel = false;
+  ShowDelete = false;
+
   selectedStatus = {
     Color: 'warning',
     Name: 'Đơn cần duyệt',
@@ -35,7 +33,6 @@ export class SaleOrderMobilePage extends PageBase {
 
   constructor(
     public pageProvider: SALE_OrderProvider,
-    public branchProvider: BRA_BranchProvider,
     public modalController: ModalController,
     public popoverCtrl: PopoverController,
     public alertCtrl: AlertController,
@@ -44,14 +41,12 @@ export class SaleOrderMobilePage extends PageBase {
     public env: EnvService,
     public navCtrl: NavController,
     public location: Location,
-    public translate: TranslateService,
   ) {
     super();
     // this.pageConfig.isShowSearch = true;
   }
 
   preLoadData(event) {
-    this.query.Status =  "['New','Unapproved','Submitted','Approved','Redelivery']";
     this.query.IDOwner = this.pageConfig.canViewAllData ? 'all' : this.env.user.StaffID;
     this.query._saleman =
       this.query.IDOwner == 'all'
@@ -63,7 +58,17 @@ export class SaleOrderMobilePage extends PageBase {
 
     this.sort.Id = 'Id';
     this.sortToggle('Id', true);
-    super.preLoadData(event);
+    this.query.Status = "['New','Unapproved','Submitted','Approved','Redelivery']";
+
+    Promise.all([
+      this.env.getStatus('SalesOrder'),
+    ]).then((values: any) => {
+      this.statusList = values[0];
+
+      super.preLoadData(event);
+    });
+    
+    
   }
 
   loadData(event) {
@@ -77,9 +82,114 @@ export class SaleOrderMobilePage extends PageBase {
     this.items.forEach((i) => {
       i.OrderTimeText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'hh:MM') : '';
       i.OrderDateText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'dd/mm/yy') : '';
+      
       i.OriginalTotalText = lib.currencyFormat(i.OriginalTotalAfterTax);
+      i._Status = this.statusList.find((s) => s.Code == i.Status);
     });
     super.loadedData(event);
+  }
+
+  changeSelection(i, e = null) {
+    super.changeSelection(i, e);
+
+    this.ShowSubmit = this.pageConfig.canSubmit;
+    this.ShowApprove = this.pageConfig.canApprove;
+    this.ShowDisapprove = this.pageConfig.canApprove;
+    this.ShowCancel = this.pageConfig.canCancel;
+    this.ShowDelete = this.pageConfig.canDelete;
+
+    this.selectedItems.forEach((i) => {
+      let notShowSubmitOrdersForApproval = [
+        'Submitted',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Redelivery',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowSubmitOrdersForApproval.indexOf(i.Status) > -1) {
+        this.ShowSubmit = false;
+      }
+
+      let notShowApproveOrders = [
+        'New',
+        'Unapproved',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowApproveOrders.indexOf(i.Status) > -1) {
+        this.ShowApprove = false;
+      }
+
+      let notShowDisapproveOrders = [
+        'New',
+        'Unapproved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Redelivery',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowDisapproveOrders.indexOf(i.Status) > -1) {
+        this.ShowDisapprove = false;
+      }
+
+      let notShowCancelOrders = [
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+        'Cancelled',
+      ];
+      if (notShowCancelOrders.indexOf(i.Status) > -1) {
+        this.ShowCancel = false;
+      }
+
+      let notShowDelete = [
+        'Submitted',
+        'Approved',
+        'Scheduled',
+        'Picking',
+        'InCarrier',
+        'InDelivery',
+        'Delivered',
+        'Splitted',
+        'Merged',
+        'Debt',
+        'Done',
+      ];
+      if (notShowDelete.indexOf(i.Status) > -1) {
+        this.ShowDelete = false;
+      }
+    });
   }
 
   search(ev) {
@@ -141,7 +251,7 @@ export class SaleOrderMobilePage extends PageBase {
 
   async splitSaleOrder() {
     let status = this.selectedItems[0].Status;
-    if (!(status == 'New' || status == 'Unapproved' || status == 'Submitted')){
+    if (!(status == 'New' || status == 'Unapproved' || status == 'Submitted')) {
       this.env.showMessage(
         'Your selected order cannot be split. Please choose draft, new, pending for approval or disaaproved order',
         'warning',
@@ -189,6 +299,9 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   submitOrdersForApproval() {
+    if (!this.pageConfig.canSubmitOrdersForApproval) {
+      return;
+    }
     this.alertCtrl
       .create({
         header: 'Gửi duyệt',
@@ -287,19 +400,13 @@ export class SaleOrderMobilePage extends PageBase {
     }
   }
 
-  translateResult;
   currentPopover = null;
   async presentPopover(ev: any) {
-    this.translate.get('Time').subscribe((message: string) => {
-      this.translateResult = message;
-    });
     let popover = await this.popoverCtrl.create({
       component: PopoverPage,
       componentProps: {
         popConfig: {
           isShowDateRange: true,
-          dateRangeLabel: this.translateResult,
-
           isShowSaleOrderStatusSelect: true,
           isShowStaffSelect: this.pageConfig.canViewAllData,
         },

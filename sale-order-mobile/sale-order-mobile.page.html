@@ -1,4 +1,14 @@
 <ion-header>
+  <!-- <app-toolbar
+  [page]="this"
+  [ShowSubmit]="ShowSubmit"
+  [ShowApprove]="ShowApprove"
+  [ShowDisapprove]="ShowDisapprove"
+  [ShowCancel]="ShowCancel"
+  [ShowDelete]="ShowDelete"
+>
+  
+</app-toolbar> -->
   <app-list-toolbar
     [NoBorder]="pageConfig.isShowSearch"
     selectedTitle="{{selectedItems.length}} đơn"
@@ -62,9 +72,9 @@
     *ngIf="this.query.Status != ['New','Unapproved','Submitted','Approved','Redelivery'] || query.OrderDateFrom"
     style="margin: 20px auto 5px auto; text-align: center"
   >
-    <ion-chip [color]="selectedStatus.Color" (click)="resetQuery()">
+    <ion-chip [color]="selectedStatus?.Color" (click)="resetQuery()">
       <ion-label
-        >{{selectedStatus.Name}}
+        >{{selectedStatus?.Name}}
         <small *ngIf="query.OrderDateFrom && query.OrderDateTo">
           {{query.OrderDateFrom | date:'dd/MM/yy'}} - {{query.OrderDateTo | date:'dd/MM/yy'}}</small
         >
@@ -81,7 +91,7 @@
 
           <ion-card-header (click)="showDetail(i)">
             <ion-card-title>
-              <ion-text [color]="i._Status.Color"> {{i.OriginalTotalText}} </ion-text>
+              <ion-text [color]="i._Status?.Color"> {{i.OriginalTotalText}} </ion-text>
               <ion-text class="ion-float-right" color="medium">
                 <span class="ngay-hd"
                   >{{i.OrderDateText}} <small *ngIf="i.OrderTimeText ">{{i.OrderTimeText}}</small></span
@@ -89,8 +99,8 @@
               </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-              <ion-text [color]="i._Status.Color"> #{{i.Id}} </ion-text>
-              <small> {{i._Status.Name}} </small>
+              <ion-text [color]="i._Status?.Color"> #{{i.Id}} </ion-text>
+              <small> {{i._Status?.Name}} </small>
             </ion-card-subtitle>
           </ion-card-header>
 
