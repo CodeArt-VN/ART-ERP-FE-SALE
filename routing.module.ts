@@ -12,7 +12,7 @@ export const SALERoutes: Routes = [
   
     { path: 'sale-order-mobile', loadChildren: () => import('./sale-order-mobile/sale-order-mobile.module').then(m => m.SaleOrderMobilePageModule), canActivate: [AuthGuard] },
     { path: 'sale-order-mobile/:id', loadChildren: () => import('./sale-order-mobile-detail/sale-order-mobile-detail.module').then(m => m.SaleOrderMobileDetailPageModule), canActivate: [AuthGuard] },
-    { path: 'sale-order-mobile-viewer/:id', loadChildren: () => import('./sale-order-mobile-viewer/sale-order-mobile-viewer.module').then(m => m.SaleOrderMobileViewerPageModule), canActivate: [AuthGuard] },
+    { path: 'sale-order-mobile/viewer/:id', loadChildren: () => import('./sale-order-mobile-viewer/sale-order-mobile-viewer.module').then(m => m.SaleOrderMobileViewerPageModule), canActivate: [AuthGuard] },
   
     { path: 'sale-order-note', loadChildren: () => import('./sale-order-note/sale-order-note.module').then(m => m.SaleOrderNotePageModule), canActivate: [AuthGuard] },
     { path: 'sale-order-note/:id', loadChildren: () => import('./sale-order-note/sale-order-note.module').then(m => m.SaleOrderNotePageModule), canActivate: [AuthGuard] },

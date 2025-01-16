@@ -232,7 +232,7 @@ export class SaleOrderMobilePage extends PageBase {
     ) {
       this.nav('sale-order-mobile/' + i.Id, 'forward');
     } else {
-      this.nav('sale-order-mobile-viewer/' + i.Id, 'forward');
+      this.nav('sale-order-mobile/viewer/' + i.Id, 'forward');
     }
   }
 
@@ -299,7 +299,7 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   submitOrdersForApproval() {
-    if (!this.pageConfig.canSubmitOrdersForApproval) {
+    if (!this.pageConfig.canSubmitSalesmanOrdersForApproval) {
       return;
     }
     this.alertCtrl
