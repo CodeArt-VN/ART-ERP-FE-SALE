@@ -223,16 +223,24 @@ export class SaleOrderMobilePage extends PageBase {
   }
 
   showDetail(i) {
-    if (
-      i.Id == 0 ||
-      !i.Status ||
-      i.Status == 'New' ||
-      i.Status == 'Unapproved' ||
-      (this.pageConfig.canChangeCustomerOfReviewOrder && i.Status == 'Submitted')
-    ) {
-      this.nav('sale-order-mobile/' + i.Id, 'forward');
-    } else {
+    let notShowDelete = [
+      'Submitted',
+      'Approved',
+      'Scheduled',
+      'Picking',
+      'InCarrier',
+      'InDelivery',
+      'Delivered',
+      'Splitted',
+      'Merged',
+      'Debt',
+      'Done',
+    ];
+    if (notShowDelete.indexOf(i.Status) > -1) {
       this.nav('sale-order-mobile/viewer/' + i.Id, 'forward');
+    }
+    else{
+      this.nav('sale-order-mobile/' + i.Id, 'forward');
     }
   }
 
