@@ -31,12 +31,6 @@ export class SaleOrderPage extends PageBase {
   shipmentList = [];
   contact: any = {};
 
-  ShowSubmit = false;
-  ShowApprove = false;
-  ShowDisapprove = false;
-  ShowCancel = false;
-  ShowDelete = false;
-
   segmentView = 's1';
   shipmentQuery: any = {
     Status: 'Scheduled',
@@ -162,7 +156,7 @@ export class SaleOrderPage extends PageBase {
         'Cancelled',
       ];
       if (notShowSubmitOrdersForApproval.indexOf(i.Status) > -1) {
-        this.ShowSubmit = false;
+        this.pageConfig.ShowSubmit = false;
       }
 
       let notShowApproveOrders = [
