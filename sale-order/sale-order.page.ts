@@ -140,11 +140,11 @@ export class SaleOrderPage extends PageBase {
   changeSelection(i, e = null) {
     super.changeSelection(i, e);
 
-    this.ShowSubmit = this.pageConfig.canSubmit;
-    this.ShowApprove = this.pageConfig.canApprove;
-    this.ShowDisapprove = this.pageConfig.canApprove;
-    this.ShowCancel = this.pageConfig.canCancel;
-    this.ShowDelete = this.pageConfig.canDelete;
+    this.pageConfig.ShowSubmit = this.pageConfig.canSubmit ;
+    this.pageConfig.ShowApprove = this.pageConfig.canApprove ;
+    this.pageConfig.ShowDisapprove = this.pageConfig.canDisapprove ;
+    this.pageConfig.ShowCancel = this.pageConfig.canCancel;
+    this.pageConfig.ShowDelete = this.pageConfig.canDelete;
 
     this.selectedItems.forEach((i) => {
       let notShowSubmitOrdersForApproval = [
@@ -182,7 +182,7 @@ export class SaleOrderPage extends PageBase {
         'Cancelled',
       ];
       if (notShowApproveOrders.indexOf(i.Status) > -1) {
-        this.ShowApprove = false;
+        this.pageConfig.ShowApprove = false;
       }
 
       let notShowDisapproveOrders = [
@@ -201,7 +201,7 @@ export class SaleOrderPage extends PageBase {
         'Cancelled',
       ];
       if (notShowDisapproveOrders.indexOf(i.Status) > -1) {
-        this.ShowDisapprove = false;
+        this.pageConfig.ShowDisapprove = false;
       }
 
       let notShowCancelOrders = [
@@ -218,7 +218,7 @@ export class SaleOrderPage extends PageBase {
         'Cancelled',
       ];
       if (notShowCancelOrders.indexOf(i.Status) > -1) {
-        this.ShowCancel = false;
+        this.pageConfig.ShowCancel = false;
       }
 
       let notShowDelete = [
@@ -235,7 +235,7 @@ export class SaleOrderPage extends PageBase {
         'Done',
       ];
       if (notShowDelete.indexOf(i.Status) > -1) {
-        this.ShowDelete = false;
+        this.pageConfig.ShowDelete = false;
       }
     });
   }
