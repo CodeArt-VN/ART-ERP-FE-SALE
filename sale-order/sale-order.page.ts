@@ -141,8 +141,7 @@ export class SaleOrderPage extends PageBase {
     super.changeSelection(i, e);
 
     this.pageConfig.ShowSubmit = this.pageConfig.canSubmit ;
-    this.pageConfig.ShowApprove = this.pageConfig.canApprove ;
-    this.pageConfig.ShowDisapprove = this.pageConfig.canDisapprove ;
+    this.pageConfig.ShowApprove = this.pageConfig.ShowDisapprove = this.pageConfig.canApprove ;
     this.pageConfig.ShowCancel = this.pageConfig.canCancel;
     this.pageConfig.ShowDelete = this.pageConfig.canDelete;
 
