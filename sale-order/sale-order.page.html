@@ -2,29 +2,29 @@
   <app-toolbar
     [page]="this"
   >
-    <ion-button
-      title="{{ 'createARInvoice' | translate }}"
-      *ngIf="pageConfig.canAddARInvoice && selectedItems.length >= 1 && !query.IsDisabled"
+    <ion-button tollbarSelected 
+      title="{{ 'Create A/R invoice' | translate }}"
+      *ngIf="pageConfig.ShowCopyToARInvoice && pageConfig.canAddARInvoice && selectedItems.length >= 1 && !query.IsDisabled"
       (click)="createARInvoice()"
     >
       <ion-icon color="success" slot="icon-only" name="receipt-outline"></ion-icon>
     </ion-button>
 
-    <ion-button
+    <!-- <ion-button tollbarSelected
       title="{{ 'Create split invoice' | translate }}"
-      *ngIf="pageConfig.canSplitARInvoices && selectedItems.length <= 1 && !query.IsDisabled"
+      *ngIf="pageConfig.canSplitARInvoices && selectedItems.length == 1 && !query.IsDisabled"
       (click)="createSplitARInvoices()"
     >
       <ion-icon color="success" slot="icon-only" name="git-branch"></ion-icon>
-    </ion-button>
+    </ion-button> -->
 
-    <ion-button
+    <!-- <ion-button tollbarSelected
       title="{{ 'Create merged invoice' | translate }}"
       *ngIf="pageConfig.canMergeARInvoice && selectedItems.length >= 2 && !query.IsDisabled"
       (click)="createMergeARInvoice()"
     >
       <ion-icon color="success" slot="icon-only" name="git-pull-request"></ion-icon>
-    </ion-button>
+    </ion-button> -->
   </app-toolbar>
 
   <section class="table">

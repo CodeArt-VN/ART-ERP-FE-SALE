@@ -58,11 +58,33 @@ export class SaleOrderPage extends PageBase {
     public navCtrl: NavController,
   ) {
     super();
-    this.pageConfig.isShowSearch = false;
+    this.pageConfig.ShowFeature = true;
+
+    //const allCommands =               ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit',  'ShowApprove', 'ShowDisapprove', 'ShowCopyToARInvoice', 'ShowCancel', 'ShowDelete', 'ShowArchive'];
+    
+    this.pageConfig.ShowCommandRules = [
+      { Status: 'New',        ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit',  'ShowApprove',                                          'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Mới
+      { Status: 'Unapproved', ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit',  'ShowApprove',                                          'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Không duyệt
+      { Status: 'Submitted',  ShowBtns: [                                                             'ShowApprove', 'ShowDisapprove',                        'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Chờ duyệt
+      { Status: 'Approved',   ShowBtns: [                                                                            'ShowDisapprove', 'ShowCopyToARInvoice', 'ShowCancel',               'ShowArchive'] }, // Đã duyệt
+      { Status: 'Scheduled',  ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đã phân tài
+      { Status: 'Picking',    ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đang lấy hàng - đóng gói
+      { Status: 'InCarrier',  ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đã giao đơn vị vận chuyển
+      { Status: 'InDelivery', ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đang giao hàng
+      { Status: 'Delivered',  ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đã giao hàng
+      { Status: 'Redelivery', ShowBtns: [                                                                                                                                                 'ShowArchive'] }, // Chờ giao lại
+      { Status: 'Splitted',   ShowBtns: [                                                                                                                                                 'ShowArchive'] }, // Đơn đã chia
+      { Status: 'Merged',     ShowBtns: [                                                                                                                                                 'ShowArchive'] }, // Đơn đã gộp
+      { Status: 'Debt',       ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Còn nợ
+      { Status: 'Done',       ShowBtns: [                                                                                              'ShowCopyToARInvoice',                             'ShowArchive'] }, // Đã xong
+      { Status: 'Cancelled',  ShowBtns: [                                                                                                                                   'ShowDelete', 'ShowArchive'] }  // Đã hủy
+    ];
+
     let today = new Date();
     today.setDate(today.getDate() + 1);
     this.shipmentQuery.DeliveryDate = lib.dateFormat(today, 'yyyy-mm-dd');
   }
+
 
   events(e) {
     if (e.Code == 'shipment') {
@@ -129,108 +151,6 @@ export class SaleOrderPage extends PageBase {
 
     this.pageConfig.canSubmit =
       this.pageConfig.canSubmitOrdersForApproval || this.pageConfig.canSubmitSalesmanOrdersForApproval;
-  }
-
-  changeSelection(i, e = null) {
-    super.changeSelection(i, e);
-
-    this.pageConfig.ShowSubmit = this.pageConfig.canSubmit ;
-    this.pageConfig.ShowApprove = this.pageConfig.ShowDisapprove = this.pageConfig.canApprove ;
-    this.pageConfig.ShowCancel = this.pageConfig.canCancel;
-    this.pageConfig.ShowDelete = this.pageConfig.canDelete;
-
-    this.selectedItems.forEach((i) => {
-      let notShowSubmitOrdersForApproval = [
-        'Submitted',
-        'Approved',
-        'Scheduled',
-        'Picking',
-        'InCarrier',
-        'InDelivery',
-        'Delivered',
-        'Redelivery',
-        'Splitted',
-        'Merged',
-        'Debt',
-        'Done',
-        'Cancelled',
-      ];
-      if (notShowSubmitOrdersForApproval.indexOf(i.Status) > -1) {
-        this.pageConfig.ShowSubmit = false;
-      }
-
-      let notShowApproveOrders = [
-        'New',
-        'Unapproved',
-        'Approved',
-        'Scheduled',
-        'Picking',
-        'InCarrier',
-        'InDelivery',
-        'Delivered',
-        'Splitted',
-        'Merged',
-        'Debt',
-        'Done',
-        'Cancelled',
-      ];
-      if (notShowApproveOrders.indexOf(i.Status) > -1) {
-        this.pageConfig.ShowApprove = false;
-      }
-
-      let notShowDisapproveOrders = [
-        'New',
-        'Unapproved',
-        'Scheduled',
-        'Picking',
-        'InCarrier',
-        'InDelivery',
-        'Delivered',
-        'Redelivery',
-        'Splitted',
-        'Merged',
-        'Debt',
-        'Done',
-        'Cancelled',
-      ];
-      if (notShowDisapproveOrders.indexOf(i.Status) > -1) {
-        this.pageConfig.ShowDisapprove = false;
-      }
-
-      let notShowCancelOrders = [
-        'Approved',
-        'Scheduled',
-        'Picking',
-        'InCarrier',
-        'InDelivery',
-        'Delivered',
-        'Splitted',
-        'Merged',
-        'Debt',
-        'Done',
-        'Cancelled',
-      ];
-      if (notShowCancelOrders.indexOf(i.Status) > -1) {
-        this.pageConfig.ShowCancel = false;
-      }
-
-      let notShowDelete = [
-        'Submitted',
-        'Approved',
-        'Scheduled',
-        'Picking',
-        'InCarrier',
-        'InDelivery',
-        'Delivered',
-        'Splitted',
-        'Merged',
-        'Debt',
-        'Done',
-      ];
-      if (notShowDelete.indexOf(i.Status) > -1) {
-        this.pageConfig.ShowDelete = false;
-      }
-    });
   }
 
   loadVehicleList() {
