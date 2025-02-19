@@ -119,6 +119,10 @@ export class SaleQuotationDetailPage extends PageBase {
 
   loadedData(event) {
     if (this.item.Status != 'Open') this.pageConfig.canEdit = false;
+    if (this.item.SourceType == 'FromPurchaseRequest') {
+      this.formGroup.disable();
+      if (this.item.Status == 'Open') this.formGroup.controls.ValidUntilDate.enable();
+    }
     this.setQuotationLines();
     super.loadedData(event);
     if (this.item._Vendor) {
@@ -163,17 +167,17 @@ export class SaleQuotationDetailPage extends PageBase {
         });
       }),
       _IDUoMDataSource: [selectedItem ? selectedItem.UoMs : []],
-      IDItem: [line.IDItem || 0], //Validators.required
-      IDItemUoM: new FormControl(
-        line.IDItemUoM,
-        this.item.contentType === 'Item' ? Validators.required : null, // Conditional validator
+      IDItem: new FormControl({ value: line.IDItem || 0, disabled: this.item?.SourceType != null }), //Validators.required
+      IDItemUoM:  new FormControl(
+        { value: line.IDItemUoM, disabled: this.item?.SourceType != null},
+        [this.item?.contentType === 'Item' ? Validators.required : null ].filter(Boolean)
       ),
       Id: [line.Id],
-      Status: ['Open'],
+      Status: [line.Status || 'Open'],
       Sort: [line.Sort],
       Name: [line.Name],
       Remark: [line.Remark],
-      RequiredDate: [line.RequiredDate], //,Validators.required
+      RequiredDate:new FormControl({ value: line.RequiredDate, disabled: this.item?.SourceType != null }), //,Validators.required
       InfoPrice: new FormControl({ value: line.InfoPrice, disabled: this.item?.SourceType != null }),
       Price: [line.Price, Validators.required],
       UoMName: [line.UoMName],
@@ -181,7 +185,7 @@ export class SaleQuotationDetailPage extends PageBase {
         line.Quantity,
         this.item.ContentType === 'Item' ? Validators.required : null, // Conditional validator
       ),
-      QuantityRemeaningOpen:new FormControl({value:line.QuantityRemeaningOpen,disabled:true}),
+      QuantityRemaningOpen:new FormControl({value:line.QuantityRemaningOpen,disabled:true}),
       QuantityRequired: new FormControl({ value: line.QuantityRequired, disabled: this.item?.SourceType != null }),
       UoMSwap: [line.UoMSwap],
       UoMSwapAlter: [line.UoMSwapAlter],
@@ -202,8 +206,8 @@ export class SaleQuotationDetailPage extends PageBase {
       ModifiedBy: [line.ModifiedBy],
       CreatedDate: [line.CreatedDate],
       DeletedLines: [],
-      StatusText: lib.getAttrib(line.Status, this.statusLinesList, 'Name', '--', 'Code'),
-      StatusColor: lib.getAttrib(line.Status, this.statusLinesList, 'Color', 'dark', 'Code'),
+      StatusText: lib.getAttrib(line.Status || 'Open', this.statusLinesList, 'Name', '--', 'Code'),
+      StatusColor: lib.getAttrib(line.Status || 'Open', this.statusLinesList, 'Color', 'dark', 'Code'),
     });
     groups.push(group);
     if (selectedItem) group.get('_IDItemDataSource').value.selected.push(selectedItem);

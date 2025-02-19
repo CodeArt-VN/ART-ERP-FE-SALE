@@ -113,7 +113,7 @@
                   <div class="col-date cell">{{ 'Required date' | translate }}</div>
                   <div class="col-uom cell">{{ 'Unit' | translate }}</div>
                   <div class="col-price cell">{{ 'Required quantity' | translate }}</div>
-                  <div class="col-price cell">{{ 'Qty remeaning open' | translate }}</div>
+                  <div class="col-price cell">{{ 'Qty remaning open' | translate }}</div>
                   <div class="col-price cell">{{ 'Quantity' | translate }}</div>
                   <div class="col-price cell">{{ 'Discount' | translate }}</div>
                   <div class="col-price cell">{{ 'Info price' | translate }}</div>
@@ -177,7 +177,7 @@
                     <div class="col-price cell">
                       <app-input-control
                         (change)="saveOrder()"
-                        [field]="{ id: 'QuantityRemeaningOpen', type: 'number', form: g }"
+                        [field]="{ id: 'QuantityRemaningOpen', type: 'number', form: g }"
                       ></app-input-control>
                     </div>
                     <div class="col-price cell">
@@ -284,10 +284,28 @@
         <div class="table-contain">
           <div class="row">
             <div class="cell">
-              <ion-button fill="clear" size="small" (click)="addLine({}, true)">
-                <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                {{ 'Add product' | translate }}
-              </ion-button>
+              <ion-toolbar>
+                <ion-buttons slot="start">
+                  <ion-button  fill="clear" size="small" (click)="addLine({}, true)">
+                    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+                    {{ 'Add product' | translate }}
+                  </ion-button>
+                </ion-buttons>
+
+                <ion-buttons class="ion-justify-content-end" slot="end">
+                  <ion-button
+                    style="margin-right: 0"
+                    *ngIf="pageConfig.ShowConfirm"
+                    fill="solid"
+                    expand="block"
+                    size="small"
+                    (click)="confirmSaleQuotation()"
+                  >
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    {{'Confirm order' | translate}}
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
             </div>
           </div>
         </div>
