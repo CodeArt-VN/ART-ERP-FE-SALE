@@ -32,12 +32,12 @@ export class SaleQuotationPage extends PageBase {
     super();
 
     this.pageConfig.ShowCommandRules = [
-      { Status: 'Open', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel'] },
-      { Status: 'Unapproved', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel'] },
+      { Status: 'Open', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel','ShowDelete','ShowArchive'] },
+      { Status: 'Unapproved', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel','ShowDelete','ShowArchive'] },
       { Status: 'Submitted', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel'] },
-      { Status: 'Approved', ShowBtns: ['ShowDisapprove', 'ShowCancel'] },
-      { Status: 'Confirmed', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel'] },
-      { Status: 'Cancelled', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowDisapprove'] },
+      { Status: 'Approved', ShowBtns: ['ShowDisapprove', 'ShowCancel','ShowConfirm'] },
+      { Status: 'Confirmed', ShowBtns: [] },
+      { Status: 'Cancelled', ShowBtns: ['ShowDelete','ShowArchive'] },
     ];
   }
 
@@ -73,8 +73,13 @@ export class SaleQuotationPage extends PageBase {
     console.log(this.items);
 
   }
-
-  confirmSaleQuotation() {
+ changeSelection(i: any, e?: any): void {
+    super.changeSelection(i, e);
+    if(!i.IsFilledQuantity){
+      this.pageConfig.ShowSubmit = this.pageConfig.ShowApprove = false;
+    }
+  }
+  confirm() {
     let Ids = this.selectedItems.map((d) => d.Id);
     this.env.showPrompt(null, null, 'Do you want to confirm?').then((_) => {
       this.env
@@ -90,11 +95,6 @@ export class SaleQuotationPage extends PageBase {
           this.env.showMessage('Failed', 'danger');
         });
     });
-  }
-
- changeSelection(i: any, e?: any): void {
-    super.changeSelection(i, e);
-    this.pageConfig.ShowSubmit = this.pageConfig.ShowApprove = i.IsFilledQuantity;
   }
 
   submit() {
