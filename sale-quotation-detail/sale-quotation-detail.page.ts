@@ -118,18 +118,28 @@ export class SaleQuotationDetailPage extends PageBase {
   }
 
   loadedData(event) {
-    if (this.item.Status != 'Open') this.pageConfig.canEdit = false;
-    if (this.item.SourceType == 'FromPurchaseRequest') {
+    // if (this.item.Status != 'Open') this.pageConfig.canEdit = false;
+    // if (this.item.SourceType == 'FromPurchaseQuotation') {
+    //   this.formGroup.disable();
+    //   if (this.item.Status == 'Open') this.formGroup.controls.ValidUntilDate.enable();
+    // }
+    // this.setQuotationLines();
+    // super.loadedData(event);
+
+    if (!([ 'Open' , 'Confirmed' ,'Disapproved'].includes(this.item.Status))) this.pageConfig.canEdit = false;
+    super.loadedData(event);
+    if (this.item.SourceType == 'FromPurchaseQuotation') {
       this.formGroup.disable();
-      if (this.item.Status == 'Open') this.formGroup.controls.ValidUntilDate.enable();
+      let enableValid = [ 'Submitted' , 'Approved' , 'Closed' ];
+      if (!enableValid.includes(this.item.Status)) this.formGroup.controls.ValidUntilDate.enable();
     }
     this.setQuotationLines();
-    super.loadedData(event);
     if (this.item._Vendor) {
       this._vendorDataSource.selected = [...this._vendorDataSource.selected, ...[this.item._Vendor]];
     }
     this._vendorDataSource.initSearch();
-    if(this.item.Status == 'Open') this.pageConfig.ShowConfirm = true;
+    if(this.item.Status == 'Approved') this.pageConfig.ShowConfirm = true;
+    else this.pageConfig.ShowConfirm = false;
     console.log(this.formGroup);
   }
 
