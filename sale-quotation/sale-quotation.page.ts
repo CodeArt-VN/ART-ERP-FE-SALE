@@ -9,6 +9,7 @@ import {
 } from 'src/app/services/static/services.service';
 import { Location } from '@angular/common';
 import { lib } from 'src/app/services/static/global-functions';
+import { ApiSetting } from 'src/app/services/static/api-setting';
 @Component({
   selector: 'app-sale-quotation',
   templateUrl: 'sale-quotation.page.html',
@@ -31,7 +32,12 @@ export class SaleQuotationPage extends PageBase {
     super();
 
     this.pageConfig.ShowCommandRules = [
-      { Status: 'New', ShowBtns: ['ShowConfirm'] }, // Mới
+      { Status: 'Open', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel'] },
+      { Status: 'Unapproved', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel'] },
+      { Status: 'Submitted', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel'] },
+      { Status: 'Approved', ShowBtns: ['ShowDisapprove', 'ShowCancel'] },
+      { Status: 'Confirmed', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel'] },
+      { Status: 'Cancelled', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowDisapprove'] },
     ];
   }
 
@@ -65,6 +71,7 @@ export class SaleQuotationPage extends PageBase {
     });
     super.loadedData(event);
     console.log(this.items);
+
   }
 
   confirmSaleQuotation() {
@@ -84,4 +91,144 @@ export class SaleQuotationPage extends PageBase {
         });
     });
   }
+
+ changeSelection(i: any, e?: any): void {
+    super.changeSelection(i, e);
+    this.pageConfig.ShowSubmit = this.pageConfig.ShowApprove = i.IsFilledQuantity;
+  }
+
+  submit() {
+    if (this.submitAttempt) return;
+    this.env
+      .showPrompt(
+        {
+          code: 'Bạn có chắc muốn gửi duyệt {{value}} báo giá đang chọn?',
+          value: this.selectedItems.length,
+        },
+        null,
+        { code: 'Gửi duyệt {{value}} báo giá', value: this.selectedItems.length  },
+      )
+      .then((_) => {
+        this.submitAttempt = true;
+        let postDTO = { Ids: [] };
+        postDTO.Ids = this.selectedItems.map((e) => e.Id);
+
+        this.pageProvider.commonService
+          .connect('POST', ApiSetting.apiDomain('SALE/Quotation/Submit/'), postDTO)
+          .toPromise()
+          .then((savedItem: any) => {
+            this.env.publishEvent({
+              Code: this.pageConfig.pageName,
+            });
+            this.submitAttempt = false;
+
+            if (savedItem > 0) {
+              this.env.showMessage('{{value}} quotations sent for approval', 'success', savedItem);
+            } else {
+              this.env.showMessage('Please check again, quotations must have at least 1 item to be approved', 'warning');
+            }
+          })
+          .catch((err) => {
+            this.submitAttempt = false;
+            console.log(err);
+          });
+      });
+  }
+
+  approve() {
+    if (this.submitAttempt) return;
+
+    this.env
+      .showPrompt(
+        { code: 'Bạn có chắc muốn DUYỆT {{value}} báo giá đang chọn?', value: this.selectedItems.length },
+        null,
+        { code: 'Duyệt {{value}} báo giá', value: this.selectedItems.length },
+      )
+      .then((_) => {
+        this.submitAttempt = true;
+        let postDTO = { Ids: [] };
+        postDTO.Ids = this.selectedItems.map((e) => e.Id);
+
+        this.pageProvider.commonService
+          .connect('POST', ApiSetting.apiDomain('SALE/Quotation/Approve/'), postDTO)
+          .toPromise()
+          .then((savedItem: any) => {
+            this.env.publishEvent({
+              Code: this.pageConfig.pageName,
+            });
+            this.submitAttempt = false;
+
+            if (savedItem > 0) {
+              this.env.showMessage('{{value}} quotations approved', 'success', savedItem);
+            } else {
+              this.env.showMessage('Please check again, quotations must have at least 1 item to be approved', 'warning');
+            }
+          })
+          .catch((err) => {
+            this.submitAttempt = false;
+            console.log(err);
+          });
+      });
+  }
+
+  disapprove() {
+    if (this.submitAttempt) return;
+    this.env
+      .showPrompt(
+        { code: 'Bạn có chắc muốn không duyệt {{value}} báo giá đang chọn?', value: this.selectedItems.length },
+        null,
+        { code: 'Không phê duyệt {{value}} báo giá', value: this.selectedItems.length },
+      )
+      .then((_) => {
+        this.submitAttempt = true;
+        let postDTO = { Ids: [] };
+        postDTO.Ids = this.selectedItems.map((e) => e.Id);
+
+        this.pageProvider.commonService
+          .connect('POST', ApiSetting.apiDomain('SALE/Quotation/Disapprove/'), postDTO)
+          .toPromise()
+          .then((savedItem: any) => {
+            this.env.publishEvent({
+              Code: this.pageConfig.pageName,
+            });
+            this.env.showMessage('Saving completed!', 'success');
+            this.submitAttempt = false;
+          })
+          .catch((err) => {
+            this.submitAttempt = false;
+            console.log(err);
+          });
+      });
+  }
+
+  cancel() {
+    if (this.submitAttempt) return;
+    this.env
+      .showPrompt(
+        { code: 'Bạn có chắc muốn HỦY {{value}} báo giá đang chọn?', value: this.selectedItems.length },
+        null,
+        { code: 'Huỷ {{value}} báo giá', value: this.selectedItems.length },
+      )
+      .then((_) => {
+        this.submitAttempt = true;
+        let postDTO = { Ids: [] };
+        postDTO.Ids = this.selectedItems.map((e) => e.Id);
+
+        this.pageProvider.commonService
+          .connect('POST', ApiSetting.apiDomain('SALE/Quotation/Cancel/'), postDTO)
+          .toPromise()
+          .then((savedItem: any) => {
+            this.env.publishEvent({
+              Code: this.pageConfig.pageName,
+            });
+            this.env.showMessage('Saving completed!', 'success');
+            this.submitAttempt = false;
+          })
+          .catch((err) => {
+            this.submitAttempt = false;
+            console.log(err);
+          });
+      });
+  }
+
 }
