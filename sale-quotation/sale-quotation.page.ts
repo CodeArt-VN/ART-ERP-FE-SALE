@@ -73,12 +73,7 @@ export class SaleQuotationPage extends PageBase {
     console.log(this.items);
 
   }
- changeSelection(i: any, e?: any): void {
-    super.changeSelection(i, e);
-    if(!i.IsFilledQuantity){
-      this.pageConfig.ShowSubmit = this.pageConfig.ShowApprove = false;
-    }
-  }
+
   confirm() {
     let Ids = this.selectedItems.map((d) => d.Id);
     this.env.showPrompt(null, null, 'Do you want to confirm?').then((_) => {
