@@ -1,48 +1,48 @@
 .full-screen {
-  min-height: calc(100vh - 97px);
+	min-height: calc(100vh - 97px);
 }
 
 .table-contain {
-  max-width: 1072px;
+	max-width: 1072px;
 
-  // min-height: calc(100vh - 146px);
-  .table {
-    min-width: 980px;
-  }
+	// min-height: calc(100vh - 146px);
+	.table {
+		min-width: 980px;
+	}
 }
 
 .col-percent {
-  max-width: 70px;
-  min-width: 70px;
+	max-width: 70px;
+	min-width: 70px;
 
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.75rem;
-  cursor: pointer;
+	justify-content: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 0.75rem;
+	cursor: pointer;
 }
 
 .col-money {
-  max-width: 120px;
-  min-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  justify-content: flex-end;
+	max-width: 120px;
+	min-width: 120px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	justify-content: flex-end;
 }
 
 .col-date-trading {
-  max-width: 120px;
-  min-width: 120px;
+	max-width: 120px;
+	min-width: 120px;
 }
 
 .col-payment-deadline {
-  max-width: 120px;
-  min-width: 120px;
+	max-width: 120px;
+	min-width: 120px;
 }
 
 .col-status {
-  max-width: 100px;
-  min-width: 100px;
+	max-width: 100px;
+	min-width: 100px;
 }

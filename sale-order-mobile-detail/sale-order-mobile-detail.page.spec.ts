@@ -4,23 +4,23 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SaleOrderMobileDetailPage } from './sale-order-mobile-detail.page';
 
 describe('SaleOrderMobileDetailPage', () => {
-  let component: SaleOrderMobileDetailPage;
-  let fixture: ComponentFixture<SaleOrderMobileDetailPage>;
+	let component: SaleOrderMobileDetailPage;
+	let fixture: ComponentFixture<SaleOrderMobileDetailPage>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [SaleOrderMobileDetailPage],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			declarations: [SaleOrderMobileDetailPage],
+			schemas: [CUSTOM_ELEMENTS_SCHEMA],
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SaleOrderMobileDetailPage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(SaleOrderMobileDetailPage);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

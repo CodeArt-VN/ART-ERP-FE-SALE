@@ -7,15 +7,15 @@ import { ShareModule } from 'src/app/share.module';
 import { SaleQuotationDetailPage } from './sale-quotation-detail.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: SaleQuotationDetailPage,
-  },
+	{
+		path: '',
+		component: SaleQuotationDetailPage,
+	},
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule,IonicModule,ReactiveFormsModule, ShareModule, RouterModule.forChild(routes)],
-  declarations: [SaleQuotationDetailPage],
-  exports : []
+	imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, ShareModule, RouterModule.forChild(routes)],
+	declarations: [SaleQuotationDetailPage],
+	exports: [],
 })
 export class SaleQuotationDetailPageModule {}

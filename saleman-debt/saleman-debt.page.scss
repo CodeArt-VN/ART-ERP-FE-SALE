@@ -1,6 +1,6 @@
 .col-id {
-  max-width: 90px !important;
-  min-width: 90px !important;
+	max-width: 90px !important;
+	min-width: 90px !important;
 }
 
 .col-code,
@@ -8,124 +8,124 @@
 .col-SellerName,
 .col-DiscountFromSalesman,
 .col-ReceivedDiscountFromSalesman {
-  max-width: 150px !important;
-  min-width: 150px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	max-width: 150px !important;
+	min-width: 150px !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .cell small {
-  border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
+	border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
 
-  margin: 1px 2px;
-  padding: 2px 4px;
-  background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
-  border-radius: 2px;
+	margin: 1px 2px;
+	padding: 2px 4px;
+	background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
+	border-radius: 2px;
 
-  &.address {
-    border: none;
-    background-color: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+	&.address {
+		border: none;
+		background-color: transparent !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
 
-  &.active {
-    background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
-  }
+	&.active {
+		background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
+	}
 }
 
 .money {
-  font-weight: bold;
-  color: var(--ion-color-primary) !important;
+	font-weight: bold;
+	color: var(--ion-color-primary) !important;
 }
 
 .small-screen {
-  display: none;
+	display: none;
 }
 
 @media screen and (max-width: calc(1164px + 0px)) {
-  .small-screen {
-    display: flex;
-  }
+	.small-screen {
+		display: flex;
+	}
 
-  .hide-screen {
-    display: none !important;
-  }
+	.hide-screen {
+		display: none !important;
+	}
 
-  .row {
-    flex-wrap: wrap;
-    padding: 10px 130px 10px 35px !important;
+	.row {
+		flex-wrap: wrap;
+		padding: 10px 130px 10px 35px !important;
 
-    .cell {
-      padding: 1px 7px 1px 0 !important;
-    }
+		.cell {
+			padding: 1px 7px 1px 0 !important;
+		}
 
-    .col-id,
-    .col-code,
-    .col-OrderDate,
-    .col-SellerName,
-    .col-DiscountFromSalesman,
-    .col-ReceivedDiscountFromSalesman {
-      min-width: fit-content !important;
-      max-width: fit-content !important;
-      order: 4;
-      margin-bottom: 5px;
-      margin-right: 5px;
-    }
+		.col-id,
+		.col-code,
+		.col-OrderDate,
+		.col-SellerName,
+		.col-DiscountFromSalesman,
+		.col-ReceivedDiscountFromSalesman {
+			min-width: fit-content !important;
+			max-width: fit-content !important;
+			order: 4;
+			margin-bottom: 5px;
+			margin-right: 5px;
+		}
 
-    .col-checkbox {
-      order: 0;
-      margin-left: -35px;
-      padding: 0 !important;
-    }
+		.col-checkbox {
+			order: 0;
+			margin-left: -35px;
+			padding: 0 !important;
+		}
 
-    .col-id {
-      order: 1;
-      padding: 1px 7px !important;
-      border-radius: 3px;
-      background-color: var(--ion-color-primary);
-      color: var(--ion-color-primary-contrast) !important;
-    }
+		.col-id {
+			order: 1;
+			padding: 1px 7px !important;
+			border-radius: 3px;
+			background-color: var(--ion-color-primary);
+			color: var(--ion-color-primary-contrast) !important;
+		}
 
-    .col-code {
-      order: 2;
-      font-weight: bold;
-      font-size: 90%;
-    }
+		.col-code {
+			order: 2;
+			font-weight: bold;
+			font-size: 90%;
+		}
 
-    .col-OrderDate {
-      order: 3;
-      border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
-      background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
-      border-radius: 2px;
-      font-size: 80%;
-    }
+		.col-OrderDate {
+			order: 3;
+			border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
+			background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
+			border-radius: 2px;
+			font-size: 80%;
+		}
 
-    .col-DiscountFromSalesman,
-    .col-ReceivedDiscountFromSalesman {
-      width: 400px;
-      position: absolute;
-      right: 0px;
-    }
+		.col-DiscountFromSalesman,
+		.col-ReceivedDiscountFromSalesman {
+			width: 400px;
+			position: absolute;
+			right: 0px;
+		}
 
-    .col-ReceivedDiscountFromSalesman {
-      margin-top: 20px;
-      font-size: 80%;
-      color: var(--ion-color-success) !important;
-    }
+		.col-ReceivedDiscountFromSalesman {
+			margin-top: 20px;
+			font-size: 80%;
+			color: var(--ion-color-success) !important;
+		}
 
-    .col-SellerName {
-      order: 6;
-      font-size: 80%;
-      color: var(--ion-color-medium);
-    }
+		.col-SellerName {
+			order: 6;
+			font-size: 80%;
+			color: var(--ion-color-medium);
+		}
 
-    .col-name {
-      min-width: 100%;
-      order: 7;
-      font-size: 90%;
-      color: var(--ion-color-medium) !important;
-    }
-  }
+		.col-name {
+			min-width: 100%;
+			order: 7;
+			font-size: 90%;
+			color: var(--ion-color-medium) !important;
+		}
+	}
 }

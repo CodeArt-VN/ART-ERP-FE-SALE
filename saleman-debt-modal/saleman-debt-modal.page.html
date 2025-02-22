@@ -1,86 +1,84 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start" class="ion-hide-sm-down_">
-      <ion-button color="dark" class="ion-hide-sm-down_"> {{'Salesman discount to collect' | translate}} </ion-button>
-    </ion-buttons>
+	<ion-toolbar>
+		<ion-buttons slot="start" class="ion-hide-sm-down_">
+			<ion-button color="dark" class="ion-hide-sm-down_"> {{'Salesman discount to collect' | translate}} </ion-button>
+		</ion-buttons>
 
-    <ion-buttons slot="primary">
-      <ion-button title="{{'Help' | translate}}" (click)="help()">
-        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
-      </ion-button>
+		<ion-buttons slot="primary">
+			<ion-button title="{{'Help' | translate}}" (click)="help()">
+				<ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+			</ion-button>
 
-      <ion-button title="{{'Close' | translate}}" color="secondary" (click)="closeModal()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+			<ion-button title="{{'Close' | translate}}" color="secondary" (click)="closeModal()">
+				<ion-icon slot="icon-only" name="close"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 <ion-content appScrollbarTheme class="ion-padding">
-  <div id="order-detail-page" style="position: absolute"></div>
-  <div class="main-view">
-    <ion-grid fixed style="max-width: 500px">
-      <ion-row style="border: none">
-        <ion-col size="12">
-          <div class="c-control">
-            <label class="c-label" for="IDOwner">{{'Payer' | translate}}</label>
-            <ng-select
-              [(ngModel)]="item.IDOwner"
-              class="c-input"
-              #IDOwner
-              labelForId="IDOwner"
-              [items]="salemanList$ | async"
-              [typeahead]="salemanListInput$"
-              [loading]="salemanListLoading"
-              [virtualScroll]="true"
-              bindLabel="FullName"
-              bindValue="Id"
-              placeholder="{{'Search for name, code or phone number' | translate}}"
-            >
-              <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                <div *ngIf="i">
-                  <div>
-                    <span [ngOptionHighlight]="search">{{i.FullName}}</span>
-                  </div>
-                  <small
-                    >#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b>
-                    <span *ngIf="i.Phone">
-                      | {{'Telephone' | translate}}:
-                      <b [ngOptionHighlight]="search">{{i.Phone}}</b></span
-                    ></small
-                  >
-                </div>
-              </ng-template>
-            </ng-select>
-          </div>
+	<div id="order-detail-page" style="position: absolute"></div>
+	<div class="main-view">
+		<ion-grid fixed style="max-width: 500px">
+			<ion-row style="border: none">
+				<ion-col size="12">
+					<div class="c-control">
+						<label class="c-label" for="IDOwner">{{'Payer' | translate}}</label>
+						<ng-select
+							[(ngModel)]="item.IDOwner"
+							class="c-input"
+							#IDOwner
+							labelForId="IDOwner"
+							[items]="salemanList$ | async"
+							[typeahead]="salemanListInput$"
+							[loading]="salemanListLoading"
+							[virtualScroll]="true"
+							bindLabel="FullName"
+							bindValue="Id"
+							placeholder="{{'Search for name, code or phone number' | translate}}"
+						>
+							<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+								<div *ngIf="i">
+									<div>
+										<span [ngOptionHighlight]="search">{{i.FullName}}</span>
+									</div>
+									<small
+										>#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b>
+										<span *ngIf="i.Phone">
+											| {{'Telephone' | translate}}:
+											<b [ngOptionHighlight]="search">{{i.Phone}}</b></span
+										></small
+									>
+								</div>
+							</ng-template>
+						</ng-select>
+					</div>
 
-          <div class="c-control">
-            <label class="c-label" for="Amount"
-              >{{'Amount paid' | translate}}
-              <span *ngIf="selectedOrders.length">
-                {{'for' | translate}} {{selectedOrders.length}} {{'Debt note' | translate}}</span
-              ></label
-            >
-            <input
-              type="tel"
-              (focus)="$event.target.select()"
-              class="c-input"
-              mask="separator.2"
-              thousandSeparator=","
-              [allowNegativeNumbers]="false"
-              [(ngModel)]="item.Amount"
-            />
-          </div>
+					<div class="c-control">
+						<label class="c-label" for="Amount"
+							>{{'Amount paid' | translate}}
+							<span *ngIf="selectedOrders.length"> {{'for' | translate}} {{selectedOrders.length}} {{'Debt note' | translate}}</span></label
+						>
+						<input
+							type="tel"
+							(focus)="$event.target.select()"
+							class="c-input"
+							mask="separator.2"
+							thousandSeparator=","
+							[allowNegativeNumbers]="false"
+							[(ngModel)]="item.Amount"
+						/>
+					</div>
 
-          <div class="c-control">
-            <label class="c-label" for="PostDate">{{'Paid date' | translate}}</label>
-            <input class="c-input" id="PostDate" type="date" [(ngModel)]="item.PostDate" />
-          </div>
+					<div class="c-control">
+						<label class="c-label" for="PostDate">{{'Paid date' | translate}}</label>
+						<input class="c-input" id="PostDate" type="date" [(ngModel)]="item.PostDate" />
+					</div>
 
-          <div class="c-control ion-text-right">
-            <ion-button [disabled]="submitAttempt" (click)="createReceipt()">{{'Collection' | translate}}</ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
+					<div class="c-control ion-text-right">
+						<ion-button [disabled]="submitAttempt" (click)="createReceipt()">{{'Collection' | translate}}</ion-button>
+					</div>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</div>
 </ion-content>

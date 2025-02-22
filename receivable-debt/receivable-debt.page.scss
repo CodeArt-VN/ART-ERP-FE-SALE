@@ -1,31 +1,31 @@
 .col-code {
-  max-width: 150px !important;
-  min-width: 150px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	max-width: 150px !important;
+	min-width: 150px !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .cell small {
-  border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
-  margin: 1px 2px;
-  padding: 2px 4px;
-  background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
-  border-radius: 2px;
+	border-left: solid 3px rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
+	margin: 1px 2px;
+	padding: 2px 4px;
+	background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.1);
+	border-radius: 2px;
 
-  &.address {
-    border: none;
-    background-color: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+	&.address {
+		border: none;
+		background-color: transparent !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
 
-  &.active {
-    background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
-  }
+	&.active {
+		background-color: rgba(var(--ion-color-primary-rgb, 0, 0, 0), 0.2);
+	}
 }
 
 .money {
-  font-weight: bold;
-  color: var(--ion-color-primary) !important;
+	font-weight: bold;
+	color: var(--ion-color-primary) !important;
 }

@@ -7,14 +7,14 @@ import { ShareModule } from 'src/app/share.module';
 import { CloseOrderPage } from './close-order.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: CloseOrderPage,
-  },
+	{
+		path: '',
+		component: CloseOrderPage,
+	},
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, ShareModule, RouterModule.forChild(routes)],
-  declarations: [CloseOrderPage],
+	imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule, ShareModule, RouterModule.forChild(routes)],
+	declarations: [CloseOrderPage],
 })
 export class CloseOrderPageModule {}

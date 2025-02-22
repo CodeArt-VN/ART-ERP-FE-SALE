@@ -1,48 +1,52 @@
-.smallDanger{
- font-weight: 400 !important;
+.smallDanger {
+	font-weight: 400 !important;
 }
 :host ::ng-deep {
-  .hide-desktop{
-    display: none !important;
-  }
+	.hide-desktop {
+		display: none !important;
+	}
 }
 
 :host ::ng-deep {
-@media screen and (max-width: 1164px) {
-  app-data-table.responsive .row, .table.responsive .row{
-    padding: 16px 100px 16px 16px;
-  }
-  .smallDanger.bold{
-    font-weight: bold !important;
-   }
-  .hideSmall{
-    display:none !important;
-  }
-  .hide-desktop{
-    display: flex  !important;
-  }
-  .smallDanger{
-    color: var(--ion-color-danger)  !important;
-  }
-  
-  app-data-table.responsive .row .col-id, .table.responsive .row .col-id
-   {
-      order: 0;
-  }
+	@media screen and (max-width: 1164px) {
+		app-data-table.responsive .row,
+		.table.responsive .row {
+			padding: 16px 100px 16px 16px;
+		}
+		.smallDanger.bold {
+			font-weight: bold !important;
+		}
+		.hideSmall {
+			display: none !important;
+		}
+		.hide-desktop {
+			display: flex !important;
+		}
+		.smallDanger {
+			color: var(--ion-color-danger) !important;
+		}
 
-  app-data-table.responsive .row .col-name, .table.responsive .row .col-name {
-    order: 2;
-}
-app-data-table.responsive .row .col-number, .table.responsive .row .col-number {
-  order: 3;
-  position: unset;
-  margin-top : unset;
-  color: var(--ion-color-danger)  !important;
-    font-size: 110%;
-}
-app-data-table.responsive .row .col-code, .table.responsive .row .col-code {
-  color: var(--ion-color-danger);
-  font-weight: bold;
-}
-  }
+		app-data-table.responsive .row .col-id,
+		.table.responsive .row .col-id {
+			order: 0;
+		}
+
+		app-data-table.responsive .row .col-name,
+		.table.responsive .row .col-name {
+			order: 2;
+		}
+		app-data-table.responsive .row .col-number,
+		.table.responsive .row .col-number {
+			order: 3;
+			position: unset;
+			margin-top: unset;
+			color: var(--ion-color-danger) !important;
+			font-size: 110%;
+		}
+		app-data-table.responsive .row .col-code,
+		.table.responsive .row .col-code {
+			color: var(--ion-color-danger);
+			font-weight: bold;
+		}
+	}
 }

@@ -1,285 +1,146 @@
 <ion-header>
-  <app-list-toolbar
-    pageTitle="{{'Debt of Saleman' | translate}}"
-    [pageConfig]="pageConfig"
-    [selectedItems]="selectedItems"
-    [query]="query"
-    (refresh)="refresh()"
-    (export)="export()"
-    (import)="import($event)"
-    (help)="help()"
-    (unselect)="unselect()"
-    (archiveItems)="archiveItems()"
-    (deleteItems)="deleteItems()"
-    (changeBranch)="changeBranch($event)"
-    (createReceipt)="createReceipt()"
-  ></app-list-toolbar>
+	<app-list-toolbar
+		pageTitle="{{'Debt of Saleman' | translate}}"
+		[pageConfig]="pageConfig"
+		[selectedItems]="selectedItems"
+		[query]="query"
+		(refresh)="refresh()"
+		(export)="export()"
+		(import)="import($event)"
+		(help)="help()"
+		(unselect)="unselect()"
+		(archiveItems)="archiveItems()"
+		(deleteItems)="deleteItems()"
+		(changeBranch)="changeBranch($event)"
+		(createReceipt)="createReceipt()"
+	></app-list-toolbar>
 
-  <section class="table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
-    <header class="bold">
-      <div class="col-checkbox cell"></div>
-      <div class="col-id cell" (click)="sortToggle('Id')">
-        #{{'Order' | translate}}
-        <ion-icon class="min-btn" *ngIf="sort.Id" [name]="sort.Id == 'Id'?'arrow-down': 'arrow-up'"></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.Id"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div class="col-OrderDate cell" (click)="sortToggle('OrderDate')">
-        {{'Order created date' | translate}}
-        <ion-icon
-          class="min-btn"
-          *ngIf="sort.OrderDate"
-          [name]="sort.OrderDate == 'OrderDate'?'arrow-down': 'arrow-up'"
-        ></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.OrderDate"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div class="col-name cell" (click)="sortToggle('CustomerName')">
-        {{'Customer' | translate}}
-        <ion-icon
-          class="min-btn"
-          *ngIf="sort.CustomerName"
-          [name]="sort.CustomerName == 'CustomerName'?'arrow-down': 'arrow-up'"
-        ></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.CustomerName"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div class="col-SellerName cell" (click)="sortToggle('IDSeller')">
-        {{'Salesman' | translate}}
-        <ion-icon
-          class="min-btn"
-          *ngIf="sort.IDSeller"
-          [name]="sort.IDSeller == 'IDSeller'?'arrow-down': 'arrow-up'"
-        ></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.SellerName"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div class="col-DiscountFromSalesman cell money hide-screen" (click)="sortToggle('DiscountFromSalesman')">
-        {{'Discount from saleman' | translate}}
-        <ion-icon
-          class="min-btn"
-          *ngIf="sort.DiscountFromSalesman"
-          [name]="sort.DiscountFromSalesman == 'DiscountFromSalesman'?'arrow-down': 'arrow-up'"
-        ></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.DiscountFromSalesman"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div
-        class="col-ReceivedDiscountFromSalesman cell money hide-screen"
-        (click)="sortToggle('ReceivedDiscountFromSalesman')"
-      >
-        {{'Amount paid' | translate}}
-        <ion-icon
-          class="min-btn"
-          *ngIf="sort.ReceivedDiscountFromSalesman"
-          [name]="sort.ReceivedDiscountFromSalesman == 'ReceivedDiscountFromSalesman'?'arrow-down': 'arrow-up'"
-        ></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.ReceivedDiscountFromSalesman"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-      <div class="col-code cell hide-screen" (click)="sortToggle('Code')">
-        {{'Vendor code' | translate}}
-        <ion-icon class="min-btn" *ngIf="sort.Code" [name]="sort.Code == 'Code'?'arrow-down': 'arrow-up'"></ion-icon>
-        <ion-icon
-          class="min-btn"
-          (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
-          *ngIf="query.Code"
-          name="search"
-          color="primary"
-        ></ion-icon>
-      </div>
-    </header>
-    <form (submit)="refresh()" action="#">
-      <header class="filter" *ngIf="pageConfig.isShowSearch">
-        <div class="col-checkbox cell"></div>
-        <div class="col-id cell">
-          <input
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.Id"
-            class="c-input"
-            [ngClass]="{active: query.Id}"
-            type="text"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.Id=''; refresh()"
-            *ngIf="query.Id"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <div class="col-OrderDate cell">
-          <input
-            (change)="refresh()"
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.OrderDate"
-            class="c-input"
-            [ngClass]="{active: query.OrderDate}"
-            type="date"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.OrderDate=''; refresh()"
-            *ngIf="query.OrderDate"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <div class="col-name cell">
-          <input
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.CustomerName"
-            class="c-input"
-            [ngClass]="{active: query.CustomerName}"
-            type="text"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.CustomerName=''; refresh()"
-            *ngIf="query.CustomerName"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <div class="col-SellerName cell">
-          <input
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.SellerName"
-            class="c-input"
-            [ngClass]="{active: query.SellerName}"
-            type="text"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.SellerName=''; refresh()"
-            *ngIf="query.SellerName"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <div class="col-DiscountFromSalesman cell money hide-screen">
-          <input
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.DiscountFromSalesman"
-            class="c-input"
-            [ngClass]="{active: query.DiscountFromSalesman}"
-            type="text"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.DiscountFromSalesman=''; refresh()"
-            *ngIf="query.DiscountFromSalesman"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <div class="col-ReceivedDiscountFromSalesman cell money hide-screen"></div>
-        <div class="col-code cell hide-screen">
-          <input
-            [ngModelOptions]="{standalone: true}"
-            [(ngModel)]="query.Code"
-            class="c-input"
-            [ngClass]="{active: query.Code}"
-            type="text"
-          />
-          <ion-icon
-            class="min-btn"
-            (click)="query.Code=''; refresh()"
-            *ngIf="query.Code"
-            name="close-circle-outline"
-          ></ion-icon>
-        </div>
-        <button mat-raised-button type="submit" style="display: none">{{'Search' | translate}}</button>
-      </header>
-    </form>
-  </section>
+	<section class="table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
+		<header class="bold">
+			<div class="col-checkbox cell"></div>
+			<div class="col-id cell" (click)="sortToggle('Id')">
+				#{{'Order' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Id" [name]="sort.Id == 'Id'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Id" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-OrderDate cell" (click)="sortToggle('OrderDate')">
+				{{'Order created date' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.OrderDate" [name]="sort.OrderDate == 'OrderDate'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.OrderDate" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-name cell" (click)="sortToggle('CustomerName')">
+				{{'Customer' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.CustomerName" [name]="sort.CustomerName == 'CustomerName'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.CustomerName" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-SellerName cell" (click)="sortToggle('IDSeller')">
+				{{'Salesman' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.IDSeller" [name]="sort.IDSeller == 'IDSeller'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.SellerName" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-DiscountFromSalesman cell money hide-screen" (click)="sortToggle('DiscountFromSalesman')">
+				{{'Discount from saleman' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.DiscountFromSalesman" [name]="sort.DiscountFromSalesman == 'DiscountFromSalesman'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.DiscountFromSalesman" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-ReceivedDiscountFromSalesman cell money hide-screen" (click)="sortToggle('ReceivedDiscountFromSalesman')">
+				{{'Amount paid' | translate}}
+				<ion-icon
+					class="min-btn"
+					*ngIf="sort.ReceivedDiscountFromSalesman"
+					[name]="sort.ReceivedDiscountFromSalesman == 'ReceivedDiscountFromSalesman'?'arrow-down': 'arrow-up'"
+				></ion-icon>
+				<ion-icon
+					class="min-btn"
+					(click)="pageConfig.isShowSearch = !pageConfig.isShowSearch"
+					*ngIf="query.ReceivedDiscountFromSalesman"
+					name="search"
+					color="primary"
+				></ion-icon>
+			</div>
+			<div class="col-code cell hide-screen" (click)="sortToggle('Code')">
+				{{'Vendor code' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Code" [name]="sort.Code == 'Code'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Code" name="search" color="primary"></ion-icon>
+			</div>
+		</header>
+		<form (submit)="refresh()" action="#">
+			<header class="filter" *ngIf="pageConfig.isShowSearch">
+				<div class="col-checkbox cell"></div>
+				<div class="col-id cell">
+					<input [ngModelOptions]="{standalone: true}" [(ngModel)]="query.Id" class="c-input" [ngClass]="{active: query.Id}" type="text" />
+					<ion-icon class="min-btn" (click)="query.Id=''; refresh()" *ngIf="query.Id" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-OrderDate cell">
+					<input
+						(change)="refresh()"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.OrderDate"
+						class="c-input"
+						[ngClass]="{active: query.OrderDate}"
+						type="date"
+					/>
+					<ion-icon class="min-btn" (click)="query.OrderDate=''; refresh()" *ngIf="query.OrderDate" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-name cell">
+					<input [ngModelOptions]="{standalone: true}" [(ngModel)]="query.CustomerName" class="c-input" [ngClass]="{active: query.CustomerName}" type="text" />
+					<ion-icon class="min-btn" (click)="query.CustomerName=''; refresh()" *ngIf="query.CustomerName" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-SellerName cell">
+					<input [ngModelOptions]="{standalone: true}" [(ngModel)]="query.SellerName" class="c-input" [ngClass]="{active: query.SellerName}" type="text" />
+					<ion-icon class="min-btn" (click)="query.SellerName=''; refresh()" *ngIf="query.SellerName" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-DiscountFromSalesman cell money hide-screen">
+					<input
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.DiscountFromSalesman"
+						class="c-input"
+						[ngClass]="{active: query.DiscountFromSalesman}"
+						type="text"
+					/>
+					<ion-icon class="min-btn" (click)="query.DiscountFromSalesman=''; refresh()" *ngIf="query.DiscountFromSalesman" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-ReceivedDiscountFromSalesman cell money hide-screen"></div>
+				<div class="col-code cell hide-screen">
+					<input [ngModelOptions]="{standalone: true}" [(ngModel)]="query.Code" class="c-input" [ngClass]="{active: query.Code}" type="text" />
+					<ion-icon class="min-btn" (click)="query.Code=''; refresh()" *ngIf="query.Code" name="close-circle-outline"></ion-icon>
+				</div>
+				<button mat-raised-button type="submit" style="display: none">{{'Search' | translate}}</button>
+			</header>
+		</form>
+	</section>
 </ion-header>
 
 <ion-content appScrollbarTheme class="header-table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
-  <app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
-  <ion-fab
-    *ngIf="pageConfig.isShowFeature"
-    [ngClass]="{withSearch: pageConfig.isShowSearch}"
-    class="feature"
-    vertical="top"
-    horizontal="end"
-    slot="fixed"
-  >
-    <div class="ion-padding ion-margin"></div>
-  </ion-fab>
-  <div *ngIf="items.length && pageConfig.showSpinner==false">
-    <section class="table">
-      <div
-        *ngFor="let i of items; let j = index;"
-        class="row"
-        [ngClass]="{odd: j % 2 != 0}"
-        [ngClass]="{selected: i.checked}"
-      >
-        <div class="col-checkbox cell">
-          <input (click)="changeSelection(i, $event)" class="c-checkbox" [(ngModel)]="i.checked" type="checkbox" />
-        </div>
-        <a [href]="'#/'+'sale-order/'+i.Id" (click)="nav('sale-order/'+i.Id,'forward')" class="col-id cell">
-          {{i.Id}}
-        </a>
-        <div class="col-OrderDate cell" (click)="query.OrderDate=i.Query; pageConfig.isShowSearch=true; refresh()">
-          {{i.OrderDateText}}
-        </div>
-        <div class="col-name cell">
-          <span title="{{'View order's details' | translate}}" (click)="nav('sale-order/'+i.Id,'forward')"
-            >{{i.CustomerName}}</span
-          >
-          <small
-            title="{{'Search for this customer' | translate}}"
-            (click)="query.CustomerName='C:'+i.IDContact; pageConfig.isShowSearch=true; refresh()"
-          >
-            {{i.IDContact}}
-          </small>
-          <a
-            [href]="'#/'+'business-partner/'+i.IDContact"
-            (click)="nav('business-partner/'+i.IDContact,'forward')"
-            title="{{'View customers' information' | translate}}"
-          >
-            <ion-icon name="open-outline"></ion-icon>
-          </a>
-        </div>
-        <div class="col-SellerName cell">{{i.SellerName}}</div>
-        <div class="col-DiscountFromSalesman cell money">{{i.DiscountFromSalesmanText}}</div>
-        <div class="col-ReceivedDiscountFromSalesman cell money">{{i.ReceivedDiscountFromSalesmanText}}</div>
-        <div class="col-code cell">{{i.Code}}</div>
-      </div>
-    </section>
-  </div>
-  <ion-infinite-scroll
-    color="primary"
-    threshold="20%"
-    (ionInfinite)="loadData($event)"
-    [disabled]="!pageConfig.infiniteScroll || pageConfig.isEndOfData"
-  >
-    <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+	<app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<ion-fab *ngIf="pageConfig.isShowFeature" [ngClass]="{withSearch: pageConfig.isShowSearch}" class="feature" vertical="top" horizontal="end" slot="fixed">
+		<div class="ion-padding ion-margin"></div>
+	</ion-fab>
+	<div *ngIf="items.length && pageConfig.showSpinner==false">
+		<section class="table">
+			<div *ngFor="let i of items; let j = index;" class="row" [ngClass]="{odd: j % 2 != 0}" [ngClass]="{selected: i.checked}">
+				<div class="col-checkbox cell">
+					<input (click)="changeSelection(i, $event)" class="c-checkbox" [(ngModel)]="i.checked" type="checkbox" />
+				</div>
+				<a [href]="'#/'+'sale-order/'+i.Id" (click)="nav('sale-order/'+i.Id,'forward')" class="col-id cell"> {{i.Id}} </a>
+				<div class="col-OrderDate cell" (click)="query.OrderDate=i.Query; pageConfig.isShowSearch=true; refresh()">{{i.OrderDateText}}</div>
+				<div class="col-name cell">
+					<span title="{{'View order's details' | translate}}" (click)="nav('sale-order/'+i.Id,'forward')">{{i.CustomerName}}</span>
+					<small title="{{'Search for this customer' | translate}}" (click)="query.CustomerName='C:'+i.IDContact; pageConfig.isShowSearch=true; refresh()">
+						{{i.IDContact}}
+					</small>
+					<a [href]="'#/'+'business-partner/'+i.IDContact" (click)="nav('business-partner/'+i.IDContact,'forward')" title="{{'View customers' information' | translate}}">
+						<ion-icon name="open-outline"></ion-icon>
+					</a>
+				</div>
+				<div class="col-SellerName cell">{{i.SellerName}}</div>
+				<div class="col-DiscountFromSalesman cell money">{{i.DiscountFromSalesmanText}}</div>
+				<div class="col-ReceivedDiscountFromSalesman cell money">{{i.ReceivedDiscountFromSalesmanText}}</div>
+				<div class="col-code cell">{{i.Code}}</div>
+			</div>
+		</section>
+	</div>
+	<ion-infinite-scroll color="primary" threshold="20%" (ionInfinite)="loadData($event)" [disabled]="!pageConfig.infiniteScroll || pageConfig.isEndOfData">
+		<ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>

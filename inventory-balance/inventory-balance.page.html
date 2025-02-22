@@ -1,48 +1,51 @@
 <ion-header>
 	<app-toolbar [page]="this"></app-toolbar>
-
 </ion-header>
 
 <ion-content appScrollbarTheme class="header-table">
-	<app-data-table class="box-shadow responsive" *ngIf ="items" [rows]="items" [(selectedRows)]="selectedItems" (dataInfinite)="loadData($event)"
+	<app-data-table
+		class="box-shadow responsive"
+		*ngIf="items"
+		[rows]="items"
+		[(selectedRows)]="selectedItems"
+		(dataInfinite)="loadData($event)"
 		[(query)]="query"
 		(filter)="onDatatableFilter($event)"
-		(sort)="onSort($event)" 
+		(sort)="onSort($event)"
 		[showFilter]="pageConfig.isShowSearch"
-		[showSpinner]="pageConfig.showSpinner" >
-
+		[showSpinner]="pageConfig.showSpinner"
+	>
 		<datatable-column class="col-id" name="ID item" property="ItemId">
-		  <ng-template let-i="row" datatable-cell-template>
-			<a [routerLink]="['/item/'+i?.ItemId]">{{i?.ItemId}}</a>
-			<small label class="hide-desktop">{{i?.ItemCode}}</small>
-		  </ng-template>
-		</datatable-column>
-	
-		<datatable-column class="col-name"  name="Item name" property="ItemName">
 			<ng-template let-i="row" datatable-cell-template>
-				<a style="color:var(--ion-color-dark)" [routerLink]="['/item/'+i?.ItemId]"><span [ngClass]="{'bold': !i.UoMs.length==0}">{{i.ItemName}}</span>
-					<p class="ion-no-margin hideSmall"  *ngIf="isShowBranch">{{i?.BranchName}}</p>
+				<a [routerLink]="['/item/'+i?.ItemId]">{{i?.ItemId}}</a>
+				<small label class="hide-desktop">{{i?.ItemCode}}</small>
+			</ng-template>
+		</datatable-column>
+
+		<datatable-column class="col-name" name="Item name" property="ItemName">
+			<ng-template let-i="row" datatable-cell-template>
+				<a style="color: var(--ion-color-dark)" [routerLink]="['/item/'+i?.ItemId]"
+					><span [ngClass]="{'bold': !i.UoMs.length==0}">{{i.ItemName}}</span>
+					<p class="ion-no-margin hideSmall" *ngIf="isShowBranch">{{i?.BranchName}}</p>
 				</a>
 			</ng-template>
 		</datatable-column>
 
-		<datatable-column class="col-name hide-desktop"  name="Warehouse" property="IDBranch">
-			<ng-template let-i="row" datatable-cell-template>
-					{{i?.BranchName}}
-			</ng-template>
+		<datatable-column class="col-name hide-desktop" name="Warehouse" property="IDBranch">
+			<ng-template let-i="row" datatable-cell-template> {{i?.BranchName}} </ng-template>
 		</datatable-column>
-	
-		<datatable-column class="col-name"  name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
+
+		<datatable-column class="col-name" name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs; let j = index">
-				<span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
-				<span *ngIf="j != 0">&nbsp;+&nbsp;</span>	<span >{{uom?.Quantity | number}} {{uom?.UoMName}} </span> 
+					<span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
+					<span *ngIf="j != 0">&nbsp;+&nbsp;</span> <span>{{uom?.Quantity | number}} {{uom?.UoMName}} </span>
 					<!-- <span class="hideSmall">{{i.UoM?.Name}}</span> -->
 				</ng-container>
 				<span *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</span>
-			  </ng-template>
+			</ng-template>
 		</datatable-column>
-		<datatable-column class="col-name " name="Price" property="ItemId"  [canFilter]="false"  [canSort]="false">
+		<datatable-column class="col-name" name="Price" property="ItemId" [canFilter]="false" [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs;let j = index">
 					<div *ngIf="uom.Price != null" class="smallDanger" [ngStyle]="{'font-weight':uom.Quantity >0? 'bold':''}">
@@ -51,10 +54,9 @@
 					</div>
 					<!-- <span class="hideSmall">{{uom.Price | number}}</span> -->
 				</ng-container>
-			
 			</ng-template>
 		</datatable-column>
-<!-- 
+		<!-- 
     <datatable-column class="col-name" name="Warehouse" property="WarehouseName">
 		  <ng-template let-i="row" datatable-cell-template>
 			{{i.WarehouseName}}
@@ -63,5 +65,5 @@
 			</small>
 		  </ng-template>
 		</datatable-column> -->
-	  </app-data-table>
+	</app-data-table>
 </ion-content>

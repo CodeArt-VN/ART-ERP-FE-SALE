@@ -1,498 +1,473 @@
 <ion-header>
-  <app-detail-toolbar [page]="this" [title]="'#'+item.Id"></app-detail-toolbar>
+	<app-detail-toolbar [page]="this" [title]="'#'+item.Id"></app-detail-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme class="ion-padding">
-  <div id="order-detail-page" style="position: absolute"></div>
-  <div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
-    <ion-grid fixed style="max-width: 500px">
-      <form [formGroup]="formGroup">
-        <ion-row class="hr-group">
-          <ion-col size="12">
-            <div class="c-control" *ngIf="item.Id">
-              <label class="c-label">
-                <ion-text color="primary"
-                  >{{'Order' | translate}} #{{item.Id}} {{item.Code? ' - '+ item.Code: ''}}
-                  <small>{{item.OrderDateText}}</small></ion-text
-                >
-              </label>
-            </div>
-            <div class="c-control">
-              <label class="c-label" for="IDAddress">
-                <ion-button
-                  *ngIf="pageConfig.canEdit && pageConfig.canAddCustomer"
-                  style="margin-top: -13px"
-                  class="ion-float-right"
-                  size="small"
-                  (click)="addContact()"
-                >
-                  <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                  {{'Create new customer' | translate}}
-                </ion-button>
-                {{'Customer' | translate}}
-                <small>{{item.IDContact}}</small>
-                <span
-                  *ngIf="!formGroup.controls.IDAddress.valid && !formGroup.controls.IDAddress.pending && (formGroup.controls.IDAddress.dirty || submitAttempt)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
-              <ng-select
-                class="c-input"
-                (change)="changedIDAddress($event)"
-                #IDAddress
-                labelForId="IDAddress"
-                formControlName="IDAddress"
-                [items]="contactList$ | async"
-                [typeahead]="contactListInput$"
-                [loading]="contactListLoading"
-                [virtualScroll]="true"
-                bindLabel="Name"
-                bindValue="IDAddress"
-                placeholder="{{'Search for name, code or phone number' | translate}}"
-              >
-                <ng-template ng-label-tmp let-i="item" let-a="item.Address">
-                  {{i.Name}}
-                  <small *ngIf="a">
-                    <span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-                    <span *ngIf="a.Ward">, {{a.Ward}}</span>
-                    <span *ngIf="a.District">, {{a.District}}</span>
-                    <span *ngIf="a.Province">, {{a.Province}}</span>
-                  </small>
-                </ng-template>
-                <ng-template ng-option-tmp let-i="item" let-a="item.Address" let-search="searchTerm">
-                  <div *ngIf="i">
-                    <div>
-                      <span [ngOptionHighlight]="search">{{i.Name}}</span>
-                      <span *ngIf="i.WorkPhone">
-                        |
-                        <small>
-                          <b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
-                        </small></span
-                      >
-                    </div>
-                    <small *ngIf="a">
-                      <b *ngIf="i.Code"><span class="important" [ngOptionHighlight]="search">{{i.Code}}</span></b>
-                      <span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-                      <span *ngIf="a.Ward">, {{a.Ward}}</span>
-                      <span *ngIf="a.District">, {{a.District}}</span>
-                      <span *ngIf="a.Province">, {{a.Province}}</span>
-                      <br *ngIf="a.AddressLine2 || a.Contact" />
-                      <span *ngIf="a.AddressLine2">{{a.AddressLine2}}</span>
-                      <span *ngIf="a.Contact"> | {{'Contact' | translate}}: {{a.Contact}}</span>
-                      <span *ngIf="a.Phone1"> - {{a.Phone1}}</span>
-                      <span *ngIf="a.Phone2"> - {{a.Phone2}}</span>
-                    </small>
-                  </div>
-                </ng-template>
-              </ng-select>
-            </div>
+	<div id="order-detail-page" style="position: absolute"></div>
+	<div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
+		<ion-grid fixed style="max-width: 500px">
+			<form [formGroup]="formGroup">
+				<ion-row class="hr-group">
+					<ion-col size="12">
+						<div class="c-control" *ngIf="item.Id">
+							<label class="c-label">
+								<ion-text color="primary">{{'Order' | translate}} #{{item.Id}} {{item.Code? ' - '+ item.Code: ''}} <small>{{item.OrderDateText}}</small></ion-text>
+							</label>
+						</div>
+						<div class="c-control">
+							<label class="c-label" for="IDAddress">
+								<ion-button
+									*ngIf="pageConfig.canEdit && pageConfig.canAddCustomer"
+									style="margin-top: -13px"
+									class="ion-float-right"
+									size="small"
+									(click)="addContact()"
+								>
+									<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+									{{'Create new customer' | translate}}
+								</ion-button>
+								{{'Customer' | translate}}
+								<small>{{item.IDContact}}</small>
+								<span
+									*ngIf="!formGroup.controls.IDAddress.valid && !formGroup.controls.IDAddress.pending && (formGroup.controls.IDAddress.dirty || submitAttempt)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
+							<ng-select
+								class="c-input"
+								(change)="changedIDAddress($event)"
+								#IDAddress
+								labelForId="IDAddress"
+								formControlName="IDAddress"
+								[items]="contactList$ | async"
+								[typeahead]="contactListInput$"
+								[loading]="contactListLoading"
+								[virtualScroll]="true"
+								bindLabel="Name"
+								bindValue="IDAddress"
+								placeholder="{{'Search for name, code or phone number' | translate}}"
+							>
+								<ng-template ng-label-tmp let-i="item" let-a="item.Address">
+									{{i.Name}}
+									<small *ngIf="a">
+										<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
+										<span *ngIf="a.Ward">, {{a.Ward}}</span>
+										<span *ngIf="a.District">, {{a.District}}</span>
+										<span *ngIf="a.Province">, {{a.Province}}</span>
+									</small>
+								</ng-template>
+								<ng-template ng-option-tmp let-i="item" let-a="item.Address" let-search="searchTerm">
+									<div *ngIf="i">
+										<div>
+											<span [ngOptionHighlight]="search">{{i.Name}}</span>
+											<span *ngIf="i.WorkPhone">
+												|
+												<small>
+													<b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
+												</small></span
+											>
+										</div>
+										<small *ngIf="a">
+											<b *ngIf="i.Code"><span class="important" [ngOptionHighlight]="search">{{i.Code}}</span></b>
+											<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
+											<span *ngIf="a.Ward">, {{a.Ward}}</span>
+											<span *ngIf="a.District">, {{a.District}}</span>
+											<span *ngIf="a.Province">, {{a.Province}}</span>
+											<br *ngIf="a.AddressLine2 || a.Contact" />
+											<span *ngIf="a.AddressLine2">{{a.AddressLine2}}</span>
+											<span *ngIf="a.Contact"> | {{'Contact' | translate}}: {{a.Contact}}</span>
+											<span *ngIf="a.Phone1"> - {{a.Phone1}}</span>
+											<span *ngIf="a.Phone2"> - {{a.Phone2}}</span>
+										</small>
+									</div>
+								</ng-template>
+							</ng-select>
+						</div>
 
-            <div class="c-control">
-              <label class="c-label" for="OriginalTotalAfterTax">
-                <ion-button
-                  style="margin-top: -13px"
-                  class="ion-float-right"
-                  size="small"
-                  (click)="showRemark = !showRemark"
-                >
-                  <ion-icon slot="start" name="chatbubble-ellipses-outline"></ion-icon>
-                 {{'Hóa đơn & Ghi chú' | translate}}
-                </ion-button>
+						<div class="c-control">
+							<label class="c-label" for="OriginalTotalAfterTax">
+								<ion-button style="margin-top: -13px" class="ion-float-right" size="small" (click)="showRemark = !showRemark">
+									<ion-icon slot="start" name="chatbubble-ellipses-outline"></ion-icon>
+									{{'Hóa đơn & Ghi chú' | translate}}
+								</ion-button>
 
-                {{'Total amount' | translate}}
-                <span
-                  *ngIf="!formGroup.controls.OriginalTotalAfterTax.valid && !formGroup.controls.OriginalTotalAfterTax.pending && (formGroup.controls.OriginalTotalAfterTax.dirty)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
-              <input
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="false"
-                suffix=" ₫"
-                class="c-input"
-                id="OriginalTotalAfterTax"
-                formControlName="OriginalTotalAfterTax"
-                type="text"
-              />
-            </div>
+								{{'Total amount' | translate}}
+								<span
+									*ngIf="!formGroup.controls.OriginalTotalAfterTax.valid && !formGroup.controls.OriginalTotalAfterTax.pending && (formGroup.controls.OriginalTotalAfterTax.dirty)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
+							<input
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="false"
+								suffix=" ₫"
+								class="c-input"
+								id="OriginalTotalAfterTax"
+								formControlName="OriginalTotalAfterTax"
+								type="text"
+							/>
+						</div>
 
-            <ng-container *ngIf="showRemark">
-              <app-form-control
-                [field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
-                (change)="saveChange()"
-              ></app-form-control>
+						<ng-container *ngIf="showRemark">
+							<app-form-control
+								[field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
+								(change)="saveChange()"
+							></app-form-control>
 
-              <app-form-control
-                [field]="{id:'Name', label: 'Content', form : formGroup }"
-                (change)="saveChange()"
-              ></app-form-control>
+							<app-form-control [field]="{id:'Name', label: 'Content', form : formGroup }" (change)="saveChange()"></app-form-control>
 
-              <app-form-control
-                [field]="{id:'Remark', type:'textarea', form : formGroup }"
-                (change)="saveChange()"
-              ></app-form-control>
-            </ng-container>
+							<app-form-control [field]="{id:'Remark', type:'textarea', form : formGroup }" (change)="saveChange()"></app-form-control>
+						</ng-container>
 
-            <div
-              class="c-control"
-              *ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount"
-            >
-              <label class="c-label" for="OriginalTotalAfterDiscountFromSalesman"
-                >{{'Total amount paid' | translate}}</label
-              >
-              <input
-                [disabled]="true"
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="false"
-                suffix=" ₫"
-                class="c-input"
-                id="OriginalTotalAfterDiscountFromSalesman"
-                [ngModelOptions]="{standalone: true}"
-                [ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
-                type="text"
-              />
-            </div>
+						<div class="c-control" *ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount">
+							<label class="c-label" for="OriginalTotalAfterDiscountFromSalesman">{{'Total amount paid' | translate}}</label>
+							<input
+								[disabled]="true"
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="false"
+								suffix=" ₫"
+								class="c-input"
+								id="OriginalTotalAfterDiscountFromSalesman"
+								[ngModelOptions]="{standalone: true}"
+								[ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
+								type="text"
+							/>
+						</div>
 
-            <div class="c-control ion-text-right">
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103) ) || submitAttempt"
-                (click)="item.IsSampleOrder = !item.IsSampleOrder; changedSampleOrder()"
-                [fill]=" item.IsSampleOrder? 'solid' : 'outline' "
-              >
-                {{'Sample' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
-                (click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
-                [fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
-              >
-                {{'Urgent order' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
-                (click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
-                [fill]=" item.IsWholeSale? 'solid' : 'outline' "
-              >
-                {{'Wholesale customer' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
-                (click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
-                [fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
-                color="blue"
-              >
-                {{'Coverage' | translate}}
-              </ion-button>
-              <!-- <ion-button size="small" [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt" (click)="item.SalesmanDelivers = !item.SalesmanDelivers; saveChange()" [fill]=" item.SalesmanDelivers? 'solid' : 'outline' " color="blue">
+						<div class="c-control ion-text-right">
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103) ) || submitAttempt"
+								(click)="item.IsSampleOrder = !item.IsSampleOrder; changedSampleOrder()"
+								[fill]=" item.IsSampleOrder? 'solid' : 'outline' "
+							>
+								{{'Sample' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
+								(click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
+								[fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
+							>
+								{{'Urgent order' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
+								(click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
+								[fill]=" item.IsWholeSale? 'solid' : 'outline' "
+							>
+								{{'Wholesale customer' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt"
+								(click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
+								[fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
+								color="blue"
+							>
+								{{'Coverage' | translate}}
+							</ion-button>
+							<!-- <ion-button size="small" [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.IDStatus == 103))|| submitAttempt" (click)="item.SalesmanDelivers = !item.SalesmanDelivers; saveChange()" [fill]=" item.SalesmanDelivers? 'solid' : 'outline' " color="blue">
                                 {{'Salesman delivers' | translate}}
                             </ion-button> -->
-            </div>
-          </ion-col>
-        </ion-row>
-      </form>
-    </ion-grid>
+						</div>
+					</ion-col>
+				</ion-row>
+			</form>
+		</ion-grid>
 
-    <div class="col-id cell"></div>
+		<div class="col-id cell"></div>
 
-    <div class="row-full shadow full-screen">
-      <ion-toolbar color="primary">
-        <ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
-          <ion-segment-button value="s1">
-            <ion-label>{{'Product list' | translate}}</ion-label>
-          </ion-segment-button>
-          <!-- <ion-segment-button value="s2">
+		<div class="row-full shadow full-screen">
+			<ion-toolbar color="primary">
+				<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
+					<ion-segment-button value="s1">
+						<ion-label>{{'Product list' | translate}}</ion-label>
+					</ion-segment-button>
+					<!-- <ion-segment-button value="s2">
                         <ion-label>KM/CK</ion-label>
                     </ion-segment-button> -->
-        </ion-segment>
-        <ion-buttons slot="end" *ngIf="segmentView == 's1'">
-          <ion-button *ngIf="pageConfig.canEdit" (click)="addOrderLine()">
-            <ion-icon class="min-btn" title="{{'Add product' | translate}}" name="add-circle-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
+				</ion-segment>
+				<ion-buttons slot="end" *ngIf="segmentView == 's1'">
+					<ion-button *ngIf="pageConfig.canEdit" (click)="addOrderLine()">
+						<ion-icon class="min-btn" title="{{'Add product' | translate}}" name="add-circle-outline"></ion-icon>
+					</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
 
-      <div>
-        <div *ngIf="segmentView == 's1'" style="min-height: calc(100vh - 410px)">
-          <div class="table-contain">
-            <section class="table">
-              <div class="row" *ngFor="let i of item.OrderLines; let idx = index;">
-                <div class="col-name cell">
-                  <div style="min-width: 100%; max-width: 100%">
-                    <div style="max-width: 100%">
-                      <ng-select
-                        [disabled]="!pageConfig.canEdit"
-                        appendTo="#order-detail-page"
-                        [id]="'drl'+idx"
-                        class="c-input"
-                        [(ngModel)]="i.IDItem"
-                        (focus)="itemSearchFocus($event)"
-                        (clear)="deleteOrderLine(i)"
-                        (change)="changedIDItem($event, i)"
-                        [labelForId]="'IDItem'+idx"
-                        [items]="itemList$ | async"
-                        [typeahead]="itemListInput$"
-                        [virtualScroll]="true"
-                        bindLabel="Name"
-                        bindValue="Id"
-                        placeholder="{{'Search for name or product code' | translate}}"
-                      >
-                        <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                          <div *ngIf="i">
-                            <div>
-                              <span [ngOptionHighlight]="search">{{i.Name}}</span>
-                            </div>
-                            <small
-                              >#<b
-                                ><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b
-                              ></small
-                            >
-                          </div>
-                        </ng-template>
-                      </ng-select>
-                    </div>
+			<div>
+				<div *ngIf="segmentView == 's1'" style="min-height: calc(100vh - 410px)">
+					<div class="table-contain">
+						<section class="table">
+							<div class="row" *ngFor="let i of item.OrderLines; let idx = index;">
+								<div class="col-name cell">
+									<div style="min-width: 100%; max-width: 100%">
+										<div style="max-width: 100%">
+											<ng-select
+												[disabled]="!pageConfig.canEdit"
+												appendTo="#order-detail-page"
+												[id]="'drl'+idx"
+												class="c-input"
+												[(ngModel)]="i.IDItem"
+												(focus)="itemSearchFocus($event)"
+												(clear)="deleteOrderLine(i)"
+												(change)="changedIDItem($event, i)"
+												[labelForId]="'IDItem'+idx"
+												[items]="itemList$ | async"
+												[typeahead]="itemListInput$"
+												[virtualScroll]="true"
+												bindLabel="Name"
+												bindValue="Id"
+												placeholder="{{'Search for name or product code' | translate}}"
+											>
+												<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+													<div *ngIf="i">
+														<div>
+															<span [ngOptionHighlight]="search">{{i.Name}}</span>
+														</div>
+														<small
+															>#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b></small
+														>
+													</div>
+												</ng-template>
+											</ng-select>
+										</div>
 
-                    <table style="max-width: 100%; min-width: 100%">
-                      <tr *ngIf="i._itemData && i._itemData.UoMs.length">
-                        <td class="label">{{'Unit' | translate}}</td>
-                        <td class="UoM col-total c-control">
-                          <select
-                            [disabled]="!pageConfig.canEdit || submitAttempt"
-                            class="c-input c-dropdown"
-                            (change)="changedItemUoM(i)"
-                            [(ngModel)]="i.IDUoM"
-                          >
-                            <option disabled value="">{{'Select unit' | translate}}</option>
-                            <option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">
-                              {{t.Name}}
-                            </option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr *ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM">
-                        <td class="label">{{'Quantity' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!pageConfig.canEdit"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedItemUoM(i)"
-                            class="c-input"
-                            [min]="i._UoM?i._UoM.MinQuantity:0.000000001"
-                            [max]="i._UoM?i._UoM.MaxQuantity:999999999999999999"
-                            mask="separator.0"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.Quantity"
-                            onkeydown="return event.keyCode !== 190"
-                          />
-                        </td>
-                      </tr>
-                      <tr *ngIf="i.Quantity && pageConfig.canEditPrice && !i.IsPromotionItem">
-                        <td class="label">
-                          <span *ngIf="!pageConfig.canEdit || i.UoMPrice == i._UoMPrice"
-                            >{{'Unit price' | translate}}</span
-                          >
+										<table style="max-width: 100%; min-width: 100%">
+											<tr *ngIf="i._itemData && i._itemData.UoMs.length">
+												<td class="label">{{'Unit' | translate}}</td>
+												<td class="UoM col-total c-control">
+													<select
+														[disabled]="!pageConfig.canEdit || submitAttempt"
+														class="c-input c-dropdown"
+														(change)="changedItemUoM(i)"
+														[(ngModel)]="i.IDUoM"
+													>
+														<option disabled value="">{{'Select unit' | translate}}</option>
+														<option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">{{t.Name}}</option>
+													</select>
+												</td>
+											</tr>
+											<tr *ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM">
+												<td class="label">{{'Quantity' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!pageConfig.canEdit"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedItemUoM(i)"
+														class="c-input"
+														[min]="i._UoM?i._UoM.MinQuantity:0.000000001"
+														[max]="i._UoM?i._UoM.MaxQuantity:999999999999999999"
+														mask="separator.0"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.Quantity"
+														onkeydown="return event.keyCode !== 190"
+													/>
+												</td>
+											</tr>
+											<tr *ngIf="i.Quantity && pageConfig.canEditPrice && !i.IsPromotionItem">
+												<td class="label">
+													<span *ngIf="!pageConfig.canEdit || i.UoMPrice == i._UoMPrice">{{'Unit price' | translate}}</span>
 
-                          <ion-button
-                            size="small"
-                            color="primary"
-                            fill="outline"
-                            *ngIf="pageConfig.canEdit && i.UoMPrice != i._UoMPrice"
-                            (click)="i.UoMPrice = i._UoMPrice; i.BuyPrice = i._BuyPrice; changedItemUoM(i)"
-                          >
-                            {{'Price recalculation' | translate}}
-                          </ion-button>
-                        </td>
-                        <td>
-                          <input
-                            [readonly]="!pageConfig.canEdit"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedItemUoM(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.UoMPrice"
-                          />
-                        </td>
-                      </tr>
+													<ion-button
+														size="small"
+														color="primary"
+														fill="outline"
+														*ngIf="pageConfig.canEdit && i.UoMPrice != i._UoMPrice"
+														(click)="i.UoMPrice = i._UoMPrice; i.BuyPrice = i._BuyPrice; changedItemUoM(i)"
+													>
+														{{'Price recalculation' | translate}}
+													</ion-button>
+												</td>
+												<td>
+													<input
+														[readonly]="!pageConfig.canEdit"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedItemUoM(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.UoMPrice"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromVendor && !i.IsPromotionItem">
-                        <td class="label">{{'Vendor discount' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!pageConfig.canEdit"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedItemUoM(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.OriginalDiscount1"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromVendor && !i.IsPromotionItem">
+												<td class="label">{{'Vendor discount' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!pageConfig.canEdit"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedItemUoM(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.OriginalDiscount1"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromDistributor && !i.IsPromotionItem">
-                        <td class="label">{{'Distributor discount' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!pageConfig.canEdit"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedItemUoM(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.OriginalDiscount2"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromDistributor && !i.IsPromotionItem">
+												<td class="label">{{'Distributor discount' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!pageConfig.canEdit"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedItemUoM(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.OriginalDiscount2"
+													/>
+												</td>
+											</tr>
 
-                      <tr>
-                        <td class="label">
-                          <ion-button
-                            [disabled]="!pageConfig.canEdit"
-                            size="small"
-                            color="primary"
-                            [fill]="i.IsPromotionItem? 'solid': 'outline'"
-                            *ngIf="i.Quantity && pageConfig.canUsePromotionItem"
-                            (click)="i.IsPromotionItem = !i.IsPromotionItem; changeIsPromotion(i)"
-                          >
-                            {{'Promotion product' | translate}}
-                          </ion-button>
+											<tr>
+												<td class="label">
+													<ion-button
+														[disabled]="!pageConfig.canEdit"
+														size="small"
+														color="primary"
+														[fill]="i.IsPromotionItem? 'solid': 'outline'"
+														*ngIf="i.Quantity && pageConfig.canUsePromotionItem"
+														(click)="i.IsPromotionItem = !i.IsPromotionItem; changeIsPromotion(i)"
+													>
+														{{'Promotion product' | translate}}
+													</ion-button>
 
-                          <!-- <ion-button size="small" color="primary" [fill]="i._ShowMore? 'outline': 'outline'" *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem" (click)="i._ShowMore = !i._ShowMore">
+													<!-- <ion-button size="small" color="primary" [fill]="i._ShowMore? 'outline': 'outline'" *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem" (click)="i._ShowMore = !i._ShowMore">
                                                         CK NVBH
                                                     </ion-button> -->
 
-                          <ion-button
-                            class="ion-float-right"
-                            size="small"
-                            fill="clear"
-                            color="danger"
-                            *ngIf="pageConfig.canEdit"
-                            (click)="deleteOrderLine(i)"
-                          >
-                            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                          </ion-button>
-                        </td>
-                        <td>
-                          <input
-                            *ngIf="i.Quantity"
-                            class="c-input disable"
-                            [disabled]="true"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.OriginalTotalAfterDiscount"
-                          />
-                        </td>
-                      </tr>
+													<ion-button
+														class="ion-float-right"
+														size="small"
+														fill="clear"
+														color="danger"
+														*ngIf="pageConfig.canEdit"
+														(click)="deleteOrderLine(i)"
+													>
+														<ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+													</ion-button>
+												</td>
+												<td>
+													<input
+														*ngIf="i.Quantity"
+														class="c-input disable"
+														[disabled]="true"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.OriginalTotalAfterDiscount"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem">
-                        <td class="label">{{'Discount from saleman' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedItemUoM(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.OriginalDiscountFromSalesman"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem">
+												<td class="label">{{'Discount from saleman' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedItemUoM(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.OriginalDiscountFromSalesman"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman">
-                        <td class="label">{{'Unit price before salesman discount' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedSalesmanPrice(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.SalesmanPrice"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman">
+												<td class="label">{{'Unit price before salesman discount' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedSalesmanPrice(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.SalesmanPrice"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman">
-                        <td class="label">{{'Payables from customer' | translate}}</td>
-                        <td>
-                          <input
-                            [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedOriginalTotalAfterDiscountFromSalesman(i)"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [allowNegativeNumbers]="false"
-                            [(ngModel)]="i.OriginalTotalAfterDiscountFromSalesman"
-                          />
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-          <div class="table-contain">
-            <div class="row">
-              <div class="cell">
-                <!-- <ion-button class="ion-margin" fill="solid" size="block" (click)="addOrderLine()" *ngIf="pageConfig.canEdit && item.Id  ">
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman">
+												<td class="label">{{'Payables from customer' | translate}}</td>
+												<td>
+													<input
+														[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.IDStatus == 103))"
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedOriginalTotalAfterDiscountFromSalesman(i)"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[allowNegativeNumbers]="false"
+														[(ngModel)]="i.OriginalTotalAfterDiscountFromSalesman"
+													/>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+						</section>
+					</div>
+					<div class="table-contain">
+						<div class="row">
+							<div class="cell">
+								<!-- <ion-button class="ion-margin" fill="solid" size="block" (click)="addOrderLine()" *ngIf="pageConfig.canEdit && item.Id  ">
                                     <ion-icon slot="start" name="add-circle-outline"></ion-icon>
                                     Thêm sản phẩm
                                 </ion-button> -->
 
-                <ion-button
-                  class="ion-margin"
-                  fill="outline"
-                  size="block"
-                  *ngIf="pageConfig.canAdd && item.Id && item?.OrderLines?.length "
-                  (click)="newSaleOrder()"
-                >
-                  {{'Create new order' | translate}}
-                </ion-button>
-              </div>
-            </div>
-          </div>
-          <div class="ion-padding"></div>
-        </div>
-        <div *ngIf="segmentView == 's2'"></div>
+								<ion-button
+									class="ion-margin"
+									fill="outline"
+									size="block"
+									*ngIf="pageConfig.canAdd && item.Id && item?.OrderLines?.length "
+									(click)="newSaleOrder()"
+								>
+									{{'Create new order' | translate}}
+								</ion-button>
+							</div>
+						</div>
+					</div>
+					<div class="ion-padding"></div>
+				</div>
+				<div *ngIf="segmentView == 's2'"></div>
 
-        <div *ngIf="segmentView == 's3'"></div>
+				<div *ngIf="segmentView == 's3'"></div>
 
-        <div *ngIf="segmentView == 's4'"></div>
+				<div *ngIf="segmentView == 's4'"></div>
 
-        <div *ngIf="segmentView == 's5'"></div>
+				<div *ngIf="segmentView == 's5'"></div>
 
-        <div *ngIf="segmentView == 's6'"></div>
-      </div>
-    </div>
-  </div>
+				<div *ngIf="segmentView == 's6'"></div>
+			</div>
+		</div>
+	</div>
 
-  <app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 </ion-content>

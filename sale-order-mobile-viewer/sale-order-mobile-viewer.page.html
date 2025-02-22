@@ -1,113 +1,92 @@
 <ion-header>
-  <app-detail-toolbar [page]="this" [title]="'#'+item.Id"></app-detail-toolbar>
+	<app-detail-toolbar [page]="this" [title]="'#'+item.Id"></app-detail-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme class="ion-padding">
-  <div *ngIf="pageConfig.showSpinner" class="page-loading">
-    <ion-spinner name="dots"></ion-spinner>
-  </div>
+	<div *ngIf="pageConfig.showSpinner" class="page-loading">
+		<ion-spinner name="dots"></ion-spinner>
+	</div>
 
-  <app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 
-  <div class="main-view" *ngIf="item && item.Customer">
-    <div class="summary">
-      <div class="time">{{item.Customer.Name}}</div>
-      <div class="date">
-        <ion-button size="small" fill="clear" [href]="'tel:'+item.Customer.WorkPhone"
-          >#{{item.Customer.Id}}
-        </ion-button>
-        <ion-button *ngIf="item.Customer.WorkPhone" size="small" fill="clear" [href]="'tel:'+item.Customer.WorkPhone">
-          <ion-icon slot="start" color="danger" name="call"></ion-icon>{{item.Customer.WorkPhone}}
-        </ion-button>
-      </div>
+	<div class="main-view" *ngIf="item && item.Customer">
+		<div class="summary">
+			<div class="time">{{item.Customer.Name}}</div>
+			<div class="date">
+				<ion-button size="small" fill="clear" [href]="'tel:'+item.Customer.WorkPhone">#{{item.Customer.Id}} </ion-button>
+				<ion-button *ngIf="item.Customer.WorkPhone" size="small" fill="clear" [href]="'tel:'+item.Customer.WorkPhone">
+					<ion-icon slot="start" color="danger" name="call"></ion-icon>{{item.Customer.WorkPhone}}
+				</ion-button>
+			</div>
 
-      <div class="date">{{item.Customer.AddressLine1}} {{item.Customer.AddressLine2}}</div>
-      <div class="date">{{item.OrderDateText}}</div>
-    </div>
+			<div class="date">{{item.Customer.AddressLine1}} {{item.Customer.AddressLine2}}</div>
+			<div class="date">{{item.OrderDateText}}</div>
+		</div>
 
-    <div class="full-screen">
-      <div style="min-height: calc(100vh - 410px)">
-        <ion-card class="booking ion-no-margin">
-          <div class="logo"></div>
+		<div class="full-screen">
+			<div style="min-height: calc(100vh - 410px)">
+				<ion-card class="booking ion-no-margin">
+					<div class="logo"></div>
 
-          <!-- Order detail -->
-          <ion-card-header>
-            <ion-card-title>
-              <ion-text color="primary">
-                {{item.TotalAfterTaxText}} /
-                <small>{{item.OriginalTotalAfterTaxText}}</small>
-              </ion-text>
-            </ion-card-title>
-          </ion-card-header>
+					<!-- Order detail -->
+					<ion-card-header>
+						<ion-card-title>
+							<ion-text color="primary">
+								{{item.TotalAfterTaxText}} /
+								<small>{{item.OriginalTotalAfterTaxText}}</small>
+							</ion-text>
+						</ion-card-title>
+					</ion-card-header>
 
-          <!-- Order detail rows -->
-          <ion-card-content class="info barcode" *ngFor="let i of item.OrderLines">
-            <div class="field">{{i.ItemName}}</div>
+					<!-- Order detail rows -->
+					<ion-card-content class="info barcode" *ngFor="let i of item.OrderLines">
+						<div class="field">{{i.ItemName}}</div>
 
-            <ion-range
-              *ngIf="i.Quantity"
-              [disabled]="true"
-              [(ngModel)]="i.ShippedQuantity"
-              color="success"
-              pin="true"
-              step="1"
-              [max]="i.Quantity"
-            >
-              <div slot="start">
-                <ion-badge
-                  class="ion-text-lowercase"
-                  slot="start"
-                  [color]="i.ShippedQuantity == i.Quantity? 'success': 'primary' "
-                  *ngIf="i.Quantity"
-                >
-                  {{i.ShippedQuantity}} / {{i.Quantity}} {{i.UoMName}}</ion-badge
-                >
-                <input [readonly]="true" class="txtQtyInput" type="number" [(ngModel)]="i.ShippedQuantity" />
-              </div>
-            </ion-range>
+						<ion-range *ngIf="i.Quantity" [disabled]="true" [(ngModel)]="i.ShippedQuantity" color="success" pin="true" step="1" [max]="i.Quantity">
+							<div slot="start">
+								<ion-badge class="ion-text-lowercase" slot="start" [color]="i.ShippedQuantity == i.Quantity? 'success': 'primary' " *ngIf="i.Quantity">
+									{{i.ShippedQuantity}} / {{i.Quantity}} {{i.UoMName}}</ion-badge
+								>
+								<input [readonly]="true" class="txtQtyInput" type="number" [(ngModel)]="i.ShippedQuantity" />
+							</div>
+						</ion-range>
 
-            <div
-              class="field ion-text-center"
-              *ngIf="i.ShippedQuantity && i.OriginalDiscount1 && i.ShippedQuantity != i.Quantity"
-            >
-              <ion-badge color="warning"> {{'Vendor discount' | translate}}: {{i.Discount1Text}} </ion-badge>
-            </div>
-            <ion-input
-              class="txtTienInput txtCKInput"
-              *ngIf="!item.DA_GIAO_HANG && i.ShippedQuantity && i.OriginalDiscount1 && i.ShippedQuantity != i.Quantity"
-              slot="start"
-              type="number"
-              [(ngModel)]="i.Discount1"
-              min="0"
-            ></ion-input>
+						<div class="field ion-text-center" *ngIf="i.ShippedQuantity && i.OriginalDiscount1 && i.ShippedQuantity != i.Quantity">
+							<ion-badge color="warning"> {{'Vendor discount' | translate}}: {{i.Discount1Text}} </ion-badge>
+						</div>
+						<ion-input
+							class="txtTienInput txtCKInput"
+							*ngIf="!item.DA_GIAO_HANG && i.ShippedQuantity && i.OriginalDiscount1 && i.ShippedQuantity != i.Quantity"
+							slot="start"
+							type="number"
+							[(ngModel)]="i.Discount1"
+							min="0"
+						></ion-input>
 
-            <div
-              class="field ion-text-center"
-              *ngIf="i.ShippedQuantity && i.OriginalDiscount2 && i.ShippedQuantity != i.Quantity"
-            >
-              <ion-badge color="warning"> {{'Distributor discount' | translate}}: {{i.Discount2Text}} </ion-badge>
-            </div>
-            <ion-input
-              class="txtTienInput txtCKInput"
-              *ngIf="!item.DA_GIAO_HANG && i.ShippedQuantity && i.OriginalDiscount2 && i.ShippedQuantity != i.Quantity"
-              slot="start"
-              type="number"
-              [(ngModel)]="i.Discount2"
-              min="0"
-            ></ion-input>
-          </ion-card-content>
+						<div class="field ion-text-center" *ngIf="i.ShippedQuantity && i.OriginalDiscount2 && i.ShippedQuantity != i.Quantity">
+							<ion-badge color="warning"> {{'Distributor discount' | translate}}: {{i.Discount2Text}} </ion-badge>
+						</div>
+						<ion-input
+							class="txtTienInput txtCKInput"
+							*ngIf="!item.DA_GIAO_HANG && i.ShippedQuantity && i.OriginalDiscount2 && i.ShippedQuantity != i.Quantity"
+							slot="start"
+							type="number"
+							[(ngModel)]="i.Discount2"
+							min="0"
+						></ion-input>
+					</ion-card-content>
 
-          <!-- Thanh toán -->
+					<!-- Thanh toán -->
 
-          <!-- Tình trạng & Ghi chú -->
-          <ion-card-content class="info barcode" *ngIf="item.Remark">
-            <ion-item>
-              <ion-label position="stacked">{{'Remark' | translate}}</ion-label>
-              <span> {{item.Remark}} </span>
-            </ion-item>
-          </ion-card-content>
-        </ion-card>
-      </div>
-    </div>
-  </div>
+					<!-- Tình trạng & Ghi chú -->
+					<ion-card-content class="info barcode" *ngIf="item.Remark">
+						<ion-item>
+							<ion-label position="stacked">{{'Remark' | translate}}</ion-label>
+							<span> {{item.Remark}} </span>
+						</ion-item>
+					</ion-card-content>
+				</ion-card>
+			</div>
+		</div>
+	</div>
 </ion-content>

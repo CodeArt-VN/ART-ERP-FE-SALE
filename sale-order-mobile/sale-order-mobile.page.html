@@ -1,5 +1,5 @@
 <ion-header>
-  <!-- <app-toolbar
+	<!-- <app-toolbar
   [page]="this"
   [ShowSubmit]="ShowSubmit"
   [ShowApprove]="ShowApprove"
@@ -9,174 +9,145 @@
 >
   
 </app-toolbar> -->
-  <app-list-toolbar
-    [NoBorder]="pageConfig.isShowSearch"
-    selectedTitle="{{selectedItems.length}} đơn"
-    pageTitle="{{'Order' | translate}}"
-    [ShowArchive]="false"
-    [ShowExport]="false"
-    [ShowImport]="false"
-    [ShowHelp]="false"
-    [ShowFeature]="false"
-    [ShowRefresh]="false"
-    [ShowAdd]="false"
-    [ShowPopover]="true"
-    [pageConfig]="pageConfig"
-    [selectedItems]="selectedItems"
-    [query]="query"
-    (add)="add()"
-    (refresh)="refresh()"
-    (export)="export()"
-    (import)="import($event)"
-    (help)="help()"
-    (unselect)="unselect()"
-    (archiveItems)="archiveItems()"
-    (deleteItems)="deleteItems()"
-    (changeBranch)="changeBranch($event)"
-    (mergeOrders)="mergeSaleOrders()"
-    (splitOrder)="splitSaleOrder()"
-    (submitOrdersForApproval)="submitOrdersForApproval()"
-    (presentPopover)="presentPopover($event)"
-  ></app-list-toolbar>
+	<app-list-toolbar
+		[NoBorder]="pageConfig.isShowSearch"
+		selectedTitle="{{selectedItems.length}} đơn"
+		pageTitle="{{'Order' | translate}}"
+		[ShowArchive]="false"
+		[ShowExport]="false"
+		[ShowImport]="false"
+		[ShowHelp]="false"
+		[ShowFeature]="false"
+		[ShowRefresh]="false"
+		[ShowAdd]="false"
+		[ShowPopover]="true"
+		[pageConfig]="pageConfig"
+		[selectedItems]="selectedItems"
+		[query]="query"
+		(add)="add()"
+		(refresh)="refresh()"
+		(export)="export()"
+		(import)="import($event)"
+		(help)="help()"
+		(unselect)="unselect()"
+		(archiveItems)="archiveItems()"
+		(deleteItems)="deleteItems()"
+		(changeBranch)="changeBranch($event)"
+		(mergeOrders)="mergeSaleOrders()"
+		(splitOrder)="splitSaleOrder()"
+		(submitOrdersForApproval)="submitOrdersForApproval()"
+		(presentPopover)="presentPopover($event)"
+	></app-list-toolbar>
 
-  <ion-toolbar *ngIf="pageConfig.isShowSearch" class="no-padding">
-    <ion-buttons slot="primary">
-      <ion-button (click)="scanQRCode()">
-        <ion-icon slot="icon-only" name="qr-code-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <!-- <span class="header-icon ">
+	<ion-toolbar *ngIf="pageConfig.isShowSearch" class="no-padding">
+		<ion-buttons slot="primary">
+			<ion-button (click)="scanQRCode()">
+				<ion-icon slot="icon-only" name="qr-code-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+		<!-- <span class="header-icon ">
 			<ion-icon name="qr-code-outline"></ion-icon>
 		</span> -->
-    <ion-searchbar
-      [(ngModel)]="query.CustomerName"
-      (ionChange)="search($event)"
-      placeholder="{{'Search order' | translate}}"
-    ></ion-searchbar>
-  </ion-toolbar>
+		<ion-searchbar [(ngModel)]="query.CustomerName" (ionChange)="search($event)" placeholder="{{'Search order' | translate}}"></ion-searchbar>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme class="header-table">
-  <ion-refresher
-    [disabled]="!pageConfig.refresher"
-    [disabled]="!pageConfig.refresher"
-    slot="fixed"
-    (ionRefresh)="refresh($event)"
-  >
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
+	<ion-refresher [disabled]="!pageConfig.refresher" [disabled]="!pageConfig.refresher" slot="fixed" (ionRefresh)="refresh($event)">
+		<ion-refresher-content></ion-refresher-content>
+	</ion-refresher>
 
-  <app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 
-  <div
-    *ngIf="this.query.Status != ['New','Unapproved','Submitted','Approved','Redelivery'] || query.OrderDateFrom"
-    style="margin: 20px auto 5px auto; text-align: center"
-  >
-    <ion-chip [color]="selectedStatus?.Color" (click)="resetQuery()">
-      <ion-label
-        >{{selectedStatus?.Name}}
-        <small *ngIf="query.OrderDateFrom && query.OrderDateTo">
-          {{query.OrderDateFrom | date:'dd/MM/yy'}} - {{query.OrderDateTo | date:'dd/MM/yy'}}</small
-        >
-      </ion-label>
-      <ion-icon name="close-circle"></ion-icon>
-    </ion-chip>
-  </div>
+	<div *ngIf="this.query.Status != ['New','Unapproved','Submitted','Approved','Redelivery'] || query.OrderDateFrom" style="margin: 20px auto 5px auto; text-align: center">
+		<ion-chip [color]="selectedStatus?.Color" (click)="resetQuery()">
+			<ion-label
+				>{{selectedStatus?.Name}}
+				<small *ngIf="query.OrderDateFrom && query.OrderDateTo"> {{query.OrderDateFrom | date:'dd/MM/yy'}} - {{query.OrderDateTo | date:'dd/MM/yy'}}</small>
+			</ion-label>
+			<ion-icon name="close-circle"></ion-icon>
+		</ion-chip>
+	</div>
 
-  <ion-list lines="none">
-    <ion-item-sliding *ngFor="let i of items; let j = index;">
-      <ion-item class="ion-no-margin ion-no-padding">
-        <ion-card class="booking ion-no-margin ion-margin-horizontal">
-          <div class="logo" [ngClass]="{selected: i.checked}" (click)="i.checked =!i.checked; changeSelection(i)"></div>
+	<ion-list lines="none">
+		<ion-item-sliding *ngFor="let i of items; let j = index;">
+			<ion-item class="ion-no-margin ion-no-padding">
+				<ion-card class="booking ion-no-margin ion-margin-horizontal">
+					<div class="logo" [ngClass]="{selected: i.checked}" (click)="i.checked =!i.checked; changeSelection(i)"></div>
 
-          <ion-card-header (click)="showDetail(i)">
-            <ion-card-title>
-              <ion-text [color]="i._Status?.Color"> {{i.OriginalTotalText}} </ion-text>
-              <ion-text class="ion-float-right" color="medium">
-                <span class="ngay-hd"
-                  >{{i.OrderDateText}} <small *ngIf="i.OrderTimeText ">{{i.OrderTimeText}}</small></span
-                >
-              </ion-text>
-            </ion-card-title>
-            <ion-card-subtitle>
-              <ion-text [color]="i._Status?.Color"> #{{i.Id}} </ion-text>
-              <small> {{i._Status?.Name}} </small>
-            </ion-card-subtitle>
-          </ion-card-header>
+					<ion-card-header (click)="showDetail(i)">
+						<ion-card-title>
+							<ion-text [color]="i._Status?.Color"> {{i.OriginalTotalText}} </ion-text>
+							<ion-text class="ion-float-right" color="medium">
+								<span class="ngay-hd">{{i.OrderDateText}} <small *ngIf="i.OrderTimeText ">{{i.OrderTimeText}}</small></span>
+							</ion-text>
+						</ion-card-title>
+						<ion-card-subtitle>
+							<ion-text [color]="i._Status?.Color"> #{{i.Id}} </ion-text>
+							<small> {{i._Status?.Name}} </small>
+						</ion-card-subtitle>
+					</ion-card-header>
 
-          <ion-card-content no-padding padding-horizontal>
-            <div>
-              <table class="card">
-                <tr>
-                  <td>
-                    <ion-icon color="primary" name="people-circle-outline"></ion-icon>
-                  </td>
-                  <td style="text-transform: uppercase">
-                    <ion-text> {{i.CustomerName}} </ion-text>
-                    <ion-text color="primary">
-                      <small>#{{i.IDContact}}</small>
-                    </ion-text>
-                  </td>
-                </tr>
+					<ion-card-content no-padding padding-horizontal>
+						<div>
+							<table class="card">
+								<tr>
+									<td>
+										<ion-icon color="primary" name="people-circle-outline"></ion-icon>
+									</td>
+									<td style="text-transform: uppercase">
+										<ion-text> {{i.CustomerName}} </ion-text>
+										<ion-text color="primary">
+											<small>#{{i.IDContact}}</small>
+										</ion-text>
+									</td>
+								</tr>
 
-                <tr *ngIf="i.AddressLine1">
-                  <td>
-                    <ion-icon color="primary" name="navigate-outline"></ion-icon>
-                  </td>
-                  <td>
-                    <ion-text class="td-address">
-                      <a>
-                        <ion-text color="medium"><small>{{i.AddressLine1}}</small></ion-text>
-                      </a>
-                    </ion-text>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </ion-card-content>
+								<tr *ngIf="i.AddressLine1">
+									<td>
+										<ion-icon color="primary" name="navigate-outline"></ion-icon>
+									</td>
+									<td>
+										<ion-text class="td-address">
+											<a>
+												<ion-text color="medium"><small>{{i.AddressLine1}}</small></ion-text>
+											</a>
+										</ion-text>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</ion-card-content>
 
-          <ion-item class="card-footer" detail lines="none">
-            <ion-button
-              *ngIf="i.WorkPhone"
-              [href]="'tel:'+i.WorkPhone"
-              fill="clear"
-              slot="start"
-              (click)="$event.stopPropagation()"
-            >
-              <ion-icon slot="start" name="call" color="danger"></ion-icon>
-              {{i.WorkPhone}}
-            </ion-button>
-            <ion-button (click)="showDetail(i)" color="secondary" fill="clear" slot="end"
-              >{{'Order details' | translate}}
-            </ion-button>
-          </ion-item>
-        </ion-card>
-      </ion-item>
-      <ion-item-options>
-        <ion-item-option (click)="i.checked =!i.checked; changeSelection(i)">
-          <ion-icon slot="top" [name]="i.checked? 'checkbox': 'git-pull-request'"></ion-icon>
-          {{'Gộp' | translate}}
-        </ion-item-option>
-        <ion-item-option (click)="splitOrder(i)">
-          <ion-icon slot="top" name="git-branch"></ion-icon>
-          {{'Chia' | translate}}
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+					<ion-item class="card-footer" detail lines="none">
+						<ion-button *ngIf="i.WorkPhone" [href]="'tel:'+i.WorkPhone" fill="clear" slot="start" (click)="$event.stopPropagation()">
+							<ion-icon slot="start" name="call" color="danger"></ion-icon>
+							{{i.WorkPhone}}
+						</ion-button>
+						<ion-button (click)="showDetail(i)" color="secondary" fill="clear" slot="end">{{'Order details' | translate}} </ion-button>
+					</ion-item>
+				</ion-card>
+			</ion-item>
+			<ion-item-options>
+				<ion-item-option (click)="i.checked =!i.checked; changeSelection(i)">
+					<ion-icon slot="top" [name]="i.checked? 'checkbox': 'git-pull-request'"></ion-icon>
+					{{'Gộp' | translate}}
+				</ion-item-option>
+				<ion-item-option (click)="splitOrder(i)">
+					<ion-icon slot="top" name="git-branch"></ion-icon>
+					{{'Chia' | translate}}
+				</ion-item-option>
+			</ion-item-options>
+		</ion-item-sliding>
+	</ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="pageConfig.canAdd && !query.IsDisabled">
-    <ion-fab-button color="secondary" (click)="add()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="pageConfig.canAdd && !query.IsDisabled">
+		<ion-fab-button color="secondary" (click)="add()">
+			<ion-icon name="add-outline"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
 
-  <ion-infinite-scroll
-    color="primary"
-    threshold="20%"
-    (ionInfinite)="loadData($event)"
-    [disabled]="!pageConfig.infiniteScroll || pageConfig.isEndOfData"
-  >
-    <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+	<ion-infinite-scroll color="primary" threshold="20%" (ionInfinite)="loadData($event)" [disabled]="!pageConfig.infiniteScroll || pageConfig.isEndOfData">
+		<ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>

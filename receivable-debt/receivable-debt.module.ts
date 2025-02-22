@@ -8,15 +8,7 @@ import { ShareModule } from 'src/app/share.module';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 
 @NgModule({
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-
-    NgOptionHighlightModule,
-    ShareModule,
-    RouterModule.forChild([{ path: '', component: ReceivableDebtPage }]),
-  ],
-  declarations: [ReceivableDebtPage],
+	imports: [IonicModule, CommonModule, FormsModule, NgOptionHighlightModule, ShareModule, RouterModule.forChild([{ path: '', component: ReceivableDebtPage }])],
+	declarations: [ReceivableDebtPage],
 })
 export class ReceivableDebtPageModule {}

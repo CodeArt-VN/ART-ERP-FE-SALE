@@ -1,5 +1,5 @@
 <ion-header>
-  <!-- <ion-toolbar>
+	<!-- <ion-toolbar>
         <ion-buttons slot="start" class="ion-hide-sm-down_">
             <ion-button color="dark" class="ion-hide-sm-down_">
                 {{'page-title' | translate}}
@@ -17,199 +17,173 @@
         </ion-buttons>
     </ion-toolbar> -->
 
-  <ion-toolbar color="primary">
-    <ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
-      <ion-segment-button value="s1">
-        <ion-label>{{'split order' | translate}}</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="s2">
-        <ion-label>{{'Details' | translate}}</ion-label>
-      </ion-segment-button>
+	<ion-toolbar color="primary">
+		<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
+			<ion-segment-button value="s1">
+				<ion-label>{{'split order' | translate}}</ion-label>
+			</ion-segment-button>
+			<ion-segment-button value="s2">
+				<ion-label>{{'Details' | translate}}</ion-label>
+			</ion-segment-button>
 
-      <!-- <ion-segment-button [value]="idx" *ngFor="let o of item.SplitedOrders; let idx = index;">
+			<!-- <ion-segment-button [value]="idx" *ngFor="let o of item.SplitedOrders; let idx = index;">
                 <ion-label>#{{idx+1}}</ion-label>
             </ion-segment-button> -->
-    </ion-segment>
-    <ion-buttons slot="end">
-      <ion-button (click)="addSplitedOrder()">
-        <ion-icon class="min-btn" title="{{'Add' | translate}}" name="add-circle-outline"></ion-icon>
-      </ion-button>
+		</ion-segment>
+		<ion-buttons slot="end">
+			<ion-button (click)="addSplitedOrder()">
+				<ion-icon class="min-btn" title="{{'Add' | translate}}" name="add-circle-outline"></ion-icon>
+			</ion-button>
 
-      <ion-button title="{{'Help' | translate}}" (click)="help()">
-        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
-      </ion-button>
+			<ion-button title="{{'Help' | translate}}" (click)="help()">
+				<ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+			</ion-button>
 
-      <ion-button title="{{'Close' | translate}}" (click)="closeModal()">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+			<ion-button title="{{'Close' | translate}}" (click)="closeModal()">
+				<ion-icon slot="icon-only" name="close"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 <ion-content appScrollbarTheme class="ion-padding">
-  <div id="order-detail-page" style="position: absolute"></div>
+	<div id="order-detail-page" style="position: absolute"></div>
 
-  <div class="main-view" *ngIf="segmentView == 's1'">
-    <ion-grid fixed style="max-width: 500px">
-      <ion-row style="border: none" *ngFor="let o of item.SplitedOrders; let idx = index;">
-        <ion-col size="11">
-          <div class="c-control">
-            <label class="c-label" for="IDContact"> {{'Customer -' | translate}} #{{idx+1}}) </label>
+	<div class="main-view" *ngIf="segmentView == 's1'">
+		<ion-grid fixed style="max-width: 500px">
+			<ion-row style="border: none" *ngFor="let o of item.SplitedOrders; let idx = index;">
+				<ion-col size="11">
+					<div class="c-control">
+						<label class="c-label" for="IDContact"> {{'Customer -' | translate}} #{{idx+1}}) </label>
 
-            <ng-select
-              [(ngModel)]="o.IDContact"
-              appendTo="#order-detail-page"
-              class="c-input"
-              (change)="changedIDContact($event, o)"
-              #IDContact
-              labelForId="IDContact"
-              [items]="contactList$ | async"
-              [typeahead]="contactListInput$"
-              [loading]="contactListLoading"
-              [virtualScroll]="true"
-              bindLabel="Name"
-              bindValue="Id"
-              placeholder="{{'Search for name, code or phone number' | translate}}"
-            >
-              <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                <div *ngIf="i">
-                  <div>
-                    <span>{{i.Name}}</span>
-                    <span *ngIf="i.WorkPhone">
-                      |
-                      <small> <b>{{i.WorkPhone}}</b></small></span
-                    >
-                  </div>
-                  <small
-                    >#<b><span class="important">{{i.Id}} - {{i.Code}}</span></b>
-                    <span *ngIf="i.AddressLine1"> | {{i.AddressLine1}}</span></small
-                  >
-                </div>
-              </ng-template>
-            </ng-select>
-          </div>
-        </ion-col>
-        <ion-col size="1">
-          <ion-button
-            *ngIf="!o.isFirst"
-            class="ion-float-right"
-            style="margin-top: 2.8rem"
-            size="small"
-            fill="clear"
-            color="danger"
-            (click)="removeSplitedOrder(o)"
-          >
-            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-          </ion-button>
-        </ion-col>
-        <ion-col size="11">
-          <div class="c-control ion-text-left">
-            <ion-button
-              size="small"
-              [disabled]="!pageConfig.canEdit"
-              (click)="o.IsSampleOrder = !o.IsSampleOrder;"
-              [fill]=" o.IsSampleOrder? 'solid' : 'outline' "
-            >
-              {{'Sample' | translate}}
-            </ion-button>
-            <ion-button
-              size="small"
-              [disabled]="!pageConfig.canEdit"
-              (click)="o.IsUrgentOrders = !o.IsUrgentOrders;"
-              [fill]=" o.IsUrgentOrders? 'solid' : 'outline' "
-            >
-              {{'Urgent order' | translate}}
-            </ion-button>
-            <ion-button
-              size="small"
-              [disabled]="!pageConfig.canEdit"
-              (click)="o.IsWholeSale = !o.IsWholeSale;"
-              [fill]=" o.IsWholeSale? 'solid' : 'outline' "
-            >
-              erp.app.pages.sale.sale-order.split.is-wholesale
-            </ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
+						<ng-select
+							[(ngModel)]="o.IDContact"
+							appendTo="#order-detail-page"
+							class="c-input"
+							(change)="changedIDContact($event, o)"
+							#IDContact
+							labelForId="IDContact"
+							[items]="contactList$ | async"
+							[typeahead]="contactListInput$"
+							[loading]="contactListLoading"
+							[virtualScroll]="true"
+							bindLabel="Name"
+							bindValue="Id"
+							placeholder="{{'Search for name, code or phone number' | translate}}"
+						>
+							<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+								<div *ngIf="i">
+									<div>
+										<span>{{i.Name}}</span>
+										<span *ngIf="i.WorkPhone">
+											|
+											<small> <b>{{i.WorkPhone}}</b></small></span
+										>
+									</div>
+									<small
+										>#<b><span class="important">{{i.Id}} - {{i.Code}}</span></b> <span *ngIf="i.AddressLine1"> | {{i.AddressLine1}}</span></small
+									>
+								</div>
+							</ng-template>
+						</ng-select>
+					</div>
+				</ion-col>
+				<ion-col size="1">
+					<ion-button *ngIf="!o.isFirst" class="ion-float-right" style="margin-top: 2.8rem" size="small" fill="clear" color="danger" (click)="removeSplitedOrder(o)">
+						<ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+					</ion-button>
+				</ion-col>
+				<ion-col size="11">
+					<div class="c-control ion-text-left">
+						<ion-button size="small" [disabled]="!pageConfig.canEdit" (click)="o.IsSampleOrder = !o.IsSampleOrder;" [fill]=" o.IsSampleOrder? 'solid' : 'outline' ">
+							{{'Sample' | translate}}
+						</ion-button>
+						<ion-button size="small" [disabled]="!pageConfig.canEdit" (click)="o.IsUrgentOrders = !o.IsUrgentOrders;" [fill]=" o.IsUrgentOrders? 'solid' : 'outline' ">
+							{{'Urgent order' | translate}}
+						</ion-button>
+						<ion-button size="small" [disabled]="!pageConfig.canEdit" (click)="o.IsWholeSale = !o.IsWholeSale;" [fill]=" o.IsWholeSale? 'solid' : 'outline' ">
+							erp.app.pages.sale.sale-order.split.is-wholesale
+						</ion-button>
+					</div>
+				</ion-col>
+			</ion-row>
 
-      <ion-row class="hr-group">
-        <ion-col size="11">
-          <div class="c-control ion-text-right">
-            <ion-button (click)="addSplitedOrder()"> {{'Add order' | translate}} </ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
+			<ion-row class="hr-group">
+				<ion-col size="11">
+					<div class="c-control ion-text-right">
+						<ion-button (click)="addSplitedOrder()"> {{'Add order' | translate}} </ion-button>
+					</div>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</div>
 
-  <div class="main-view" *ngIf="segmentView != 's1'">
-    <div class="row-full shadow full-screen">
-      <div style="min-height: calc(90vh - 80px)">
-        <div class="table-contain">
-          <section class="table">
-            <ng-container>
-              <div class="row" *ngFor="let i of items; let idx = index;">
-                <!-- <div class="col-id cell">{{idx+1}}</div> -->
-                <div class="col-name cell">
-                  <div style="min-width: 100%; max-width: 100%">
-                    <div style="max-width: 100%">
-                      <ng-select
-                        [disabled]="true"
-                        [id]="'drl'+idx"
-                        class="c-input"
-                        appendTo="#order-detail-page"
-                        [(ngModel)]="i.IDItem"
-                        [labelForId]="'IDItem'+idx"
-                        [items]="itemList$ | async"
-                        [typeahead]="itemListInput$"
-                        [virtualScroll]="true"
-                        bindLabel="Name"
-                        bindValue="Id"
-                        placeholder="{{'Search for name or product code' | translate}}"
-                      >
-                        <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                          <div *ngIf="i">
-                            <div>
-                              <span>{{i.Name}}</span>
-                            </div>
-                            <small
-                              >#<b><span class="important">{{i.Id}} - {{i.Code}}</span></b></small
-                            >
-                          </div>
-                        </ng-template>
-                      </ng-select>
-                    </div>
+	<div class="main-view" *ngIf="segmentView != 's1'">
+		<div class="row-full shadow full-screen">
+			<div style="min-height: calc(90vh - 80px)">
+				<div class="table-contain">
+					<section class="table">
+						<ng-container>
+							<div class="row" *ngFor="let i of items; let idx = index;">
+								<!-- <div class="col-id cell">{{idx+1}}</div> -->
+								<div class="col-name cell">
+									<div style="min-width: 100%; max-width: 100%">
+										<div style="max-width: 100%">
+											<ng-select
+												[disabled]="true"
+												[id]="'drl'+idx"
+												class="c-input"
+												appendTo="#order-detail-page"
+												[(ngModel)]="i.IDItem"
+												[labelForId]="'IDItem'+idx"
+												[items]="itemList$ | async"
+												[typeahead]="itemListInput$"
+												[virtualScroll]="true"
+												bindLabel="Name"
+												bindValue="Id"
+												placeholder="{{'Search for name or product code' | translate}}"
+											>
+												<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+													<div *ngIf="i">
+														<div>
+															<span>{{i.Name}}</span>
+														</div>
+														<small
+															>#<b><span class="important">{{i.Id}} - {{i.Code}}</span></b></small
+														>
+													</div>
+												</ng-template>
+											</ng-select>
+										</div>
 
-                    <table style="max-width: 100%; min-width: 100%">
-                      <tr *ngIf="i._itemData && i._itemData.UoMs.length">
-                        <td class="label">{{'Unit' | translate}}</td>
-                        <td class="UoM col-total c-control" *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <select [disabled]="true" class="c-input c-dropdown" [(ngModel)]="o.IDUoM">
-                            <option disabled value="">{{'Select unit' | translate}}</option>
-                            <option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">
-                              {{t.Name}}
-                            </option>
-                          </select>
-                        </td>
-                      </tr>
-                      <tr *ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM">
-                        <td class="label">{{'Quantity' | translate}}</td>
-                        <td *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <input
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedCalc(i, o, 'Quantity')"
-                            class="c-input"
-                            min="0"
-                            step="1"
-                            max="999999999999999999"
-                            mask="separator.0"
-                            thousandSeparator=","
-                            [(ngModel)]="o.Quantity"
-                            onkeydown="return event.keyCode !== 190"
-                          />
-                        </td>
-                      </tr>
-                      <!-- <tr *ngIf="i.Quantity && pageConfig.canEditPrice && !i.IsPromotionItem">
+										<table style="max-width: 100%; min-width: 100%">
+											<tr *ngIf="i._itemData && i._itemData.UoMs.length">
+												<td class="label">{{'Unit' | translate}}</td>
+												<td class="UoM col-total c-control" *ngFor="let o of i.splitDetail; let jdx = index;">
+													<select [disabled]="true" class="c-input c-dropdown" [(ngModel)]="o.IDUoM">
+														<option disabled value="">{{'Select unit' | translate}}</option>
+														<option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">{{t.Name}}</option>
+													</select>
+												</td>
+											</tr>
+											<tr *ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM">
+												<td class="label">{{'Quantity' | translate}}</td>
+												<td *ngFor="let o of i.splitDetail; let jdx = index;">
+													<input
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedCalc(i, o, 'Quantity')"
+														class="c-input"
+														min="0"
+														step="1"
+														max="999999999999999999"
+														mask="separator.0"
+														thousandSeparator=","
+														[(ngModel)]="o.Quantity"
+														onkeydown="return event.keyCode !== 190"
+													/>
+												</td>
+											</tr>
+											<!-- <tr *ngIf="i.Quantity && pageConfig.canEditPrice && !i.IsPromotionItem">
                                                 <td class="label">
                                                     <span *ngIf="!pageConfig.canEdit || i.UoMPrice == i._UoMPrice">{{'Unit price' | translate}}</span>
                                                 </td>
@@ -218,102 +192,97 @@
                                                 </td>
                                             </tr> -->
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromVendor && !i.IsPromotionItem">
-                        <td class="label">{{'Vendor discount' | translate}}</td>
-                        <td *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <input
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedCalc(i, o, 'OriginalDiscount1')"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [(ngModel)]="o.OriginalDiscount1"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromVendor && !i.IsPromotionItem">
+												<td class="label">{{'Vendor discount' | translate}}</td>
+												<td *ngFor="let o of i.splitDetail; let jdx = index;">
+													<input
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedCalc(i, o, 'OriginalDiscount1')"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[(ngModel)]="o.OriginalDiscount1"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromDistributor && !i.IsPromotionItem">
-                        <td class="label">{{'Distributor discount' | translate}}</td>
-                        <td *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <input
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedCalc(i, o, 'OriginalDiscount2')"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [(ngModel)]="o.OriginalDiscount2"
-                          />
-                        </td>
-                      </tr>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromDistributor && !i.IsPromotionItem">
+												<td class="label">{{'Distributor discount' | translate}}</td>
+												<td *ngFor="let o of i.splitDetail; let jdx = index;">
+													<input
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedCalc(i, o, 'OriginalDiscount2')"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[(ngModel)]="o.OriginalDiscount2"
+													/>
+												</td>
+											</tr>
 
-                      <tr>
-                        <td class="label">
-                          <ion-button
-                            [disabled]="true"
-                            size="small"
-                            color="primary"
-                            [fill]="i.IsPromotionItem? 'solid': 'outline'"
-                          >
-                            {{'Promotion product' | translate}}
-                          </ion-button>
-                        </td>
-                        <td *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <input
-                            *ngIf="i.Quantity"
-                            class="c-input disable"
-                            [disabled]="true"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [(ngModel)]="o.OriginalTotalAfterDiscount"
-                          />
-                        </td>
-                      </tr>
+											<tr>
+												<td class="label">
+													<ion-button [disabled]="true" size="small" color="primary" [fill]="i.IsPromotionItem? 'solid': 'outline'">
+														{{'Promotion product' | translate}}
+													</ion-button>
+												</td>
+												<td *ngFor="let o of i.splitDetail; let jdx = index;">
+													<input
+														*ngIf="i.Quantity"
+														class="c-input disable"
+														[disabled]="true"
+														mask="separator.2"
+														thousandSeparator=","
+														[(ngModel)]="o.OriginalTotalAfterDiscount"
+													/>
+												</td>
+											</tr>
 
-                      <tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem">
-                        <td class="label">{{'Discount from saleman' | translate}}</td>
-                        <td *ngFor="let o of i.splitDetail; let jdx = index;">
-                          <input
-                            type="tel"
-                            (focus)="$event.target.select()"
-                            (blur)="changedCalc(i, o, 'OriginalDiscountFromSalesman')"
-                            class="c-input"
-                            mask="separator.2"
-                            thousandSeparator=","
-                            [(ngModel)]="o.OriginalDiscountFromSalesman"
-                          />
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-          </section>
-        </div>
+											<tr *ngIf="i.Quantity && pageConfig.canUseDiscountFromSalesman && !i.IsPromotionItem">
+												<td class="label">{{'Discount from saleman' | translate}}</td>
+												<td *ngFor="let o of i.splitDetail; let jdx = index;">
+													<input
+														type="tel"
+														(focus)="$event.target.select()"
+														(blur)="changedCalc(i, o, 'OriginalDiscountFromSalesman')"
+														class="c-input"
+														mask="separator.2"
+														thousandSeparator=","
+														[(ngModel)]="o.OriginalDiscountFromSalesman"
+													/>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+							</div>
+						</ng-container>
+					</section>
+				</div>
 
-        <div class="table-contain">
-          <div class="row">
-            <div class="cell">
-              <!-- <ion-button class="ion-margin" fill="solid" size="block" (click)="addOrderLine()" *ngIf="pageConfig.canEdit && item.Id  ">
+				<div class="table-contain">
+					<div class="row">
+						<div class="cell">
+							<!-- <ion-button class="ion-margin" fill="solid" size="block" (click)="addOrderLine()" *ngIf="pageConfig.canEdit && item.Id  ">
                                 <ion-icon slot="start" name="add-circle-outline"></ion-icon>
                                 {{'add-order-line' | translate}}
                             </ion-button> -->
 
-              <ion-button
-                (click)="splitSaleOrder()"
-                [disabled]="!isCanSplit || submitAttempt"
-                style="max-width: 300px"
-                class="ion-margin ion-float-right"
-                size="block"
-              >
-                {{'Split Order' | translate}}
-              </ion-button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+							<ion-button
+								(click)="splitSaleOrder()"
+								[disabled]="!isCanSplit || submitAttempt"
+								style="max-width: 300px"
+								class="ion-margin ion-float-right"
+								size="block"
+							>
+								{{'Split Order' | translate}}
+							</ion-button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </ion-content>

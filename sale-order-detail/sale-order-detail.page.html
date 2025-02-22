@@ -1,267 +1,260 @@
 <ion-header>
-  <app-toolbar [page]="this">
-    <ion-button (click)="closeOrder()" title="Chốt tiệc" *ngIf="pageConfig.canCloseOrder && id">
-      <ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
-    </ion-button>
-  </app-toolbar>
+	<app-toolbar [page]="this">
+		<ion-button (click)="closeOrder()" title="Chốt tiệc" *ngIf="pageConfig.canCloseOrder && id">
+			<ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
+		</ion-button>
+	</app-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme class="ion-padding">
-  <div id="order-detail-page" style="position: absolute"></div>
-  <div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
-    <ion-grid fixed>
-      <form [formGroup]="formGroup">
-        <ion-row class="hr-group">
-          <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-            <ion-list-header class="ion-no-padding">
-              <ion-label color="primary">{{'Order' | translate}}</ion-label>
-            </ion-list-header>
-          </ion-col>
-          <ion-col size="12" size-sm size-xl="4">
-            <div class="c-control" *ngIf="item.Id">
-              <label class="c-label" for="Id"># Id</label>
-              <input class="c-input" id="Id" formControlName="Id" type="number" />
-            </div>
+	<div id="order-detail-page" style="position: absolute"></div>
+	<div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
+		<ion-grid fixed>
+			<form [formGroup]="formGroup">
+				<ion-row class="hr-group">
+					<ion-col size="12" size-sm="12" size-md="12" size-xl="3">
+						<ion-list-header class="ion-no-padding">
+							<ion-label color="primary">{{'Order' | translate}}</ion-label>
+						</ion-list-header>
+					</ion-col>
+					<ion-col size="12" size-sm size-xl="4">
+						<div class="c-control" *ngIf="item.Id">
+							<label class="c-label" for="Id"># Id</label>
+							<input class="c-input" id="Id" formControlName="Id" type="number" />
+						</div>
 
-            <div class="c-control">
-              <label class="c-label" for="IDAddress"
-                >{{'Customer' | translate}}
-                <small>#{{item.IDContact}}</small>
-                <span
-                  *ngIf="!formGroup.controls.IDAddress.valid && !formGroup.controls.IDAddress.pending && (formGroup.controls.IDAddress.dirty || submitAttempt)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
-              <ng-select
-                *ngIf="item.Id && item.IDContact && !item.IDAddress"
-                class="c-input"
-                (change)="changedIDAddress($event)"
-                #IDContact
-                labelForId="IDContact"
-                formControlName="IDContact"
-                [items]="contactList$ | async"
-                [typeahead]="contactListInput$"
-                [loading]="contactListLoading"
-                [virtualScroll]="true"
-                bindLabel="Name"
-                bindValue="Id"
-                placeholder="{{'Search for name, code or phone number' | translate}}"
-              >
-                <ng-template ng-label-tmp let-i="item"> {{i.Name}} </ng-template>
-                <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                  <div *ngIf="i">
-                    <div>
-                      <span [ngOptionHighlight]="search">{{i.Name}}</span>
-                      <span *ngIf="i.WorkPhone">
-                        |
-                        <small>
-                          <b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
-                        </small></span
-                      >
-                    </div>
-                  </div>
-                </ng-template>
-              </ng-select>
+						<div class="c-control">
+							<label class="c-label" for="IDAddress"
+								>{{'Customer' | translate}}
+								<small>#{{item.IDContact}}</small>
+								<span
+									*ngIf="!formGroup.controls.IDAddress.valid && !formGroup.controls.IDAddress.pending && (formGroup.controls.IDAddress.dirty || submitAttempt)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
+							<ng-select
+								*ngIf="item.Id && item.IDContact && !item.IDAddress"
+								class="c-input"
+								(change)="changedIDAddress($event)"
+								#IDContact
+								labelForId="IDContact"
+								formControlName="IDContact"
+								[items]="contactList$ | async"
+								[typeahead]="contactListInput$"
+								[loading]="contactListLoading"
+								[virtualScroll]="true"
+								bindLabel="Name"
+								bindValue="Id"
+								placeholder="{{'Search for name, code or phone number' | translate}}"
+							>
+								<ng-template ng-label-tmp let-i="item"> {{i.Name}} </ng-template>
+								<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+									<div *ngIf="i">
+										<div>
+											<span [ngOptionHighlight]="search">{{i.Name}}</span>
+											<span *ngIf="i.WorkPhone">
+												|
+												<small>
+													<b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
+												</small></span
+											>
+										</div>
+									</div>
+								</ng-template>
+							</ng-select>
 
-              <ng-select
-                *ngIf="!item.Id || item.IDAddress"
-                class="c-input"
-                (change)="changedIDAddress($event)"
-                #IDAddress
-                labelForId="IDAddress"
-                formControlName="IDAddress"
-                [items]="contactList$ | async"
-                [typeahead]="contactListInput$"
-                [loading]="contactListLoading"
-                [virtualScroll]="true"
-                bindLabel="Name"
-                bindValue="IDAddress"
-                placeholder="{{'Search for name, code or phone number' | translate}}"
-              >
-                <ng-template ng-label-tmp let-i="item" let-a="item.Address">
-                  {{i.Name}}
-                  <small *ngIf="a">
-                    <span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-                    <span *ngIf="a.Ward">, {{a.Ward}}</span>
-                    <span *ngIf="a.District">, {{a.District}}</span>
-                    <span *ngIf="a.Province">, {{a.Province}}</span>
-                  </small>
-                </ng-template>
-                <ng-template ng-option-tmp let-i="item" let-a="item.Address" let-search="searchTerm">
-                  <div *ngIf="i">
-                    <div>
-                      <span [ngOptionHighlight]="search">{{i.Name}}</span>
-                      <span *ngIf="i.WorkPhone">
-                        |
-                        <small>
-                          <b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
-                        </small></span
-                      >
-                    </div>
-                    <small *ngIf="a">
-                      <b *ngIf="i.Code"><span class="important" [ngOptionHighlight]="search">{{i.Code}}</span></b>
-                      <span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-                      <span *ngIf="a.Ward">, {{a.Ward}}</span>
-                      <span *ngIf="a.District">, {{a.District}}</span>
-                      <span *ngIf="a.Province">, {{a.Province}}</span>
-                      <br *ngIf="a.AddressLine2 || a.Contact" />
-                      <span *ngIf="a.AddressLine2">{{a.AddressLine2}}</span>
-                      <span *ngIf="a.Contact"> | {{'Contact' | translate}}: {{a.Contact}}</span>
-                      <span *ngIf="a.Phone1"> - {{a.Phone1}}</span>
-                      <span *ngIf="a.Phone2"> - {{a.Phone2}}</span>
-                    </small>
-                  </div>
-                </ng-template>
-              </ng-select>
-            </div>
+							<ng-select
+								*ngIf="!item.Id || item.IDAddress"
+								class="c-input"
+								(change)="changedIDAddress($event)"
+								#IDAddress
+								labelForId="IDAddress"
+								formControlName="IDAddress"
+								[items]="contactList$ | async"
+								[typeahead]="contactListInput$"
+								[loading]="contactListLoading"
+								[virtualScroll]="true"
+								bindLabel="Name"
+								bindValue="IDAddress"
+								placeholder="{{'Search for name, code or phone number' | translate}}"
+							>
+								<ng-template ng-label-tmp let-i="item" let-a="item.Address">
+									{{i.Name}}
+									<small *ngIf="a">
+										<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
+										<span *ngIf="a.Ward">, {{a.Ward}}</span>
+										<span *ngIf="a.District">, {{a.District}}</span>
+										<span *ngIf="a.Province">, {{a.Province}}</span>
+									</small>
+								</ng-template>
+								<ng-template ng-option-tmp let-i="item" let-a="item.Address" let-search="searchTerm">
+									<div *ngIf="i">
+										<div>
+											<span [ngOptionHighlight]="search">{{i.Name}}</span>
+											<span *ngIf="i.WorkPhone">
+												|
+												<small>
+													<b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
+												</small></span
+											>
+										</div>
+										<small *ngIf="a">
+											<b *ngIf="i.Code"><span class="important" [ngOptionHighlight]="search">{{i.Code}}</span></b>
+											<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
+											<span *ngIf="a.Ward">, {{a.Ward}}</span>
+											<span *ngIf="a.District">, {{a.District}}</span>
+											<span *ngIf="a.Province">, {{a.Province}}</span>
+											<br *ngIf="a.AddressLine2 || a.Contact" />
+											<span *ngIf="a.AddressLine2">{{a.AddressLine2}}</span>
+											<span *ngIf="a.Contact"> | {{'Contact' | translate}}: {{a.Contact}}</span>
+											<span *ngIf="a.Phone1"> - {{a.Phone1}}</span>
+											<span *ngIf="a.Phone2"> - {{a.Phone2}}</span>
+										</small>
+									</div>
+								</ng-template>
+							</ng-select>
+						</div>
 
-            <div class="c-control">
-              <label class="c-label" for="OriginalTotalAfterTax"
-                >{{'Total amount' | translate}}
-                <span
-                  *ngIf="!formGroup.controls.OriginalTotalAfterTax.valid && !formGroup.controls.OriginalTotalAfterTax.pending && (formGroup.controls.OriginalTotalAfterTax.dirty || submitAttempt)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
-              <input
-                (change)="saveChange()"
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="true"
-                suffix=" ₫"
-                class="c-input"
-                id="OriginalTotalAfterTax"
-                formControlName="OriginalTotalAfterTax"
-                type="text"
-              />
-            </div>
+						<div class="c-control">
+							<label class="c-label" for="OriginalTotalAfterTax"
+								>{{'Total amount' | translate}}
+								<span
+									*ngIf="!formGroup.controls.OriginalTotalAfterTax.valid && !formGroup.controls.OriginalTotalAfterTax.pending && (formGroup.controls.OriginalTotalAfterTax.dirty || submitAttempt)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
+							<input
+								(change)="saveChange()"
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="true"
+								suffix=" ₫"
+								class="c-input"
+								id="OriginalTotalAfterTax"
+								formControlName="OriginalTotalAfterTax"
+								type="text"
+							/>
+						</div>
 
-            <div
-              class="c-control"
-              *ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount"
-            >
-              <label class="c-label" for="OriginalTotalAfterDiscountFromSalesman"
-                >{{'Total amount paid' | translate}}</label
-              >
-              <input
-                [disabled]="true"
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="true"
-                suffix=" ₫"
-                class="c-input"
-                id="OriginalTotalAfterDiscountFromSalesman"
-                [ngModelOptions]="{standalone: true}"
-                [ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
-                type="text"
-              />
-            </div>
-          </ion-col>
-          <ion-col size="12" size-sm size-xl="4">
-            <div class="c-control" *ngIf="item.Id">
-              <label class="c-label">{{'Order created date' | translate}}</label>
+						<div class="c-control" *ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount">
+							<label class="c-label" for="OriginalTotalAfterDiscountFromSalesman">{{'Total amount paid' | translate}}</label>
+							<input
+								[disabled]="true"
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="true"
+								suffix=" ₫"
+								class="c-input"
+								id="OriginalTotalAfterDiscountFromSalesman"
+								[ngModelOptions]="{standalone: true}"
+								[ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
+								type="text"
+							/>
+						</div>
+					</ion-col>
+					<ion-col size="12" size-sm size-xl="4">
+						<div class="c-control" *ngIf="item.Id">
+							<label class="c-label">{{'Order created date' | translate}}</label>
 
-              <span class="c-input disable">{{item.OrderDateText}}</span>
-            </div>
+							<span class="c-input disable">{{item.OrderDateText}}</span>
+						</div>
 
-            <div class="c-control">
-              <label class="c-label" for="ProductWeight"
-                >{{'Weight' | translate}}
-                <span
-                  *ngIf="!formGroup.controls.ProductWeight.valid && !formGroup.controls.ProductWeight.pending && (formGroup.controls.ProductWeight.dirty || submitAttempt)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
-              <input
-                readonly
-                class="c-input"
-                id="ProductWeight"
-                formControlName="ProductWeight"
-                type="text"
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="true"
-                suffix=" kg"
-              />
-            </div>
+						<div class="c-control">
+							<label class="c-label" for="ProductWeight"
+								>{{'Weight' | translate}}
+								<span
+									*ngIf="!formGroup.controls.ProductWeight.valid && !formGroup.controls.ProductWeight.pending && (formGroup.controls.ProductWeight.dirty || submitAttempt)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
+							<input
+								readonly
+								class="c-input"
+								id="ProductWeight"
+								formControlName="ProductWeight"
+								type="text"
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="true"
+								suffix=" kg"
+							/>
+						</div>
 
-            <div class="c-control">
-              <label class="c-label" for="ProductDimensions"
-                >{{'Volume' | translate}}
-                <ion-text color="primary" *ngIf="item.ProductDimensionsM"
-                  >{{item.ProductDimensionsM | mask: 'separator.2':','}} m³</ion-text
-                >
-                <span
-                  *ngIf="!formGroup.controls.ProductDimensions.valid && !formGroup.controls.ProductDimensions.pending && (formGroup.controls.ProductDimensions.dirty || submitAttempt)"
-                  ion-text
-                  color="danger"
-                  >(*)</span
-                >
-              </label>
+						<div class="c-control">
+							<label class="c-label" for="ProductDimensions"
+								>{{'Volume' | translate}}
+								<ion-text color="primary" *ngIf="item.ProductDimensionsM">{{item.ProductDimensionsM | mask: 'separator.2':','}} m³</ion-text>
+								<span
+									*ngIf="!formGroup.controls.ProductDimensions.valid && !formGroup.controls.ProductDimensions.pending && (formGroup.controls.ProductDimensions.dirty || submitAttempt)"
+									ion-text
+									color="danger"
+									>(*)</span
+								>
+							</label>
 
-              <input
-                readonly
-                class="c-input"
-                id="ProductDimensions"
-                formControlName="ProductDimensions"
-                type="text"
-                mask="separator.2"
-                thousandSeparator=","
-                [allowNegativeNumbers]="true"
-                suffix=" cm³"
-              />
-            </div>
+							<input
+								readonly
+								class="c-input"
+								id="ProductDimensions"
+								formControlName="ProductDimensions"
+								type="text"
+								mask="separator.2"
+								thousandSeparator=","
+								[allowNegativeNumbers]="true"
+								suffix=" cm³"
+							/>
+						</div>
 
-            <!-- <div class="c-control">
+						<!-- <div class="c-control">
                             <label class="c-label" for=""></label>
                             <ion-button *ngIf="!item.Id && pageConfig.canAdd" expand="block" (click)="saveChange()" [disabled]="!formGroup.dirty">{{'add-order' | translate}}</ion-button>
                         </div> -->
 
-            <div class="c-control ion-text-right">
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
-                (click)="item.IsSampleOrder = !item.IsSampleOrder; changedSampleOrder()"
-                [fill]=" item.IsSampleOrder? 'solid' : 'outline' "
-              >
-                {{'Sample' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
-                (click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
-                [fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
-              >
-                {{'Urgent order' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
-                (click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
-                [fill]=" item.IsWholeSale? 'solid' : 'outline' "
-              >
-                {{'Wholesale customer' | translate}}
-              </ion-button>
-              <ion-button
-                size="small"
-                [disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted'))|| submitAttempt"
-                (click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
-                [fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
-                color="blue"
-              >
-                {{'Coverage' | translate}}
-              </ion-button>
-            </div>
-          </ion-col>
-        </ion-row>
+						<div class="c-control ion-text-right">
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
+								(click)="item.IsSampleOrder = !item.IsSampleOrder; changedSampleOrder()"
+								[fill]=" item.IsSampleOrder? 'solid' : 'outline' "
+							>
+								{{'Sample' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
+								(click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
+								[fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
+							>
+								{{'Urgent order' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
+								(click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
+								[fill]=" item.IsWholeSale? 'solid' : 'outline' "
+							>
+								{{'Wholesale customer' | translate}}
+							</ion-button>
+							<ion-button
+								size="small"
+								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted'))|| submitAttempt"
+								(click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
+								[fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
+								color="blue"
+							>
+								{{'Coverage' | translate}}
+							</ion-button>
+						</div>
+					</ion-col>
+				</ion-row>
 
-        <!-- <ion-row class="hr-group">
+				<!-- <ion-row class="hr-group">
                     <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
                         <ion-list-header class="ion-no-padding">
                             <ion-label color="primary">{{'item-information-title' | translate}}</ion-label>
@@ -275,482 +268,406 @@
                         
                     </ion-col>
                 </ion-row> -->
-      </form>
-    </ion-grid>
+			</form>
+		</ion-grid>
 
-    <div class="row-full shadow full-screen">
-      <ion-toolbar color="primary">
-        <ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
-          <ion-segment-button value="s1">
-            <ion-label>{{'Product list' | translate}}</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="s2">
-            <ion-label>{{'Promotion/ applied discount' | translate}}</ion-label>
-          </ion-segment-button>
-          <ion-segment-button value="s3">
-            <ion-label>{{'Other information' | translate}}</ion-label>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-toolbar>
+		<div class="row-full shadow full-screen">
+			<ion-toolbar color="primary">
+				<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
+					<ion-segment-button value="s1">
+						<ion-label>{{'Product list' | translate}}</ion-label>
+					</ion-segment-button>
+					<ion-segment-button value="s2">
+						<ion-label>{{'Promotion/ applied discount' | translate}}</ion-label>
+					</ion-segment-button>
+					<ion-segment-button value="s3">
+						<ion-label>{{'Other information' | translate}}</ion-label>
+					</ion-segment-button>
+				</ion-segment>
+			</ion-toolbar>
 
-      <div>
-        <div *ngIf="segmentView == 's1'">
-          <div class="table-contain">
-            <section class="table" style="min-width: 1550px">
-              <header class="bold">
-                <div class="col-id cell">#</div>
-                <div class="col-name cell">{{'Product' | translate}}</div>
-                <div class="col-uom cell">{{'Unit' | translate}}</div>
-                <div class="col-qty cell">{{'Quantity' | translate}}</div>
-                <div
-                  class="col-discount cell"
-                  title="{{'Discount from vendor' | translate}}"
-                  *ngIf="pageConfig.canUseDiscountFromVendor"
-                >
-                  {{'Discount 1' | translate}}
-                </div>
-                <div
-                  class="col-discount cell"
-                  title="{{'Discount from distributor' | translate}}"
-                  *ngIf="pageConfig.canUseDiscountFromDistributor"
-                >
-                  {{'Discount 2' | translate}}
-                </div>
+			<div>
+				<div *ngIf="segmentView == 's1'">
+					<div class="table-contain">
+						<section class="table" style="min-width: 1550px">
+							<header class="bold">
+								<div class="col-id cell">#</div>
+								<div class="col-name cell">{{'Product' | translate}}</div>
+								<div class="col-uom cell">{{'Unit' | translate}}</div>
+								<div class="col-qty cell">{{'Quantity' | translate}}</div>
+								<div class="col-discount cell" title="{{'Discount from vendor' | translate}}" *ngIf="pageConfig.canUseDiscountFromVendor">
+									{{'Discount 1' | translate}}
+								</div>
+								<div class="col-discount cell" title="{{'Discount from distributor' | translate}}" *ngIf="pageConfig.canUseDiscountFromDistributor">
+									{{'Discount 2' | translate}}
+								</div>
 
-                <div
-                  class="col-promotion cell"
-                  title="{{'Promotion goods' | translate}}"
-                  *ngIf="pageConfig.canUsePromotionItem"
-                >
-                  {{'Promotion' | translate}}
-                </div>
-                <div class="col-discount cell" title="{{'Discount per product' | translate}}">
-                  {{'Discount/product' | translate}}
-                </div>
-                <div class="col-discount cell" title="{{'= [%discount] * [value before discount]' | translate}}">
-                  {{'Discount by group' | translate}}
-                </div>
-                <div class="col-discount cell" title="{{'= [Discount /product] + [Group discount]' | translate}}">
-                  {{'Discount by line' | translate}}
-                </div>
-                <div
-                  class="col-discount cell"
-                  title="{{'= [%Discount] * ([value before discount] - [Line discount])' | translate}}"
-                >
-                  {{'Discount by order' | translate}}
-                </div>
-                <div class="col-price cell">{{'Unit price' | translate}}</div>
-                <div class="col-total cell">{{'Amount' | translate}}</div>
-                <div
-                  class="col-discount cell"
-                  title="{{'Discount from saleman' | translate}}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  {{'Discount from saleman' | translate}}
-                </div>
-                <div
-                  class="col-discount cell"
-                  title="{{'Unit price before salesman discount' | translate}}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  {{'Unit price' | translate}} <br />
-                  {{'(before discount from salesman)' | translate}}
-                </div>
-                <div
-                  class="col-total cell"
-                  title="{{'[Customer pays] = [Total amount] - [Discount 3]' | translate}}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  {{'Customers payable' | translate}}
-                </div>
-                <div class="col-price cell">{{'VAT(%)' | translate}}</div>
-                <div *ngIf="pageConfig.SOIsShowOrderDetailRemark" class="col-remark cell">Remark</div>
-                <div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
-              </header>
+								<div class="col-promotion cell" title="{{'Promotion goods' | translate}}" *ngIf="pageConfig.canUsePromotionItem">{{'Promotion' | translate}}</div>
+								<div class="col-discount cell" title="{{'Discount per product' | translate}}">{{'Discount/product' | translate}}</div>
+								<div class="col-discount cell" title="{{'= [%discount] * [value before discount]' | translate}}">{{'Discount by group' | translate}}</div>
+								<div class="col-discount cell" title="{{'= [Discount /product] + [Group discount]' | translate}}">{{'Discount by line' | translate}}</div>
+								<div class="col-discount cell" title="{{'= [%Discount] * ([value before discount] - [Line discount])' | translate}}">
+									{{'Discount by order' | translate}}
+								</div>
+								<div class="col-price cell">{{'Unit price' | translate}}</div>
+								<div class="col-total cell">{{'Amount' | translate}}</div>
+								<div class="col-discount cell" title="{{'Discount from saleman' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									{{'Discount from saleman' | translate}}
+								</div>
+								<div class="col-discount cell" title="{{'Unit price before salesman discount' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									{{'Unit price' | translate}} <br />
+									{{'(before discount from salesman)' | translate}}
+								</div>
+								<div class="col-total cell" title="{{'[Customer pays] = [Total amount] - [Discount 3]' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									{{'Customers payable' | translate}}
+								</div>
+								<div class="col-price cell">{{'VAT(%)' | translate}}</div>
+								<div *ngIf="pageConfig.SOIsShowOrderDetailRemark" class="col-remark cell">Remark</div>
+								<div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
+							</header>
 
-              <div class="row" *ngFor="let i of item.OrderLines; let idx = index;">
-                <div class="col-id cell">{{idx+1}}</div>
-                <div class="col-name cell">
-                  <ng-select
-                    appendTo="#order-detail-page"
-                    [disabled]="!pageConfig.canEdit || submitAttempt"
-                    class="c-input"
-                    [(ngModel)]="i.IDItem"
-                    (change)="changedIDItem($event, i)"
-                    [labelForId]="'IDItem'+idx"
-                    [items]="itemList$ | async"
-                    [typeahead]="itemListInput$"
-                    [virtualScroll]="true"
-                    bindLabel="Name"
-                    bindValue="Id"
-                    placeholder="{{'Search for name, code or phone number' | translate}}"
-                  >
-                    <ng-template ng-label-tmp let-i="item">
-                      <b *ngIf="i.Code" [title]="i.Id" [title]="i.Name"> {{i.Code}} </b>
-                      {{i.Name}}
-                    </ng-template>
-                    <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                      <div *ngIf="i">
-                        <div>
-                          <span [ngOptionHighlight]="search">{{i.Name}}</span>
-                        </div>
-                        <small
-                          >#<b
-                            ><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b
-                          ></small
-                        >
-                      </div>
-                    </ng-template>
-                  </ng-select>
-                </div>
-                <div class="col-uom cell">
-                  <select
-                    [disabled]="!pageConfig.canEdit || submitAttempt"
-                    class="c-input c-dropdown"
-                    (change)="changedItemUoM(i)"
-                    [(ngModel)]="i.IDUoM"
-                    *ngIf="i._itemData && i._itemData.UoMs.length"
-                  >
-                    <option value="">{{'Select unit' | translate}}</option>
-                    <option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">{{t.Name}}</option>
-                  </select>
-                </div>
+							<div class="row" *ngFor="let i of item.OrderLines; let idx = index;">
+								<div class="col-id cell">{{idx+1}}</div>
+								<div class="col-name cell">
+									<ng-select
+										appendTo="#order-detail-page"
+										[disabled]="!pageConfig.canEdit || submitAttempt"
+										class="c-input"
+										[(ngModel)]="i.IDItem"
+										(change)="changedIDItem($event, i)"
+										[labelForId]="'IDItem'+idx"
+										[items]="itemList$ | async"
+										[typeahead]="itemListInput$"
+										[virtualScroll]="true"
+										bindLabel="Name"
+										bindValue="Id"
+										placeholder="{{'Search for name, code or phone number' | translate}}"
+									>
+										<ng-template ng-label-tmp let-i="item">
+											<b *ngIf="i.Code" [title]="i.Id" [title]="i.Name"> {{i.Code}} </b>
+											{{i.Name}}
+										</ng-template>
+										<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+											<div *ngIf="i">
+												<div>
+													<span [ngOptionHighlight]="search">{{i.Name}}</span>
+												</div>
+												<small
+													>#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b></small
+												>
+											</div>
+										</ng-template>
+									</ng-select>
+								</div>
+								<div class="col-uom cell">
+									<select
+										[disabled]="!pageConfig.canEdit || submitAttempt"
+										class="c-input c-dropdown"
+										(change)="changedItemUoM(i)"
+										[(ngModel)]="i.IDUoM"
+										*ngIf="i._itemData && i._itemData.UoMs.length"
+									>
+										<option value="">{{'Select unit' | translate}}</option>
+										<option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">{{t.Name}}</option>
+									</select>
+								</div>
 
-                <div [ngClass]="{disable: !pageConfig.canEdit}" class="col-qty cell">
-                  <input
-                    [readonly]="!pageConfig.canEdit || submitAttempt"
-                    (focus)="$event.target.select()"
-                    *ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM"
-                    (change)="changedItemUoM(i)"
-                    class="c-input"
-                    type="number"
-                    [min]="i._UoM?i._UoM.MinQuantity:0.000000001"
-                    [max]="i._UoM?i._UoM.MaxQuantity:999999999999999999"
-                    step="1"
-                    [(ngModel)]="i.Quantity"
-                    onkeydown="return event.keyCode !== 190"
-                  />
-                </div>
-                <div
-                  [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}"
-                  class="col-discount cell"
-                  *ngIf="pageConfig.canUseDiscountFromVendor"
-                >
-                  <input
-                    [readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
-                    (focus)="$event.target.select()"
-                    *ngIf="i.Quantity"
-                    (change)="changedItemUoM(i)"
-                    class="c-input"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscount1"
-                  />
-                </div>
-                <div
-                  [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}"
-                  class="col-discount cell"
-                  *ngIf="pageConfig.canUseDiscountFromDistributor"
-                >
-                  <input
-                    [readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
-                    (focus)="$event.target.select()"
-                    *ngIf="i.Quantity"
-                    (change)="changedItemUoM(i)"
-                    class="c-input"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscount2"
-                  />
-                </div>
+								<div [ngClass]="{disable: !pageConfig.canEdit}" class="col-qty cell">
+									<input
+										[readonly]="!pageConfig.canEdit || submitAttempt"
+										(focus)="$event.target.select()"
+										*ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM"
+										(change)="changedItemUoM(i)"
+										class="c-input"
+										type="number"
+										[min]="i._UoM?i._UoM.MinQuantity:0.000000001"
+										[max]="i._UoM?i._UoM.MaxQuantity:999999999999999999"
+										step="1"
+										[(ngModel)]="i.Quantity"
+										onkeydown="return event.keyCode !== 190"
+									/>
+								</div>
+								<div [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}" class="col-discount cell" *ngIf="pageConfig.canUseDiscountFromVendor">
+									<input
+										[readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
+										(focus)="$event.target.select()"
+										*ngIf="i.Quantity"
+										(change)="changedItemUoM(i)"
+										class="c-input"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscount1"
+									/>
+								</div>
+								<div [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}" class="col-discount cell" *ngIf="pageConfig.canUseDiscountFromDistributor">
+									<input
+										[readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
+										(focus)="$event.target.select()"
+										*ngIf="i.Quantity"
+										(change)="changedItemUoM(i)"
+										class="c-input"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscount2"
+									/>
+								</div>
 
-                <div
-                  [ngClass]="{disable: !pageConfig.canEdit}"
-                  class="col-promotion cell"
-                  *ngIf="pageConfig.canUsePromotionItem"
-                >
-                  <input
-                    [disabled]="!pageConfig.canEdit || submitAttempt"
-                    (change)="changeIsPromotion(i);"
-                    class="c-checkbox"
-                    [(ngModel)]="i.IsPromotionItem"
-                    type="checkbox"
-                  />
-                </div>
+								<div [ngClass]="{disable: !pageConfig.canEdit}" class="col-promotion cell" *ngIf="pageConfig.canUsePromotionItem">
+									<input
+										[disabled]="!pageConfig.canEdit || submitAttempt"
+										(change)="changeIsPromotion(i);"
+										class="c-checkbox"
+										[(ngModel)]="i.IsPromotionItem"
+										type="checkbox"
+									/>
+								</div>
 
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscountByItem"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscountByGroup"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscountByLine"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalDiscountByOrder"
-                  />
-                </div>
-                <div
-                  class="col-price cell disable"
-                  [ngClass]="{disable: !pageConfig.canEdit || !pageConfig.canEditPrice, 'price-warning': i._ShowPriceWarning}"
-                >
-                  <input
-                    class="c-input"
-                    [readonly]="!(pageConfig.canEdit && pageConfig.canEditPrice && !i.IsPromotionItem)"
-                    (focus)="$event.target.select()"
-                    (change)="changedItemUoM(i)"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="false"
-                    [(ngModel)]="i.UoMPrice"
-                  />
-                </div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscountByItem"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscountByGroup"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscountByLine"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalDiscountByOrder"
+									/>
+								</div>
+								<div class="col-price cell disable" [ngClass]="{disable: !pageConfig.canEdit || !pageConfig.canEditPrice, 'price-warning': i._ShowPriceWarning}">
+									<input
+										class="c-input"
+										[readonly]="!(pageConfig.canEdit && pageConfig.canEditPrice && !i.IsPromotionItem)"
+										(focus)="$event.target.select()"
+										(change)="changedItemUoM(i)"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="false"
+										[(ngModel)]="i.UoMPrice"
+									/>
+								</div>
 
-                <div class="col-total cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.OriginalTotalAfterDiscount"
-                  />
-                </div>
+								<div class="col-total cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[(ngModel)]="i.OriginalTotalAfterDiscount"
+									/>
+								</div>
 
-                <div
-                  class="col-discount cell"
-                  [ngClass]="{disable: !pageConfig.canEdit}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  <input
-                    *ngIf="i.Quantity && !i.IsPromotionItem"
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt || i.IsPromotionItem"
-                    (focus)="$event.target.select()"
-                    (change)="changedItemUoM(i)"
-                    class="c-input"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="i.IsPromotionItem"
-                    [(ngModel)]="i.OriginalDiscountFromSalesman"
-                  />
-                </div>
+								<div class="col-discount cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									<input
+										*ngIf="i.Quantity && !i.IsPromotionItem"
+										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt || i.IsPromotionItem"
+										(focus)="$event.target.select()"
+										(change)="changedItemUoM(i)"
+										class="c-input"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="i.IsPromotionItem"
+										[(ngModel)]="i.OriginalDiscountFromSalesman"
+									/>
+								</div>
 
-                <div
-                  class="col-discount cell"
-                  [ngClass]="{disable: !pageConfig.canEdit}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  <input
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
-                    (focus)="$event.target.select()"
-                    *ngIf="i.Quantity"
-                    (change)="changedSalesmanPrice(i)"
-                    class="c-input"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="false"
-                    [(ngModel)]="i.SalesmanPrice"
-                  />
-                </div>
+								<div class="col-discount cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									<input
+										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
+										(focus)="$event.target.select()"
+										*ngIf="i.Quantity"
+										(change)="changedSalesmanPrice(i)"
+										class="c-input"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="false"
+										[(ngModel)]="i.SalesmanPrice"
+									/>
+								</div>
 
-                <div
-                  class="col-total cell"
-                  [ngClass]="{disable: !pageConfig.canEdit}"
-                  *ngIf="pageConfig.canUseDiscountFromSalesman"
-                >
-                  <input
-                    [readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
-                    (focus)="$event.target.select()"
-                    *ngIf="i.Quantity"
-                    (change)="changedOriginalTotalAfterDiscountFromSalesman(i)"
-                    class="c-input"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="false"
-                    [(ngModel)]="i.OriginalTotalAfterDiscountFromSalesman"
-                  />
-                </div>
+								<div class="col-total cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									<input
+										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
+										(focus)="$event.target.select()"
+										*ngIf="i.Quantity"
+										(change)="changedOriginalTotalAfterDiscountFromSalesman(i)"
+										class="c-input"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="false"
+										[(ngModel)]="i.OriginalTotalAfterDiscountFromSalesman"
+									/>
+								</div>
 
-                <div class="col-price cell">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [(ngModel)]="i.TaxRate"
-                  />
-                </div>
-                <div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark">
-                  <input
-                    [readonly]="!pageConfig.canEdit"
-                    [(ngModel)]="i.Remark"
-                    class="c-input"
-                    (change)="saveChange()"
-                  />
-                </div>
-                <div class="col-del cell" *ngIf="pageConfig.canEdit" (click)="deleteOrderLine(i)">
-                  <ion-icon color="danger" class="min-btn" name="trash-outline"></ion-icon>
-                </div>
-              </div>
+								<div class="col-price cell">
+									<input class="c-input" [disabled]="true" mask="separator.2" thousandSeparator="," [allowNegativeNumbers]="true" [(ngModel)]="i.TaxRate" />
+								</div>
+								<div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark">
+									<input [readonly]="!pageConfig.canEdit" [(ngModel)]="i.Remark" class="c-input" (change)="saveChange()" />
+								</div>
+								<div class="col-del cell" *ngIf="pageConfig.canEdit" (click)="deleteOrderLine(i)">
+									<ion-icon color="danger" class="min-btn" name="trash-outline"></ion-icon>
+								</div>
+							</div>
 
-              <div class="row" *ngIf="item.Id && item?.OrderLines?.length > 1">
-                <div class="col-id cell" *ngIf="pageConfig.canEdit" (click)="addOrderLine()">
-                  <ion-icon class="min-btn" title="{{'Add product' | translate}}" name="add-circle-outline"></ion-icon>
-                </div>
-                <div class="col-id cell" *ngIf="!pageConfig.canEdit"></div>
-                <div class="col-name cell">
-                  <b (click)="addOrderLine()" *ngIf="pageConfig.canEdit">{{'Add product' | translate}}</b>
-                </div>
-                <div class="col-uom cell">
-                  <b>{{'Total' | translate}}:</b>
-                </div>
+							<div class="row" *ngIf="item.Id && item?.OrderLines?.length > 1">
+								<div class="col-id cell" *ngIf="pageConfig.canEdit" (click)="addOrderLine()">
+									<ion-icon class="min-btn" title="{{'Add product' | translate}}" name="add-circle-outline"></ion-icon>
+								</div>
+								<div class="col-id cell" *ngIf="!pageConfig.canEdit"></div>
+								<div class="col-name cell">
+									<b (click)="addOrderLine()" *ngIf="pageConfig.canEdit">{{'Add product' | translate}}</b>
+								</div>
+								<div class="col-uom cell">
+									<b>{{'Total' | translate}}:</b>
+								</div>
 
-                <div class="col-qty cell"></div>
-                <div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromVendor">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscount1"
-                  />
-                </div>
-                <div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromDistributor">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscount2"
-                  />
-                </div>
+								<div class="col-qty cell"></div>
+								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromVendor">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscount1"
+									/>
+								</div>
+								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromDistributor">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscount2"
+									/>
+								</div>
 
-                <div class="col-promotion cell disable" *ngIf="pageConfig.canUsePromotionItem"></div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscountByItem"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscountByGroup"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscountByLine"
-                  />
-                </div>
-                <div class="col-discount cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscountByOrder"
-                  />
-                </div>
-                <div class="col-price cell disable"></div>
-                <div class="col-total cell disable">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalTotalAfterTax"
-                  />
-                </div>
+								<div class="col-promotion cell disable" *ngIf="pageConfig.canUsePromotionItem"></div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscountByItem"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscountByGroup"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscountByLine"
+									/>
+								</div>
+								<div class="col-discount cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscountByOrder"
+									/>
+								</div>
+								<div class="col-price cell disable"></div>
+								<div class="col-total cell disable">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalTotalAfterTax"
+									/>
+								</div>
 
-                <div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalDiscountFromSalesman"
-                  />
-                </div>
-                <div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman"></div>
-                <div class="col-total cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
-                  <input
-                    class="c-input"
-                    [disabled]="true"
-                    mask="separator.2"
-                    thousandSeparator=","
-                    [allowNegativeNumbers]="true"
-                    [ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
-                  />
-                </div>
-                <div class="col-price cell"></div>
-                <div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark"></div>
+								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalDiscountFromSalesman"
+									/>
+								</div>
+								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman"></div>
+								<div class="col-total cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
+									<input
+										class="c-input"
+										[disabled]="true"
+										mask="separator.2"
+										thousandSeparator=","
+										[allowNegativeNumbers]="true"
+										[ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
+									/>
+								</div>
+								<div class="col-price cell"></div>
+								<div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark"></div>
 
-                <div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
-              </div>
-            </section>
-          </div>
-          <div class="table-contain">
-            <div class="row" *ngIf="pageConfig.canEdit && item.Id && item?.OrderLines?.length < 2  ">
-              <div class="cell">
-                <ion-button fill="clear" size="small" (click)="addOrderLine()">
-                  <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                  {{'Add product' | translate}}
-                </ion-button>
-              </div>
-            </div>
-          </div>
+								<div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
+							</div>
+						</section>
+					</div>
+					<div class="table-contain">
+						<div class="row" *ngIf="pageConfig.canEdit && item.Id && item?.OrderLines?.length < 2  ">
+							<div class="cell">
+								<ion-button fill="clear" size="small" (click)="addOrderLine()">
+									<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+									{{'Add product' | translate}}
+								</ion-button>
+							</div>
+						</div>
+					</div>
 
-          <!-- <div class="ion-padding">
+					<!-- <div class="ion-padding">
 
                         <ion-grid fixed *ngIf="OrderLines.controls.length">
 
@@ -806,366 +723,294 @@
 
                         </ion-grid>
                     </div> -->
-        </div>
-        <div *ngIf="segmentView == 's2'"></div>
+				</div>
+				<div *ngIf="segmentView == 's2'"></div>
 
-        <div *ngIf="segmentView == 's3'">
-          <div class="ion-padding">
-            <ion-grid fixed>
-              <form [formGroup]="formGroup">
-                <ion-row class="hr-group">
-                  <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-                    <ion-list-header class="ion-no-padding">
-                      <ion-label color="primary">{{'Order information' | translate}}</ion-label>
-                    </ion-list-header>
-                  </ion-col>
-                  <ion-col size="12" size-sm size-xl="4">
-                    <div class="c-control">
-                      <label class="c-label" for="Code"
-                        >{{'Code' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.Code.valid && !formGroup.controls.Code.pending && (formGroup.controls.Code.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <input (change)="saveChange()" class="c-input" id="Code" formControlName="Code" type="text" />
-                    </div>
-                    <div class="c-control">
-                      <label class="c-label" for="Name"
-                        >{{'Content' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.Name.valid && !formGroup.controls.Name.pending && (formGroup.controls.Name.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <input (change)="saveChange()" class="c-input" id="Name" formControlName="Name" type="text" />
-                    </div>
+				<div *ngIf="segmentView == 's3'">
+					<div class="ion-padding">
+						<ion-grid fixed>
+							<form [formGroup]="formGroup">
+								<ion-row class="hr-group">
+									<ion-col size="12" size-sm="12" size-md="12" size-xl="3">
+										<ion-list-header class="ion-no-padding">
+											<ion-label color="primary">{{'Order information' | translate}}</ion-label>
+										</ion-list-header>
+									</ion-col>
+									<ion-col size="12" size-sm size-xl="4">
+										<div class="c-control">
+											<label class="c-label" for="Code"
+												>{{'Code' | translate}}
+												<span
+													*ngIf="!formGroup.controls.Code.valid && !formGroup.controls.Code.pending && (formGroup.controls.Code.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<input (change)="saveChange()" class="c-input" id="Code" formControlName="Code" type="text" />
+										</div>
+										<div class="c-control">
+											<label class="c-label" for="Name"
+												>{{'Content' | translate}}
+												<span
+													*ngIf="!formGroup.controls.Name.valid && !formGroup.controls.Name.pending && (formGroup.controls.Name.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<input (change)="saveChange()" class="c-input" id="Name" formControlName="Name" type="text" />
+										</div>
 
-                    <app-form-control
-                      [field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
-                      (change)="saveChange()"
-                    ></app-form-control>
+										<app-form-control
+											[field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
 
-                    <app-form-control
-                    [field]="{id:'Status', label: 'Order Status', type : 'ng-select', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
-                    (change)="saveChange()"
-                  ></app-form-control>
+										<app-form-control
+											[field]="{id:'Status', label: 'Order Status', type : 'ng-select', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
 
-                  <app-form-control
-                  [field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
-                  (change)="saveChange()"
-                ></app-form-control>
+										<app-form-control
+											[field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
 
-                <app-form-control
-                [field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
-                (change)="saveChange()"
-              ></app-form-control>
-                  
-                  </ion-col>
-                  <ion-col size="12" size-sm size-xl="4">
-                    <div class="c-control" *ngIf="item.Id">
-                      <label class="c-label" for="ExpectedDeliveryDate"
-                        >Ngày giao hàng dự kiến
-                        <span
-                          *ngIf="!formGroup.controls.ExpectedDeliveryDate.valid && !formGroup.controls.ExpectedDeliveryDate.pending && (formGroup.controls.ExpectedDeliveryDate.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <input
-                        (change)="saveChange()"
-                        formControlName="ExpectedDeliveryDate"
-                        class="c-input"
-                        id="ExpectedDeliveryDate"
-                        type="datetime-local"
-                      />
-                    </div>
+										<app-form-control
+											[field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
+									</ion-col>
+									<ion-col size="12" size-sm size-xl="4">
+										<div class="c-control" *ngIf="item.Id">
+											<label class="c-label" for="ExpectedDeliveryDate"
+												>Ngày giao hàng dự kiến
+												<span
+													*ngIf="!formGroup.controls.ExpectedDeliveryDate.valid && !formGroup.controls.ExpectedDeliveryDate.pending && (formGroup.controls.ExpectedDeliveryDate.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<input (change)="saveChange()" formControlName="ExpectedDeliveryDate" class="c-input" id="ExpectedDeliveryDate" type="datetime-local" />
+										</div>
 
-                    <div class="c-control" *ngIf="item.IDOwner">
-                      <label class="c-label" for="IDOwner"
-                        >{{'Sales staff' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.IDOwner.valid && !formGroup.controls.IDOwner.pending && (formGroup.controls.IDOwner.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select class="c-input c-dropdown" formControlName="IDOwner">
-                        <option *ngIf="saller" [value]="saller.Id">{{saller.FullName}}</option>
-                      </select>
-                    </div>
+										<div class="c-control" *ngIf="item.IDOwner">
+											<label class="c-label" for="IDOwner"
+												>{{'Sales staff' | translate}}
+												<span
+													*ngIf="!formGroup.controls.IDOwner.valid && !formGroup.controls.IDOwner.pending && (formGroup.controls.IDOwner.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<select class="c-input c-dropdown" formControlName="IDOwner">
+												<option *ngIf="saller" [value]="saller.Id">{{saller.FullName}}</option>
+											</select>
+										</div>
 
-                    <div class="c-control">
-                      <label class="c-label" for="IDOpportunity"
-                        >{{'Opportunity' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.IDOpportunity.valid && !formGroup.controls.IDOpportunity.pending && (formGroup.controls.IDOpportunity.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select class="c-input c-dropdown" formControlName="IDOpportunity">
-                        <option [value]="1">Opportunity 1</option>
-                      </select>
-                    </div>
+										<div class="c-control">
+											<label class="c-label" for="IDOpportunity"
+												>{{'Opportunity' | translate}}
+												<span
+													*ngIf="!formGroup.controls.IDOpportunity.valid && !formGroup.controls.IDOpportunity.pending && (formGroup.controls.IDOpportunity.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<select class="c-input c-dropdown" formControlName="IDOpportunity">
+												<option [value]="1">Opportunity 1</option>
+											</select>
+										</div>
 
-                    <div class="c-control">
-                      <label class="c-label" for="IDContract"
-                        >{{'Contract' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.IDContract.valid && !formGroup.controls.IDContract.pending && (formGroup.controls.IDContract.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select class="c-input c-dropdown" formControlName="IDContract">
-                        <option [value]="1">Contract 1</option>
-                      </select>
-                    </div>
+										<div class="c-control">
+											<label class="c-label" for="IDContract"
+												>{{'Contract' | translate}}
+												<span
+													*ngIf="!formGroup.controls.IDContract.valid && !formGroup.controls.IDContract.pending && (formGroup.controls.IDContract.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<select class="c-input c-dropdown" formControlName="IDContract">
+												<option [value]="1">Contract 1</option>
+											</select>
+										</div>
 
-                    <div class="c-control">
-                      <label class="c-label" for="PaymentMethod"
-                        >{{'Payment method' | translate}}
-                        <span
-                          *ngIf="!formGroup.controls.PaymentMethod.valid && !formGroup.controls.PaymentMethod.pending && (formGroup.controls.PaymentMethod.dirty || submitAttempt)"
-                          ion-text
-                          color="danger"
-                          >(*)</span
-                        >
-                      </label>
-                      <select (change)="saveChange()" class="c-input c-dropdown" formControlName="PaymentMethod">
-                        <option *ngFor="let t of paymentMethodList" [value]="t.Code">{{t.Name}}</option>
-                      </select>
-                    </div>
-                  </ion-col>
-                </ion-row>
-              </form>
-              <ion-row class="hr-group">
-                <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-                  <ion-list-header class="ion-no-padding">
-                    <ion-label color="primary">{{'delivery information' | translate}}</ion-label>
-                  </ion-list-header>
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <div class="c-control">
-                    <label class="c-label">{{'Bill No.' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.Code"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'Route' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.Route"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
+										<div class="c-control">
+											<label class="c-label" for="PaymentMethod"
+												>{{'Payment method' | translate}}
+												<span
+													*ngIf="!formGroup.controls.PaymentMethod.valid && !formGroup.controls.PaymentMethod.pending && (formGroup.controls.PaymentMethod.dirty || submitAttempt)"
+													ion-text
+													color="danger"
+													>(*)</span
+												>
+											</label>
+											<select (change)="saveChange()" class="c-input c-dropdown" formControlName="PaymentMethod">
+												<option *ngFor="let t of paymentMethodList" [value]="t.Code">{{t.Name}}</option>
+											</select>
+										</div>
+									</ion-col>
+								</ion-row>
+							</form>
+							<ion-row class="hr-group">
+								<ion-col size="12" size-sm="12" size-md="12" size-xl="3">
+									<ion-list-header class="ion-no-padding">
+										<ion-label color="primary">{{'delivery information' | translate}}</ion-label>
+									</ion-list-header>
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<div class="c-control">
+										<label class="c-label">{{'Bill No.' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.Code" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'Route' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.Route" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
 
-                  <div class="c-control">
-                    <label class="c-label">{{'Shipper' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.Route"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'License plate' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.VehicleNumber"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <div class="c-control">
-                    <label class="c-label">{{'Expected delivery date' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.Route"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'Delivery date' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.ShippedDate"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'Address' | translate}} </label>
-                    <textarea
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="billOfLanding.ShippingAddress"
-                      [ngModelOptions]="{standalone: true}"
-                      type="textarea"
-                    ></textarea>
-                  </div>
-                  <!-- <div class="c-control">
+									<div class="c-control">
+										<label class="c-label">{{'Shipper' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.Route" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'License plate' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.VehicleNumber" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<div class="c-control">
+										<label class="c-label">{{'Expected delivery date' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.Route" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'Delivery date' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="billOfLanding.ShippedDate" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'Address' | translate}} </label>
+										<textarea
+											readonly
+											class="c-input"
+											[(ngModel)]="billOfLanding.ShippingAddress"
+											[ngModelOptions]="{standalone: true}"
+											type="textarea"
+										></textarea>
+									</div>
+									<!-- <div class="c-control">
                                         <label class="c-label">{{'shipping-address-remark' | translate}}</label>
                                         <textarea readonly class="c-input" [(ngModel)]="billOfLanding.ShippingAddressRemark" [ngModelOptions]="{standalone: true}" type="textarea"></textarea>
                                     </div> -->
-                </ion-col>
-              </ion-row>
-              <ion-row class="hr-group">
-                <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-                  <ion-list-header class="ion-no-padding">
-                    <ion-label color="primary">{{'Documents / debts' | translate}}</ion-label>
-                  </ion-list-header>
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <div class="c-control">
-                    <label class="c-label">{{'Total' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      mask="separator.2"
-                      thousandSeparator=","
-                      [allowNegativeNumbers]="false"
-                      suffix=" ₫"
-                      [(ngModel)]="item.OriginalTotalAfterTax"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
+								</ion-col>
+							</ion-row>
+							<ion-row class="hr-group">
+								<ion-col size="12" size-sm="12" size-md="12" size-xl="3">
+									<ion-list-header class="ion-no-padding">
+										<ion-label color="primary">{{'Documents / debts' | translate}}</ion-label>
+									</ion-list-header>
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<div class="c-control">
+										<label class="c-label">{{'Total' | translate}} </label>
+										<input
+											readonly
+											class="c-input"
+											mask="separator.2"
+											thousandSeparator=","
+											[allowNegativeNumbers]="false"
+											suffix=" ₫"
+											[(ngModel)]="item.OriginalTotalAfterTax"
+											[ngModelOptions]="{standalone: true}"
+											type="text"
+										/>
+									</div>
 
-                  <div class="c-control">
-                    <label class="c-label">{{'Received' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      mask="separator.2"
-                      thousandSeparator=","
-                      [allowNegativeNumbers]="false"
-                      suffix=" ₫"
-                      [(ngModel)]="item.Received"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
+									<div class="c-control">
+										<label class="c-label">{{'Received' | translate}} </label>
+										<input
+											readonly
+											class="c-input"
+											mask="separator.2"
+											thousandSeparator=","
+											[allowNegativeNumbers]="false"
+											suffix=" ₫"
+											[(ngModel)]="item.Received"
+											[ngModelOptions]="{standalone: true}"
+											type="text"
+										/>
+									</div>
 
-                  <div class="c-control">
-                    <label class="c-label">{{'Remaining debt' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      mask="separator.2"
-                      thousandSeparator=","
-                      [allowNegativeNumbers]="false"
-                      suffix=" ₫"
-                      [(ngModel)]="item.Debt"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
+									<div class="c-control">
+										<label class="c-label">{{'Remaining debt' | translate}} </label>
+										<input
+											readonly
+											class="c-input"
+											mask="separator.2"
+											thousandSeparator=","
+											[allowNegativeNumbers]="false"
+											suffix=" ₫"
+											[(ngModel)]="item.Debt"
+											[ngModelOptions]="{standalone: true}"
+											type="text"
+										/>
+									</div>
 
-                  <!-- IsDebt bit Unchecked -->
-                  <!-- IsPaymentReceived bit Unchecked -->
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <div class="c-control">
-                    <label class="c-label">{{'Invoice' | translate}}</label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="item.InvoiceNumber"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'Invoice date' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="item.InvoiceDate"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                  <div class="c-control">
-                    <label class="c-label">{{'Tax' | translate}} </label>
-                    <input
-                      readonly
-                      class="c-input"
-                      [(ngModel)]="item.TaxRate"
-                      [ngModelOptions]="{standalone: true}"
-                      type="text"
-                    />
-                  </div>
-                </ion-col>
-              </ion-row>
+									<!-- IsDebt bit Unchecked -->
+									<!-- IsPaymentReceived bit Unchecked -->
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<div class="c-control">
+										<label class="c-label">{{'Invoice' | translate}}</label>
+										<input readonly class="c-input" [(ngModel)]="item.InvoiceNumber" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'Invoice date' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="item.InvoiceDate" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+									<div class="c-control">
+										<label class="c-label">{{'Tax' | translate}} </label>
+										<input readonly class="c-input" [(ngModel)]="item.TaxRate" [ngModelOptions]="{standalone: true}" type="text" />
+									</div>
+								</ion-col>
+							</ion-row>
 
-              <!-- Other information -->
-              <ion-row class="hr-group" *ngIf="item.Id">
-                <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-                  <ion-list-header class="ion-no-padding">
-                    <ion-label color="primary">{{'Other information' | translate}}</ion-label>
-                  </ion-list-header>
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <app-form-control
-                    [field]="{id:'CreatedBy', type : 'text', label: 'Created by', form : formGroup }"
-                  ></app-form-control>
-                  <app-form-control
-                    [field]="{id:'CreatedDate', type : 'span-datetime', label: 'Created date', form : formGroup }"
-                  ></app-form-control>
-                  <app-form-control
-                    [field]="{id:'ModifiedBy', type : 'text', label: 'Last modified by', form : formGroup }"
-                  ></app-form-control>
-                  <app-form-control
-                    [field]="{id:'ModifiedDate', type : 'span-datetime', label: 'Last modified date', form : formGroup }"
-                  ></app-form-control>
-                </ion-col>
-                <ion-col size="12" size-sm size-xl="4">
-                  <app-form-control
-                    [field]="{id:'IDBranch', type : 'branch-breadcrumbs', label: 'Branch', form : formGroup, dataSource:env.branchList }"
-                  ></app-form-control>
-                  <app-form-control
-                    [field]="{id:'Remark', type : 'textarea', label: 'Remark', form : formGroup }"
-                    (change)="saveChange()"
-                  ></app-form-control>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </div>
-        </div>
+							<!-- Other information -->
+							<ion-row class="hr-group" *ngIf="item.Id">
+								<ion-col size="12" size-sm="12" size-md="12" size-xl="3">
+									<ion-list-header class="ion-no-padding">
+										<ion-label color="primary">{{'Other information' | translate}}</ion-label>
+									</ion-list-header>
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<app-form-control [field]="{id:'CreatedBy', type : 'text', label: 'Created by', form : formGroup }"></app-form-control>
+									<app-form-control [field]="{id:'CreatedDate', type : 'span-datetime', label: 'Created date', form : formGroup }"></app-form-control>
+									<app-form-control [field]="{id:'ModifiedBy', type : 'text', label: 'Last modified by', form : formGroup }"></app-form-control>
+									<app-form-control [field]="{id:'ModifiedDate', type : 'span-datetime', label: 'Last modified date', form : formGroup }"></app-form-control>
+								</ion-col>
+								<ion-col size="12" size-sm size-xl="4">
+									<app-form-control
+										[field]="{id:'IDBranch', type : 'branch-breadcrumbs', label: 'Branch', form : formGroup, dataSource:env.branchList }"
+									></app-form-control>
+									<app-form-control [field]="{id:'Remark', type : 'textarea', label: 'Remark', form : formGroup }" (change)="saveChange()"></app-form-control>
+								</ion-col>
+							</ion-row>
+						</ion-grid>
+					</div>
+				</div>
 
-        <div *ngIf="segmentView == 's4'"></div>
+				<div *ngIf="segmentView == 's4'"></div>
 
-        <div *ngIf="segmentView == 's5'"></div>
+				<div *ngIf="segmentView == 's5'"></div>
 
-        <div *ngIf="segmentView == 's6'"></div>
-      </div>
-    </div>
-  </div>
+				<div *ngIf="segmentView == 's6'"></div>
+			</div>
+		</div>
+	</div>
 
-  <app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 </ion-content>

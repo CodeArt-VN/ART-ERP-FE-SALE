@@ -1,291 +1,278 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button [text]="'Trở lại'"></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{'Print sale order' | translate}}</ion-title>
-    <ion-buttons slot="end">
-      <!-- <ion-button (click)="changePrintMode()" title="{{'print-mode' | translate}}">
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button [text]="'Trở lại'"></ion-back-button>
+		</ion-buttons>
+		<ion-title>{{'Print sale order' | translate}}</ion-title>
+		<ion-buttons slot="end">
+			<!-- <ion-button (click)="changePrintMode()" title="{{'print-mode' | translate}}">
 				<ion-icon slot="icon-only" [name]="printMode == 'A4' ? 'cut-outline':'file-tray-full-outline'"></ion-icon>
 			</ion-button>
 			<span class="split ion-hide-sm-down">|</span> -->
-      <ion-button (click)="print()" title="{{'Form printing' | translate}}">
-        <ion-icon slot="icon-only" name="print"></ion-icon>
-      </ion-button>
-      <ion-button (click)="refresh()" title="{{'Refresh' | translate}}">
-        <ion-icon slot="icon-only" name="reload-outline"></ion-icon>
-      </ion-button>
-      <ion-button
-        title="{{'Expanded function' | translate}}"
-        (click)="pageConfig.isShowFeature = !pageConfig.isShowFeature;"
-      >
-        <ion-icon slot="icon-only" [name]="pageConfig.isShowFeature? 'close-outline':'list-circle-outline'"> </ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+			<ion-button (click)="print()" title="{{'Form printing' | translate}}">
+				<ion-icon slot="icon-only" name="print"></ion-icon>
+			</ion-button>
+			<ion-button (click)="refresh()" title="{{'Refresh' | translate}}">
+				<ion-icon slot="icon-only" name="reload-outline"></ion-icon>
+			</ion-button>
+			<ion-button title="{{'Expanded function' | translate}}" (click)="pageConfig.isShowFeature = !pageConfig.isShowFeature;">
+				<ion-icon slot="icon-only" [name]="pageConfig.isShowFeature? 'close-outline':'list-circle-outline'"> </ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content appScrollbarTheme appPrintFix class="A4 left" [ngClass]="{withFeature: pageConfig.isShowFeature}">
-  <ion-fab
-    *ngIf="pageConfig.isShowFeature"
-    [ngClass]="{withSearch: pageConfig.isShowSearch}"
-    class="feature no-print"
-    vertical="top"
-    horizontal="start"
-    slot="fixed"
-  >
-    <ion-list>
-      <ion-list-header lines="full">
-        <ion-label color="dark">{{'Order' | translate}}</ion-label>
+	<ion-fab *ngIf="pageConfig.isShowFeature" [ngClass]="{withSearch: pageConfig.isShowSearch}" class="feature no-print" vertical="top" horizontal="start" slot="fixed">
+		<ion-list>
+			<ion-list-header lines="full">
+				<ion-label color="dark">{{'Order' | translate}}</ion-label>
 
-        <ion-button size="small" (click)="toggleDateFilter()">
-          <ion-icon
-            slot="icon-only"
-            [name]="query.IDStatus == '[104, 105, 109, 113, 114]' ? 'calendar-outline' : 'calendar'"
-          ></ion-icon>
-        </ion-button>
-      </ion-list-header>
-    </ion-list>
+				<ion-button size="small" (click)="toggleDateFilter()">
+					<ion-icon slot="icon-only" [name]="query.IDStatus == '[104, 105, 109, 113, 114]' ? 'calendar-outline' : 'calendar'"></ion-icon>
+				</ion-button>
+			</ion-list-header>
+		</ion-list>
 
-    <ion-list>
-      <ion-item lines="full" *ngIf="query.IDStatus!='[301]'">
-        <div class="c-control">
-          <label class="c-label" for="OrderDate">{{'Order created date' | translate}}</label>
-          <input class="c-input" (change)="refresh()" id="OrderDate" type="date" [(ngModel)]="query.OrderDate" />
-        </div>
-      </ion-item>
+		<ion-list>
+			<ion-item lines="full" *ngIf="query.IDStatus!='[301]'">
+				<div class="c-control">
+					<label class="c-label" for="OrderDate">{{'Order created date' | translate}}</label>
+					<input class="c-input" (change)="refresh()" id="OrderDate" type="date" [(ngModel)]="query.OrderDate" />
+				</div>
+			</ion-item>
 
-      <ion-item
-        [color]="i.Id == selectedSaleOrderID? 'primary': '' "
-        button
-        detail="true"
-        lines="full"
-        class="clickable"
-        *ngFor="let i of items"
-        (click)="loadSaleOrderNote(i)"
-      >
-        <ion-label class="ion-text-wrap">
-          <p>
-            <b>
-              <ion-text [color]="i.Id == selectedSaleOrderID? '': 'primary' ">SO:{{i.Id}}</ion-text>
-              <ion-text [color]="i.Id == selectedSaleOrderID? '': 'dark' "> - {{i.OrderDateText}}</ion-text>
-            </b>
-          </p>
-          <div style="display: flex">
-            <div class="col-status cell">
-              <ion-badge [color]="i._Status.Color" [title]="i._Status.Name"> {{i._Status.Name}} </ion-badge>
-            </div>
-            <ion-text>
-              <small>{{i.VendorName}} {{i.BranchName}}</small>
-            </ion-text>
-          </div>
-        </ion-label>
-      </ion-item>
-    </ion-list>
+			<ion-item
+				[color]="i.Id == selectedSaleOrderID? 'primary': '' "
+				button
+				detail="true"
+				lines="full"
+				class="clickable"
+				*ngFor="let i of items"
+				(click)="loadSaleOrderNote(i)"
+			>
+				<ion-label class="ion-text-wrap">
+					<p>
+						<b>
+							<ion-text [color]="i.Id == selectedSaleOrderID? '': 'primary' ">SO:{{i.Id}}</ion-text>
+							<ion-text [color]="i.Id == selectedSaleOrderID? '': 'dark' "> - {{i.OrderDateText}}</ion-text>
+						</b>
+					</p>
+					<div style="display: flex">
+						<div class="col-status cell">
+							<ion-badge [color]="i._Status.Color" [title]="i._Status.Name"> {{i._Status.Name}} </ion-badge>
+						</div>
+						<ion-text>
+							<small>{{i.VendorName}} {{i.BranchName}}</small>
+						</ion-text>
+					</div>
+				</ion-label>
+			</ion-item>
+		</ion-list>
 
-    <img style="width: 1px; height: 1px; opacity: 0" src="assets/RPT-Logo-ART.png" />
-  </ion-fab>
+		<img style="width: 1px; height: 1px; opacity: 0" src="assets/RPT-Logo-ART.png" />
+	</ion-fab>
 
-  <div style="overflow: auto">
-    <div class="giao-nhan" *ngFor="let o of sheets">
-      <section class="sheet padding-10mm rpt p1">
-        <table>
-          <thead>
-            <tr>
-              <td>
-                <div class="page-header-space"></div>
-              </td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="top-zone">
-                  <!-- <div class="ribbon" *ngIf="o.Status != 'Approved'">
+	<div style="overflow: auto">
+		<div class="giao-nhan" *ngFor="let o of sheets">
+			<section class="sheet padding-10mm rpt p1">
+				<table>
+					<thead>
+						<tr>
+							<td>
+								<div class="page-header-space"></div>
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="top-zone">
+									<!-- <div class="ribbon" *ngIf="o.Status != 'Approved'">
 										<span class="text">
 											{{o.StatusText}}
 										</span>
 									</div> -->
-                  <table class="rpt-header" cellpadding="0" cellspacing="0">
-                    <tbody>
-                      <tr>
-                        <td rowspan="7" class="logo">
-                          <img [src]="o.BranchLogoURL" (error)="$event.src='assets/RPT-Logo-ART.png'" />
-                        </td>
-                        <td colspan="2" class="bol title">{{'Payment detail listings' | translate}}</td>
+									<table class="rpt-header" cellpadding="0" cellspacing="0">
+										<tbody>
+											<tr>
+												<td rowspan="7" class="logo">
+													<img [src]="o.BranchLogoURL" (error)="$event.src='assets/RPT-Logo-ART.png'" />
+												</td>
+												<td colspan="2" class="bol title">{{'Payment detail listings' | translate}}</td>
 
-                        <td class="bol num" colspan="2">{{o.Code? o.Code : '#'+o.Id}}</td>
-                        <td rowspan="7" class="topQR">
-                          <div *ngIf="o.Code">SO:{{o.Id}}</div>
-                          <a [href]="'#/'+'sale-order/'+o.Id" (click)="nav('sale-order/'+o.Id,'forward')">
-                            <img class="qrc" [src]="o.QRC" />
-                          </a>
-                        </td>
-                      </tr>
+												<td class="bol num" colspan="2">{{o.Code? o.Code : '#'+o.Id}}</td>
+												<td rowspan="7" class="topQR">
+													<div *ngIf="o.Code">SO:{{o.Id}}</div>
+													<a [href]="'#/'+'sale-order/'+o.Id" (click)="nav('sale-order/'+o.Id,'forward')">
+														<img class="qrc" [src]="o.QRC" />
+													</a>
+												</td>
+											</tr>
 
-                      <tr>
-                        <td class="head-c1">{{'Company' | translate}}:</td>
-                        <td class="bol">{{o.BranchName}}</td>
-                        <td class="bol num" colspan="2">{{o.OrderDateText}}</td>
-                      </tr>
-                      <tr>
-                        <td>{{'Address' | translate}}:</td>
-                        <td colspan="2">
-                          <span class="bol">{{o.BranchAddress}} </span>
-                        </td>
-                      </tr>
+											<tr>
+												<td class="head-c1">{{'Company' | translate}}:</td>
+												<td class="bol">{{o.BranchName}}</td>
+												<td class="bol num" colspan="2">{{o.OrderDateText}}</td>
+											</tr>
+											<tr>
+												<td>{{'Address' | translate}}:</td>
+												<td colspan="2">
+													<span class="bol">{{o.BranchAddress}} </span>
+												</td>
+											</tr>
 
-                      <tr>
-                        <td>{{'Customer name' | translate}}:</td>
-                        <td class="bol" colspan="2">{{o._Customer.Name}}</td>
-                      </tr>
+											<tr>
+												<td>{{'Customer name' | translate}}:</td>
+												<td class="bol" colspan="2">{{o._Customer.Name}}</td>
+											</tr>
 
-                      <tr>
-                        <td>{{'Phone number' | translate}}:</td>
-                        <td class="bol" colspan="2">{{o.WorkPhone}}</td>
-                      </tr>
+											<tr>
+												<td>{{'Phone number' | translate}}:</td>
+												<td class="bol" colspan="2">{{o.WorkPhone}}</td>
+											</tr>
 
-                      <tr>
-                        <td>{{'Content' | translate}}:</td>
-                        <td class="bol" colspan="2">{{o.Name}}</td>
-                      </tr>
+											<tr>
+												<td>{{'Content' | translate}}:</td>
+												<td class="bol" colspan="2">{{o.Name}}</td>
+											</tr>
 
-                      <tr>
-                        <td colspan="4" class="">
-                          <span *ngIf="o._Customer.Address">{{o._Customer.Address}}</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+											<tr>
+												<td colspan="4" class="">
+													<span *ngIf="o._Customer.Address">{{o._Customer.Address}}</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 
-                  <div class="ds-san-pham">
-                    <table cellpadding="0" cellspacing="0">
-                      <tbody>
-                        <tr class="head">
-                          <td class="cen">{{'No.' | translate}}</td>
-                          <td>
-                            <div class="ten-sp ck">{{'Service name' | translate}}</div>
-                          </td>
-                          <td class="cen">{{'S.L' | translate}}</td>
-                          <td class="cen">{{'Unit' | translate}}</td>
-                          <td class="num">{{'Unit price' | translate}}</td>
-                          <td class="num">{{'Amount' | translate}}</td>
-                          <!-- <td class="cen">{{'Service charge (%)' | translate}}</td> -->
-                          <td class="num">{{'Service charge (Amount)' | translate}}</td>
-                          <td class="cen">{{'VAT(%)' | translate}}</td>
-                          <td class="num">{{'VAT' | translate}}</td>
-                          <td class="num">{{'Total amount' | translate}}</td>
-                        </tr>
+									<div class="ds-san-pham">
+										<table cellpadding="0" cellspacing="0">
+											<tbody>
+												<tr class="head">
+													<td class="cen">{{'No.' | translate}}</td>
+													<td>
+														<div class="ten-sp ck">{{'Service name' | translate}}</div>
+													</td>
+													<td class="cen">{{'S.L' | translate}}</td>
+													<td class="cen">{{'Unit' | translate}}</td>
+													<td class="num">{{'Unit price' | translate}}</td>
+													<td class="num">{{'Amount' | translate}}</td>
+													<!-- <td class="cen">{{'Service charge (%)' | translate}}</td> -->
+													<td class="num">{{'Service charge (Amount)' | translate}}</td>
+													<td class="cen">{{'VAT(%)' | translate}}</td>
+													<td class="num">{{'VAT' | translate}}</td>
+													<td class="num">{{'Total amount' | translate}}</td>
+												</tr>
 
-                        <ng-container>
-                          <tr *ngFor="let i of o.OrderLines; let idx = index; ">
-                            <td class="cen">{{idx+1}}</td>
-                            <td>
-                              <div class="ten-sp ck">{{i.ItemName}}</div>
-                            </td>
-                            <td class="cen">
-                              <span> {{i.ShippedQuantity}} </span>
-                            </td>
-                            <td class="cen">
-                              <span> {{i.UoMName}} </span>
-                            </td>
-                            <td class="num">
-                              <span> {{i.UoMPrice | number: '1.0-0' }} </span>
-                            </td>
-                            <td class="num">
-                              <span> {{i.TotalBeforeDiscount | number: '1.0-0' }} </span>
-                            </td>
-                            <!-- <td class="cen"> <span> {{i._serviceCharge}} </span> </td> -->
-                            <td class="num">
-                              <span> {{i.CalcTotalAdditions | number: '1.0-0' }} </span>
-                            </td>
-                            <td class="cen">
-                              <span> {{i.TaxRate}} </span>
-                            </td>
-                            <td class="num">
-                              <span> {{i.Tax | number: '1.0-0' }} </span>
-                            </td>
-                            <td class="num bol">
-                              <span> {{i.CalcTotal | number: '1.0-0' }} </span>
-                            </td>
-                          </tr>
-                        </ng-container>
+												<ng-container>
+													<tr *ngFor="let i of o.OrderLines; let idx = index; ">
+														<td class="cen">{{idx+1}}</td>
+														<td>
+															<div class="ten-sp ck">{{i.ItemName}}</div>
+														</td>
+														<td class="cen">
+															<span> {{i.ShippedQuantity}} </span>
+														</td>
+														<td class="cen">
+															<span> {{i.UoMName}} </span>
+														</td>
+														<td class="num">
+															<span> {{i.UoMPrice | number: '1.0-0' }} </span>
+														</td>
+														<td class="num">
+															<span> {{i.TotalBeforeDiscount | number: '1.0-0' }} </span>
+														</td>
+														<!-- <td class="cen"> <span> {{i._serviceCharge}} </span> </td> -->
+														<td class="num">
+															<span> {{i.CalcTotalAdditions | number: '1.0-0' }} </span>
+														</td>
+														<td class="cen">
+															<span> {{i.TaxRate}} </span>
+														</td>
+														<td class="num">
+															<span> {{i.Tax | number: '1.0-0' }} </span>
+														</td>
+														<td class="num bol">
+															<span> {{i.CalcTotal | number: '1.0-0' }} </span>
+														</td>
+													</tr>
+												</ng-container>
 
-                        <tr>
-                          <td colspan="5" class="num" style="text-align: left !important">{{'Total' | translate}}</td>
-                          <td class="num">
-                            <b>{{o.TotalBeforeDiscount | number: '1.0-0' }}</b>
-                          </td>
-                          <!-- <td class="num"></td> -->
-                          <td class="num">
-                            <b>{{o.CalcTotalAdditions | number: '1.0-0' }}</b>
-                          </td>
-                          <td class="num"></td>
-                          <td class="num">
-                            <b>{{o.Tax | number: '1.0-0' }}</b>
-                          </td>
-                          <td class="num">
-                            <b>{{o.CalcTotal | number: '1.0-0' }}</b>
-                          </td>
-                        </tr>
-                        <tr *ngIf="o.DiscountFromSalesman">
-                          <td colspan="9" class="num" style="text-align: left !important">Bù giá</td>
-                          <td class="num">
-                            <b>{{o.DiscountFromSalesman | number: '1.0-0' }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="9" class="num" style="text-align: left !important">{{'Payment completed' | translate}}</td>
-                          <td class="num">
-                            <b>{{o.Received | number: '1.0-0' }}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="9" class="num" style="text-align: left !important">{{'Remaining' | translate}}</td>
-                          <td class="num">
-                            <b>{{o.Debt | number: '1.0-0'}}</b>
-                          </td>
-                        </tr>
-                        <!-- <tr style="border-top: dashed 1px #000;" >
+												<tr>
+													<td colspan="5" class="num" style="text-align: left !important">{{'Total' | translate}}</td>
+													<td class="num">
+														<b>{{o.TotalBeforeDiscount | number: '1.0-0' }}</b>
+													</td>
+													<!-- <td class="num"></td> -->
+													<td class="num">
+														<b>{{o.CalcTotalAdditions | number: '1.0-0' }}</b>
+													</td>
+													<td class="num"></td>
+													<td class="num">
+														<b>{{o.Tax | number: '1.0-0' }}</b>
+													</td>
+													<td class="num">
+														<b>{{o.CalcTotal | number: '1.0-0' }}</b>
+													</td>
+												</tr>
+												<tr *ngIf="o.DiscountFromSalesman">
+													<td colspan="9" class="num" style="text-align: left !important">Bù giá</td>
+													<td class="num">
+														<b>{{o.DiscountFromSalesman | number: '1.0-0' }}</b>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="9" class="num" style="text-align: left !important">{{'Payment completed' | translate}}</td>
+													<td class="num">
+														<b>{{o.Received | number: '1.0-0' }}</b>
+													</td>
+												</tr>
+												<tr>
+													<td colspan="9" class="num" style="text-align: left !important">{{'Remaining' | translate}}</td>
+													<td class="num">
+														<b>{{o.Debt | number: '1.0-0'}}</b>
+													</td>
+												</tr>
+												<!-- <tr style="border-top: dashed 1px #000;" >
 													<td colspan="6" class="num">
 														{{o.DocTienBangChu}}
 													</td>
 												</tr> -->
-                      </tbody>
-                    </table>
-                  </div>
-                  <table class="chu-ky" cellpadding="0" cellspacing="0">
-                    <tbody>
-                      <tr>
-                        <td colspan="2" style="text-align: left !important; margin-bottom: 16px">
-                          <b><i>{{'In words' | translate}}: {{o.DocTienBangChu}}</i></b>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="2"><br /></td>
-                      </tr>
-                      <tr>
-                        <td style="width: 50%">
-                          {{'Party A (Service provider)' | translate}}
-                          <div class="line2">
-                            <i>{{'(Sign and write full name)' | translate}}</i>
-                          </div>
-                        </td>
-                        <td>
-                          {{'Party B (Service user)' | translate}}
-                          <div class="line2">
-                            <i>{{'(Sign and write full name)' | translate}}</i>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- <table class="noti" cellpadding="0" cellspacing="0">
+											</tbody>
+										</table>
+									</div>
+									<table class="chu-ky" cellpadding="0" cellspacing="0">
+										<tbody>
+											<tr>
+												<td colspan="2" style="text-align: left !important; margin-bottom: 16px">
+													<b><i>{{'In words' | translate}}: {{o.DocTienBangChu}}</i></b>
+												</td>
+											</tr>
+											<tr>
+												<td colspan="2"><br /></td>
+											</tr>
+											<tr>
+												<td style="width: 50%">
+													{{'Party A (Service provider)' | translate}}
+													<div class="line2">
+														<i>{{'(Sign and write full name)' | translate}}</i>
+													</div>
+												</td>
+												<td>
+													{{'Party B (Service user)' | translate}}
+													<div class="line2">
+														<i>{{'(Sign and write full name)' | translate}}</i>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td></td>
+												<td></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!-- <table class="noti" cellpadding="0" cellspacing="0">
 									<tbody>
 										<tr>
 											<td class="cen">
@@ -297,19 +284,19 @@
 										</tr>
 									</tbody>
 								</table> -->
-              </td>
-            </tr>
-          </tbody>
+							</td>
+						</tr>
+					</tbody>
 
-          <tfoot>
-            <tr>
-              <td>
-                <div class="page-footer-space"></div>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </section>
-    </div>
-  </div>
+					<tfoot>
+						<tr>
+							<td>
+								<div class="page-footer-space"></div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</section>
+		</div>
+	</div>
 </ion-content>

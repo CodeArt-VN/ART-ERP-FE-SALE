@@ -7,13 +7,7 @@ import { ChatPage } from './chat.page';
 import { ShareModule } from 'src/app/share.module';
 
 @NgModule({
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    ShareModule,
-    RouterModule.forChild([{ path: '', component: ChatPage }]),
-  ],
-  declarations: [ChatPage],
+	imports: [IonicModule, CommonModule, FormsModule, ShareModule, RouterModule.forChild([{ path: '', component: ChatPage }])],
+	declarations: [ChatPage],
 })
 export class ChatPageModule {}

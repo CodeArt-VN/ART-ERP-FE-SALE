@@ -10,458 +10,447 @@ import { concat, of, Subject } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
-
 @Component({
-    selector: 'app-close-order',
-    templateUrl: './close-order.page.html',
-    styleUrls: ['./close-order.page.scss'],
-    standalone: false
+	selector: 'app-close-order',
+	templateUrl: './close-order.page.html',
+	styleUrls: ['./close-order.page.scss'],
+	standalone: false,
 })
 export class CloseOrderPage extends PageBase {
-    childSOList = [];
-    allLines = [];
-    preLoadItems = [];
-    listPaymentHistory = [];
-    queryLinesPaymentHistory ;
-    constructor(
-        public pageProvider: SALE_OrderProvider,
-        public saleOrderDetailProvider: SALE_OrderDetailProvider,
-        public itemProvider: WMS_ItemProvider,
-        public env: EnvService,
-        public navCtrl: NavController,
-        public route: ActivatedRoute,
-        public alertCtrl: AlertController,
-        public formBuilder: FormBuilder,
-        public cdr: ChangeDetectorRef,
-        public loadingController: LoadingController,
-        public commonService: CommonService,
-        public IncomingPaymentDetailProvider: BANK_IncomingPaymentDetailProvider,
-    ) {
-        super();
-        this.pageConfig.isDetailPage = true;
+	childSOList = [];
+	allLines = [];
+	preLoadItems = [];
+	listPaymentHistory = [];
+	queryLinesPaymentHistory;
+	constructor(
+		public pageProvider: SALE_OrderProvider,
+		public saleOrderDetailProvider: SALE_OrderDetailProvider,
+		public itemProvider: WMS_ItemProvider,
+		public env: EnvService,
+		public navCtrl: NavController,
+		public route: ActivatedRoute,
+		public alertCtrl: AlertController,
+		public formBuilder: FormBuilder,
+		public cdr: ChangeDetectorRef,
+		public loadingController: LoadingController,
+		public commonService: CommonService,
+		public IncomingPaymentDetailProvider: BANK_IncomingPaymentDetailProvider
+	) {
+		super();
+		this.pageConfig.isDetailPage = true;
 
-        this.formGroup = formBuilder.group({
-            IDBranch: [''],
-            Id: new FormControl({ value: '', disabled: true }),
-            Code: new FormControl({ value: '', disabled: true }),
-            Name: new FormControl({ value: '', disabled: true }),
-            Remark: new FormControl({ value: '', disabled: true }),
-            Sort: [''],
-            IsDisabled: new FormControl({ value: '', disabled: true }),
-            IsDeleted: new FormControl({ value: '', disabled: true }),
-            CreatedBy: new FormControl({ value: '', disabled: true }),
-            CreatedDate: new FormControl({ value: '', disabled: true }),
-            ModifiedBy: new FormControl({ value: '', disabled: true }),
-            ModifiedDate: new FormControl({ value: '', disabled: true }),
-            OrderLines: this.formBuilder.array([]),
-        });
-    }
+		this.formGroup = formBuilder.group({
+			IDBranch: [''],
+			Id: new FormControl({ value: '', disabled: true }),
+			Code: new FormControl({ value: '', disabled: true }),
+			Name: new FormControl({ value: '', disabled: true }),
+			Remark: new FormControl({ value: '', disabled: true }),
+			Sort: [''],
+			IsDisabled: new FormControl({ value: '', disabled: true }),
+			IsDeleted: new FormControl({ value: '', disabled: true }),
+			CreatedBy: new FormControl({ value: '', disabled: true }),
+			CreatedDate: new FormControl({ value: '', disabled: true }),
+			ModifiedBy: new FormControl({ value: '', disabled: true }),
+			ModifiedDate: new FormControl({ value: '', disabled: true }),
+			OrderLines: this.formBuilder.array([]),
+		});
+	}
 
-    ngOnInit(): void {
-        this.pageConfig.subscribeSOPaymentUpdate = this.env.getEvents().subscribe((data) => {
-          if (data.code === 'app:SOPaymentUpdate') {
-             this.IncomingPaymentDetailProvider.read({ IDSaleOrder:JSON.stringify(this.queryLinesPaymentHistory) }).then((results:any) =>{
-                this.item.PaymentHistory = results.data;
-                this.patchPaymentHistoryLinesValue();
-                this.item.Debt =this.item.Debt - results.data.map(e=>e.Amount).pop()
-             });
-          }
-        });
-        super.ngOnInit();
-    }
+	ngOnInit(): void {
+		this.pageConfig.subscribeSOPaymentUpdate = this.env.getEvents().subscribe((data) => {
+			if (data.code === 'app:SOPaymentUpdate') {
+				this.IncomingPaymentDetailProvider.read({ IDSaleOrder: JSON.stringify(this.queryLinesPaymentHistory) }).then((results: any) => {
+					this.item.PaymentHistory = results.data;
+					this.patchPaymentHistoryLinesValue();
+					this.item.Debt = this.item.Debt - results.data.map((e) => e.Amount).pop();
+				});
+			}
+		});
+		super.ngOnInit();
+	}
 
-    ngOnDestroy() {
-        this.pageConfig?.subscribeSOPaymentUpdate?.unsubscribe();
-        super.ngOnDestroy();
-    }
+	ngOnDestroy() {
+		this.pageConfig?.subscribeSOPaymentUpdate?.unsubscribe();
+		super.ngOnDestroy();
+	}
 
-    preLoadData(event?: any): void {
+	preLoadData(event?: any): void {
+		this.pageProvider.read({ IDParent: this.id }).then((resp) => {
+			this.childSOList = resp['data'];
+			this.childSOList = this.childSOList.filter((d) => d.Status != 'Cancelled');
+			let queryLines = this.childSOList.map((m) => m.Id);
+			queryLines.push(parseInt(this.id));
+			this.queryLinesPaymentHistory = '';
+			this.queryLinesPaymentHistory = queryLines;
 
-        this.pageProvider.read({ IDParent: this.id }).then((resp) => {
-            this.childSOList = resp['data'];
-            this.childSOList = this.childSOList.filter((d) => d.Status != 'Cancelled');
-            let queryLines = this.childSOList.map((m) => m.Id);
-            queryLines.push(parseInt(this.id));
-            this.queryLinesPaymentHistory = "";
-            this.queryLinesPaymentHistory =  queryLines;
-      
-            Promise.all([
-              this.saleOrderDetailProvider.read({ IDOrder: JSON.stringify(queryLines) }),
-              this.IncomingPaymentDetailProvider.read({ IDSaleOrder: JSON.stringify(queryLines) }),
-            ]).then((results: any) => {
-              this.allLines = results[0]['data'];
-              this.listPaymentHistory = results[1]['data'];
-              let helper = {};
-      
-              this.allLines = this.allLines.reduce(function (r, o) {
-                var key = o.IDUoM + '-' + o.UoMPrice;
-      
-                if (!helper[key]) {
-                  helper[key] = Object.assign({}, o); // create a copy of o
-                  r.push(helper[key]);
-                } else {
-                  helper[key].Quantity += o.Quantity;
-                  helper[key].ShippedQuantity += o.ShippedQuantity;
-                }
-      
-                return r;
-              }, []);
-      
-              let itemIds = this.allLines.map((m) => m.IDItem);
-              this.itemProvider
-                .search({ Id: JSON.stringify(itemIds), IDSO: this.id })
-                .toPromise()
-                .then((resp: any) => {
-                  this.preLoadItems = resp;
-      
-                  super.preLoadData(event);
-                });
-            });
-          });
-    }
+			Promise.all([
+				this.saleOrderDetailProvider.read({ IDOrder: JSON.stringify(queryLines) }),
+				this.IncomingPaymentDetailProvider.read({ IDSaleOrder: JSON.stringify(queryLines) }),
+			]).then((results: any) => {
+				this.allLines = results[0]['data'];
+				this.listPaymentHistory = results[1]['data'];
+				let helper = {};
 
-    loadedData(event?: any, ignoredFromGroup?: boolean): void {
-        this.item.OrderLines = this.allLines;
-        this.item.PaymentHistory = this.listPaymentHistory;
-        this.pageConfig.canEdit = !(this.item.Status == 'Done' || this.item.Status == 'Cancelled');
-        
-        super.loadedData(event, ignoredFromGroup);
+				this.allLines = this.allLines.reduce(function (r, o) {
+					var key = o.IDUoM + '-' + o.UoMPrice;
 
-        this.patchOrderLinesValue();
-        this.patchPaymentHistoryLinesValue();
-    }
+					if (!helper[key]) {
+						helper[key] = Object.assign({}, o); // create a copy of o
+						r.push(helper[key]);
+					} else {
+						helper[key].Quantity += o.Quantity;
+						helper[key].ShippedQuantity += o.ShippedQuantity;
+					}
 
-    refresh(event?: any): void {
-        this.clearData();
-        this.preLoadData(event);
-    }
+					return r;
+				}, []);
 
-    private patchOrderLinesValue() {
-        this.formGroup.controls.OrderLines = new FormArray([]);
-        if (this.item.OrderLines?.length) {
-            for (let i of this.item.OrderLines) {
-                i._Item = this.preLoadItems.find(d => d.Id == i.IDItem);
-                this.addOrderLine(i);
-            }
-            this.calcSubTotal();
-        }
-    }
+				let itemIds = this.allLines.map((m) => m.IDItem);
+				this.itemProvider
+					.search({ Id: JSON.stringify(itemIds), IDSO: this.id })
+					.toPromise()
+					.then((resp: any) => {
+						this.preLoadItems = resp;
 
-    addOrderLine(line) {
-        let IDItemDataSource = {
-            searchProvider: this.itemProvider,
-            loading: false,
-            input$: new Subject<string>(),
-            selected: [...this.preLoadItems],
-            items$: null,
-            id: this.id,
-            initSearch() {
-                this.loading = false;
-                this.items$ = concat(
-                    of(this.selected),
-                    this.input$.pipe(
-                        distinctUntilChanged(),
-                        tap(() => this.loading = true),
-                        switchMap(term => this.searchProvider.search({ IDSO: this.id, SortBy: ['Id_desc'], Take: 20, Skip: 0, Term: term }).pipe(
-                            catchError(() => of([])), // empty list on error
-                            tap(() => this.loading = false)
-                        ))
+						super.preLoadData(event);
+					});
+			});
+		});
+	}
 
-                    )
-                );
-            }
-        };
+	loadedData(event?: any, ignoredFromGroup?: boolean): void {
+		this.item.OrderLines = this.allLines;
+		this.item.PaymentHistory = this.listPaymentHistory;
+		this.pageConfig.canEdit = !(this.item.Status == 'Done' || this.item.Status == 'Cancelled');
 
-        let groups = <FormArray>this.formGroup.controls.OrderLines;
-        let group = this.formBuilder.group({
-            _IDItemDataSource: [IDItemDataSource],
-            _Item: new FormControl({ value: line._Item, disabled: line.Id ? true : false }, Validators.required),
-            _UoMs: [line._Item ? line._Item.UoMs : ''],
+		super.loadedData(event, ignoredFromGroup);
 
-            IDOrder: [line.IDOrder],
-            Id: new FormControl({ value: line.Id, disabled: true }),
+		this.patchOrderLinesValue();
+		this.patchPaymentHistoryLinesValue();
+	}
 
-            //Type: [line.Type],
-            //Status: new FormControl({ value: line.Status, disabled: true }),
+	refresh(event?: any): void {
+		this.clearData();
+		this.preLoadData(event);
+	}
 
-            IDItem: [line.IDItem, Validators.required],
-            IDTax: [line.IDTax],
-            TaxRate: [line.TaxRate],
+	private patchOrderLinesValue() {
+		this.formGroup.controls.OrderLines = new FormArray([]);
+		if (this.item.OrderLines?.length) {
+			for (let i of this.item.OrderLines) {
+				i._Item = this.preLoadItems.find((d) => d.Id == i.IDItem);
+				this.addOrderLine(i);
+			}
+			this.calcSubTotal();
+		}
+	}
 
-            IDUoM: new FormControl({ value: line.IDUoM, disabled: line.Id ? true : false }, Validators.required),
-            UoMPrice: [line.UoMPrice],
+	addOrderLine(line) {
+		let IDItemDataSource = {
+			searchProvider: this.itemProvider,
+			loading: false,
+			input$: new Subject<string>(),
+			selected: [...this.preLoadItems],
+			items$: null,
+			id: this.id,
+			initSearch() {
+				this.loading = false;
+				this.items$ = concat(
+					of(this.selected),
+					this.input$.pipe(
+						distinctUntilChanged(),
+						tap(() => (this.loading = true)),
+						switchMap((term) =>
+							this.searchProvider.search({ IDSO: this.id, SortBy: ['Id_desc'], Take: 20, Skip: 0, Term: term }).pipe(
+								catchError(() => of([])), // empty list on error
+								tap(() => (this.loading = false))
+							)
+						)
+					)
+				);
+			},
+		};
 
-            Quantity: new FormControl({ value: line.Quantity, disabled: line.Id ? true : false }, Validators.required),
-            IDBaseUoM: [line.IDBaseUoM],
-            UoMSwap: [line.UoMSwap],
-            UoMSwapAlter: [line.UoMSwapAlter],
-            BaseQuantity: [line.BaseQuantity],
+		let groups = <FormArray>this.formGroup.controls.OrderLines;
+		let group = this.formBuilder.group({
+			_IDItemDataSource: [IDItemDataSource],
+			_Item: new FormControl({ value: line._Item, disabled: line.Id ? true : false }, Validators.required),
+			_UoMs: [line._Item ? line._Item.UoMs : ''],
 
-            ShippedQuantity: new FormControl({ value: line.ShippedQuantity, disabled: !this.pageConfig.canEdit }, Validators.required), 
-           
-            //Remark: new FormControl({ value: line.Remark, disabled: true }),
+			IDOrder: [line.IDOrder],
+			Id: new FormControl({ value: line.Id, disabled: true }),
 
-            IsPromotionItem: [line.IsPromotionItem],
-            IDPromotion: [line.IDPromotion],
+			//Type: [line.Type],
+			//Status: new FormControl({ value: line.Status, disabled: true }),
 
-            Sort: [line.Sort],
+			IDItem: [line.IDItem, Validators.required],
+			IDTax: [line.IDTax],
+			TaxRate: [line.TaxRate],
 
-            // OriginalTotalBeforeDiscount
-            // OriginalPromotion
-            // OriginalDiscount1
-            // OriginalDiscount2
-            // OriginalDiscountByItem
-            // OriginalDiscountByGroup
-            // OriginalDiscountByLine
-            // OriginalDiscountByOrder
-            // OriginalDiscountFromSalesman
-            // OriginalTotalDiscount
-            // OriginalTotalAfterDiscount
-            // OriginalTax
-            // OriginalTotalAfterTax
-            // CalcOriginalTotalAdditions
-            // CalcOriginalTotalDeductions
-            // CalcTotalOriginal
+			IDUoM: new FormControl({ value: line.IDUoM, disabled: line.Id ? true : false }, Validators.required),
+			UoMPrice: [line.UoMPrice],
 
-            // ShippedQuantity
-            // ReturnedQuantity
+			Quantity: new FormControl({ value: line.Quantity, disabled: line.Id ? true : false }, Validators.required),
+			IDBaseUoM: [line.IDBaseUoM],
+			UoMSwap: [line.UoMSwap],
+			UoMSwapAlter: [line.UoMSwapAlter],
+			BaseQuantity: [line.BaseQuantity],
 
-            // TotalBeforeDiscount
-            // Discount1
-            // Discount2
-            // DiscountByItem
-            // Promotion
-            // DiscountByGroup
-            // DiscountByLine
-            // DiscountByOrder
-            // DiscountFromSalesman
-            // TotalDiscount
-            // TotalAfterDiscount
-            // Tax
-            // TotalAfterTax
-            // CalcTotalAdditions
-            // CalcTotalDeductions
-            // CalcTotal
+			ShippedQuantity: new FormControl({ value: line.ShippedQuantity, disabled: !this.pageConfig.canEdit }, Validators.required),
 
+			//Remark: new FormControl({ value: line.Remark, disabled: true }),
 
-            // CreatedBy
-            // ModifiedBy
-            // CreatedDate
-            // ModifiedDate
+			IsPromotionItem: [line.IsPromotionItem],
+			IDPromotion: [line.IDPromotion],
 
-        });
-        groups.push(group);
-        group.valueChanges.subscribe(value => {
-            this.calcSubTotal();
-        });
-        IDItemDataSource.initSearch();
-    }
+			Sort: [line.Sort],
 
-    calcSubTotal() {
-        let rvalue = this.formGroup.getRawValue();
-        this.item.subTotal = rvalue.OrderLines.reduce((sum, item) => sum += (item.ShippedQuantity || 0) * (item.UoMPrice || 0), 0)
-    }
+			// OriginalTotalBeforeDiscount
+			// OriginalPromotion
+			// OriginalDiscount1
+			// OriginalDiscount2
+			// OriginalDiscountByItem
+			// OriginalDiscountByGroup
+			// OriginalDiscountByLine
+			// OriginalDiscountByOrder
+			// OriginalDiscountFromSalesman
+			// OriginalTotalDiscount
+			// OriginalTotalAfterDiscount
+			// OriginalTax
+			// OriginalTotalAfterTax
+			// CalcOriginalTotalAdditions
+			// CalcOriginalTotalDeductions
+			// CalcTotalOriginal
 
-    segmentView = 's2';
-    segmentChanged(ev: any) {
-        this.segmentView = ev.detail.value;
-    }
+			// ShippedQuantity
+			// ReturnedQuantity
 
-    changedIDItem(group, e) {
-        console.log(e);
-        
-        if (e) {
-            group.controls._UoMs.setValue(e.UoMs);
-            group.controls.IDItem.setValue(e.Id);
-            group.controls.IDItem.markAsDirty();
+			// TotalBeforeDiscount
+			// Discount1
+			// Discount2
+			// DiscountByItem
+			// Promotion
+			// DiscountByGroup
+			// DiscountByLine
+			// DiscountByOrder
+			// DiscountFromSalesman
+			// TotalDiscount
+			// TotalAfterDiscount
+			// Tax
+			// TotalAfterTax
+			// CalcTotalAdditions
+			// CalcTotalDeductions
+			// CalcTotal
 
-            group.controls.TaxRate.setValue(e.SalesTaxInPercent);
-            group.controls.TaxRate.markAsDirty();
+			// CreatedBy
+			// ModifiedBy
+			// CreatedDate
+			// ModifiedDate
+		});
+		groups.push(group);
+		group.valueChanges.subscribe((value) => {
+			this.calcSubTotal();
+		});
+		IDItemDataSource.initSearch();
+	}
 
-            group.controls.IDTax.setValue(e.IDSalesTaxDefinition);
-            group.controls.IDTax.markAsDirty();
+	calcSubTotal() {
+		let rvalue = this.formGroup.getRawValue();
+		this.item.subTotal = rvalue.OrderLines.reduce((sum, item) => (sum += (item.ShippedQuantity || 0) * (item.UoMPrice || 0)), 0);
+	}
 
-            group.controls.IDUoM.setValue(e.SalesUoM);
-            group.controls.IDUoM.markAsDirty();
-            this.changedIDUoM(group);
-        }
-    }
+	segmentView = 's2';
+	segmentChanged(ev: any) {
+		this.segmentView = ev.detail.value;
+	}
 
-    changedIDUoM(group) {
-        let selectedUoM = group.controls._UoMs.value.find(d => d.Id == group.controls.IDUoM.value);
+	changedIDItem(group, e) {
+		console.log(e);
 
-        if (selectedUoM) {
-            let price = selectedUoM.PriceList.find(d => d.Type == 'PriceListForCustomer');
-            if (price) {
-                group.controls.UoMPrice.setValue(price.Price);
-            }
-            else {
-                group.controls.UoMPrice.setValue(0);
-            }
-            group.controls.UoMPrice.markAsDirty();
-            this.saveChange();
-        }
-        else{
-            this.env.showMessage('Sản phẩm chưa có giá bán, xin vui lòng liên hệ quản trị để được hỗ trợ.');
-        }
-    }
+		if (e) {
+			group.controls._UoMs.setValue(e.UoMs);
+			group.controls.IDItem.setValue(e.Id);
+			group.controls.IDItem.markAsDirty();
 
-    toggleAllShippedQty() {
+			group.controls.TaxRate.setValue(e.SalesTaxInPercent);
+			group.controls.TaxRate.markAsDirty();
 
+			group.controls.IDTax.setValue(e.IDSalesTaxDefinition);
+			group.controls.IDTax.markAsDirty();
 
-        let groups = <FormArray>this.formGroup.controls.OrderLines;
-        groups.controls.forEach((group: FormGroup) => {
-            if (this.item._IsShippedAll) {
-                group.controls.ShippedQuantity.setValue(0);
-                group.controls.ShippedQuantity.markAsDirty();
-            }
-            else {
-                group.controls.ShippedQuantity.setValue(group.controls.Quantity.value);
-                group.controls.ShippedQuantity.markAsDirty();
-            }
+			group.controls.IDUoM.setValue(e.SalesUoM);
+			group.controls.IDUoM.markAsDirty();
+			this.changedIDUoM(group);
+		}
+	}
 
-        });
-        this.item._IsShippedAll = !this.item._IsShippedAll;
-    }
+	changedIDUoM(group) {
+		let selectedUoM = group.controls._UoMs.value.find((d) => d.Id == group.controls.IDUoM.value);
 
-    toggleShippedQty(group) {
-        if (group.controls.Quantity.value == group.controls.ShippedQuantity.value) {
-            group.controls.ShippedQuantity.setValue(0);
-            group.controls.ShippedQuantity.markAsDirty();
-        }
-        else {
-            group.controls.ShippedQuantity.setValue(group.controls.Quantity.value);
-            group.controls.ShippedQuantity.markAsDirty();
-        }
-    }
+		if (selectedUoM) {
+			let price = selectedUoM.PriceList.find((d) => d.Type == 'PriceListForCustomer');
+			if (price) {
+				group.controls.UoMPrice.setValue(price.Price);
+			} else {
+				group.controls.UoMPrice.setValue(0);
+			}
+			group.controls.UoMPrice.markAsDirty();
+			this.saveChange();
+		} else {
+			this.env.showMessage('Sản phẩm chưa có giá bán, xin vui lòng liên hệ quản trị để được hỗ trợ.');
+		}
+	}
 
-    removeTempProperties(obj) {
-        for (var key in obj) {
-            if (key.startsWith('_')) delete obj[key];
+	toggleAllShippedQty() {
+		let groups = <FormArray>this.formGroup.controls.OrderLines;
+		groups.controls.forEach((group: FormGroup) => {
+			if (this.item._IsShippedAll) {
+				group.controls.ShippedQuantity.setValue(0);
+				group.controls.ShippedQuantity.markAsDirty();
+			} else {
+				group.controls.ShippedQuantity.setValue(group.controls.Quantity.value);
+				group.controls.ShippedQuantity.markAsDirty();
+			}
+		});
+		this.item._IsShippedAll = !this.item._IsShippedAll;
+	}
 
-            if (Array.isArray(obj[key]))
-                for (let sobj of obj[key])
-                    this.removeTempProperties(sobj);
-        }
-    }
+	toggleShippedQty(group) {
+		if (group.controls.Quantity.value == group.controls.ShippedQuantity.value) {
+			group.controls.ShippedQuantity.setValue(0);
+			group.controls.ShippedQuantity.markAsDirty();
+		} else {
+			group.controls.ShippedQuantity.setValue(group.controls.Quantity.value);
+			group.controls.ShippedQuantity.markAsDirty();
+		}
+	}
 
-    async saveChange(isClosed = false, form = this.formGroup, publishEventCode = this.pageConfig.pageName, provider = this.pageProvider) {
-        this.formGroup.updateValueAndValidity();
-        if (!form.valid) {
-            this.env.showMessage('Please recheck information highlighted in red above', 'warning');
-        }
-        else if (this.submitAttempt == false) {
+	removeTempProperties(obj) {
+		for (var key in obj) {
+			if (key.startsWith('_')) delete obj[key];
 
-            this.submitAttempt = true;
-            let submitItem = form.getRawValue();
-            this.removeTempProperties(submitItem);
-            submitItem.IsClosedOrder = isClosed;
-            
-            this.env.showLoading('Please wait for a few moments', this.pageProvider.commonService.put('SALE/Order/CloseOrder/' + this.item.Id, submitItem))
-                .then(_ => {
-                    this.preLoadData();
-                    this.env.publishEvent({ Code: publishEventCode });
-                    this.submitAttempt = false;
-                }).catch(err => {
-                    console.log(err);
-                    this.submitAttempt = false;
-                    this.env.showMessage('Cannot save, please try again', 'danger');
-                })
-        }
-    }
+			if (Array.isArray(obj[key])) for (let sobj of obj[key]) this.removeTempProperties(sobj);
+		}
+	}
 
-    async closeOrder() {
-        this.env.showPrompt('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
-        .then(_=>{
-            this.saveChange(true);
-        })
-        .catch(_=>{});
-        
-    }
+	async saveChange(isClosed = false, form = this.formGroup, publishEventCode = this.pageConfig.pageName, provider = this.pageProvider) {
+		this.formGroup.updateValueAndValidity();
+		if (!form.valid) {
+			this.env.showMessage('Please recheck information highlighted in red above', 'warning');
+		} else if (this.submitAttempt == false) {
+			this.submitAttempt = true;
+			let submitItem = form.getRawValue();
+			this.removeTempProperties(submitItem);
+			submitItem.IsClosedOrder = isClosed;
 
-    
+			this.env
+				.showLoading('Please wait for a few moments', this.pageProvider.commonService.put('SALE/Order/CloseOrder/' + this.item.Id, submitItem))
+				.then((_) => {
+					this.preLoadData();
+					this.env.publishEvent({ Code: publishEventCode });
+					this.submitAttempt = false;
+				})
+				.catch((err) => {
+					console.log(err);
+					this.submitAttempt = false;
+					this.env.showMessage('Cannot save, please try again', 'danger');
+				});
+		}
+	}
 
-    openSONote(){
-        var dirty:any = this.getDirtyValues(this.formGroup);
-        if (dirty?.OrderLines) {
-            this.env.showPrompt('Bạn chưa lưu thay đổi, bạn có muốn lưu lại các thay đổi?',null, 'In bảng kê')
-            .then(_=>{
-                this.saveChange().then(_=>{
-                    this.nav('sale-order-note/'+this.id);
-                })
-            }).catch(_=>{
-                this.nav('sale-order-note/'+this.id);
-            })
-        }
-        else{
-            this.nav('sale-order-note/'+this.id);
-        }
-    }
+	async closeOrder() {
+		this.env
+			.showPrompt('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
+			.then((_) => {
+				this.saveChange(true);
+			})
+			.catch((_) => {});
+	}
 
-    removeOrderLine(index) {
-        this.env.showPrompt('Bạn có chắc muốn bỏ item phần này?', null, 'Xóa item').then(_=>{
-            let groups = <FormArray>this.formGroup.controls.OrderLines;
-            groups.removeAt(index);
-            this.calcSubTotal();
-            
-        }).catch(err=>{});
-    }
+	openSONote() {
+		var dirty: any = this.getDirtyValues(this.formGroup);
+		if (dirty?.OrderLines) {
+			this.env
+				.showPrompt('Bạn chưa lưu thay đổi, bạn có muốn lưu lại các thay đổi?', null, 'In bảng kê')
+				.then((_) => {
+					this.saveChange().then((_) => {
+						this.nav('sale-order-note/' + this.id);
+					});
+				})
+				.catch((_) => {
+					this.nav('sale-order-note/' + this.id);
+				});
+		} else {
+			this.nav('sale-order-note/' + this.id);
+		}
+	}
 
-    doReorder(ev, groups) {
-        groups = ev.detail.complete(groups);
-        for (let i = 0; i < groups.length; i++) {
-            const g = groups[i];
-            g.controls.Sort.setValue(i + 1);
-            g.controls.Sort.markAsDirty();
-        }
+	removeOrderLine(index) {
+		this.env
+			.showPrompt('Bạn có chắc muốn bỏ item phần này?', null, 'Xóa item')
+			.then((_) => {
+				let groups = <FormArray>this.formGroup.controls.OrderLines;
+				groups.removeAt(index);
+				this.calcSubTotal();
+			})
+			.catch((err) => {});
+	}
 
-        //this.saveChange();
-    }
-    patchPaymentHistoryLinesValue() {
-        this.formGroup.controls.PaymentHistory = new FormArray([]);
-        if (this.item.PaymentHistory?.length) {
-          for (let i of this.item.PaymentHistory) {
-            this.addPaymentHistoryLine(i);
-          }
-        }
-      }
-    
-      addPaymentHistoryLine(line) {
-        let groups = <FormArray>this.formGroup.controls.PaymentHistory;
-        let group = this.formBuilder.group({
-          AmountPaid: [line.Amount],
-          Remark: [line.IncomingPayment.Remark],
-          Status: [line.IncomingPayment.Status],
-          Percent: [''], // %
-          Amount: [line.Amount], // số tiền
-          DueDate: [line.IncomingPayment.DueDate], // ngày giao dịch
-          RemainingAmount: [''], //còn lại
-          PaymentDeadline: [''], // hạn thanh toán
-        });
-        groups.push(group);
-      }
-    
-      goToPayment() {    
-        let payment = {
-          IDBranch: this.item.IDBranch,
-          IDStaff: this.env.user.StaffID,
-          IDCustomer: this.item.IDContact,
-          IDSaleOrder: this.item.Id,
-          DebtAmount: this.item.Debt,
-          IsActiveInputAmount: true,
-          IsActiveTypeCash: true,
-          ReturnUrl: window.location.href,
-          Lang: this.env.language.current,
-          Timestamp: Date.now(),
-          CreatedBy: this.env.user.Email,
-        };
-        let str = window.btoa(JSON.stringify(payment));
-        let code = this.convertUrl(str);
-        let url = environment.appDomain + 'Payment?Code=' + code;
-        window.open(url, '_blank');
-      }
-    
-      private convertUrl(str) {
-        return str.replace('=', '').replace('=', '').replace('+', '-').replace('_', '/');
-      }
+	doReorder(ev, groups) {
+		groups = ev.detail.complete(groups);
+		for (let i = 0; i < groups.length; i++) {
+			const g = groups[i];
+			g.controls.Sort.setValue(i + 1);
+			g.controls.Sort.markAsDirty();
+		}
+
+		//this.saveChange();
+	}
+	patchPaymentHistoryLinesValue() {
+		this.formGroup.controls.PaymentHistory = new FormArray([]);
+		if (this.item.PaymentHistory?.length) {
+			for (let i of this.item.PaymentHistory) {
+				this.addPaymentHistoryLine(i);
+			}
+		}
+	}
+
+	addPaymentHistoryLine(line) {
+		let groups = <FormArray>this.formGroup.controls.PaymentHistory;
+		let group = this.formBuilder.group({
+			AmountPaid: [line.Amount],
+			Remark: [line.IncomingPayment.Remark],
+			Status: [line.IncomingPayment.Status],
+			Percent: [''], // %
+			Amount: [line.Amount], // số tiền
+			DueDate: [line.IncomingPayment.DueDate], // ngày giao dịch
+			RemainingAmount: [''], //còn lại
+			PaymentDeadline: [''], // hạn thanh toán
+		});
+		groups.push(group);
+	}
+
+	goToPayment() {
+		let payment = {
+			IDBranch: this.item.IDBranch,
+			IDStaff: this.env.user.StaffID,
+			IDCustomer: this.item.IDContact,
+			IDSaleOrder: this.item.Id,
+			DebtAmount: this.item.Debt,
+			IsActiveInputAmount: true,
+			IsActiveTypeCash: true,
+			ReturnUrl: window.location.href,
+			Lang: this.env.language.current,
+			Timestamp: Date.now(),
+			CreatedBy: this.env.user.Email,
+		};
+		let str = window.btoa(JSON.stringify(payment));
+		let code = this.convertUrl(str);
+		let url = environment.appDomain + 'Payment?Code=' + code;
+		window.open(url, '_blank');
+	}
+
+	private convertUrl(str) {
+		return str.replace('=', '').replace('=', '').replace('+', '-').replace('_', '/');
+	}
 }
