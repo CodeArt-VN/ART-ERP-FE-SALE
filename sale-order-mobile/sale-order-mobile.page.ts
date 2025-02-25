@@ -315,7 +315,7 @@ export class SaleOrderMobilePage extends PageBase {
 			});
 	}
 
-	deleteItems() {
+	delete() {
 		let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
 		if (itemsCanNotDelete.length == this.selectedItems.length) {
 			this.env.showMessage('Your selected invoices cannot be deleted. Please only delete new or disapproved invoice', 'warning');
@@ -341,7 +341,7 @@ export class SaleOrderMobilePage extends PageBase {
 									i.checked = false;
 								});
 								this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
-								super.deleteItems();
+								super.delete();
 							},
 						},
 					],
@@ -350,7 +350,7 @@ export class SaleOrderMobilePage extends PageBase {
 					alert.present();
 				});
 		} else {
-			super.deleteItems();
+			super.delete();
 		}
 	}
 

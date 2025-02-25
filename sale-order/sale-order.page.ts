@@ -514,7 +514,7 @@ export class SaleOrderPage extends PageBase {
 		}
 	}
 
-	deleteItems() {
+	delete() {
 		// !(i.IDStatus == 101 || i.IDStatus == 102)
 		let itemsCanNotDelete = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
 		if (itemsCanNotDelete.length == this.selectedItems.length) {
@@ -542,7 +542,7 @@ export class SaleOrderPage extends PageBase {
 								});
 								// i.IDStatus == 101 || i.IDStatus == 102
 								this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
-								super.deleteItems();
+								super.delete();
 							},
 						},
 					],
@@ -551,7 +551,7 @@ export class SaleOrderPage extends PageBase {
 					alert.present();
 				});
 		} else {
-			super.deleteItems();
+			super.delete();
 		}
 	}
 
