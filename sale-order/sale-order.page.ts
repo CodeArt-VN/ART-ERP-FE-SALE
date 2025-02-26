@@ -54,26 +54,6 @@ export class SaleOrderPage extends PageBase {
 		super();
 		this.pageConfig.ShowFeature = true;
 
-		//const allCommands =               ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit',  'ShowApprove', 'ShowDisapprove', 'ShowCopyToARInvoice', 'ShowCancel', 'ShowDelete', 'ShowArchive'];
-
-		this.pageProvider.showCommandRules = [
-			{ Status: 'New', ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Mới
-			{ Status: 'Unapproved', ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Không duyệt
-			{ Status: 'Submitted', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Chờ duyệt
-			{ Status: 'Approved', ShowBtns: ['ShowDisapprove', 'ShowCopyToARInvoice', 'ShowCancel', 'ShowArchive'] }, // Đã duyệt
-			{ Status: 'Scheduled', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đã phân tài
-			{ Status: 'Picking', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đang lấy hàng - đóng gói
-			{ Status: 'InCarrier', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đã giao đơn vị vận chuyển
-			{ Status: 'InDelivery', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đang giao hàng
-			{ Status: 'Delivered', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đã giao hàng
-			{ Status: 'Redelivery', ShowBtns: ['ShowArchive'] }, // Chờ giao lại
-			{ Status: 'Splitted', ShowBtns: ['ShowArchive'] }, // Đơn đã chia
-			{ Status: 'Merged', ShowBtns: ['ShowArchive'] }, // Đơn đã gộp
-			{ Status: 'Debt', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Còn nợ
-			{ Status: 'Done', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đã xong
-			{ Status: 'Canceled', ShowBtns: ['ShowDelete', 'ShowArchive'] }, // Đã hủy
-		];
-
 		let today = new Date();
 		today.setDate(today.getDate() + 1);
 		this.shipmentQuery.DeliveryDate = lib.dateFormat(today, 'yyyy-mm-dd');
