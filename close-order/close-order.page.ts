@@ -77,7 +77,7 @@ export class CloseOrderPage extends PageBase {
 	preLoadData(event?: any): void {
 		this.pageProvider.read({ IDParent: this.id }).then((resp) => {
 			this.childSOList = resp['data'];
-			this.childSOList = this.childSOList.filter((d) => d.Status != 'Cancelled');
+			this.childSOList = this.childSOList.filter((d) => d.Status != 'Canceled');
 			let queryLines = this.childSOList.map((m) => m.Id);
 			queryLines.push(parseInt(this.id));
 			this.queryLinesPaymentHistory = '';
@@ -121,7 +121,7 @@ export class CloseOrderPage extends PageBase {
 	loadedData(event?: any, ignoredFromGroup?: boolean): void {
 		this.item.OrderLines = this.allLines;
 		this.item.PaymentHistory = this.listPaymentHistory;
-		this.pageConfig.canEdit = !(this.item.Status == 'Done' || this.item.Status == 'Cancelled');
+		this.pageConfig.canEdit = !(this.item.Status == 'Done' || this.item.Status == 'Canceled');
 
 		super.loadedData(event, ignoredFromGroup);
 

@@ -108,7 +108,7 @@ export class SaleOrderMobilePage extends PageBase {
 				'Merged',
 				'Debt',
 				'Done',
-				'Cancelled',
+				'Canceled',
 			];
 			if (notShowSubmitOrdersForApproval.indexOf(i.Status) > -1) {
 				this.ShowSubmit = false;
@@ -127,7 +127,7 @@ export class SaleOrderMobilePage extends PageBase {
 				'Merged',
 				'Debt',
 				'Done',
-				'Cancelled',
+				'Canceled',
 			];
 			if (notShowApproveOrders.indexOf(i.Status) > -1) {
 				this.ShowApprove = false;
@@ -146,13 +146,13 @@ export class SaleOrderMobilePage extends PageBase {
 				'Merged',
 				'Debt',
 				'Done',
-				'Cancelled',
+				'Canceled',
 			];
 			if (notShowDisapproveOrders.indexOf(i.Status) > -1) {
 				this.ShowDisapprove = false;
 			}
 
-			let notShowCancelOrders = ['Approved', 'Scheduled', 'Picking', 'InCarrier', 'InDelivery', 'Delivered', 'Splitted', 'Merged', 'Debt', 'Done', 'Cancelled'];
+			let notShowCancelOrders = ['Approved', 'Scheduled', 'Picking', 'InCarrier', 'InDelivery', 'Delivered', 'Splitted', 'Merged', 'Debt', 'Done', 'Canceled'];
 			if (notShowCancelOrders.indexOf(i.Status) > -1) {
 				this.ShowCancel = false;
 			}

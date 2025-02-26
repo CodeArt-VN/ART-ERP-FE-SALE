@@ -27,13 +27,13 @@ export class SaleQuotationPage extends PageBase {
 	) {
 		super();
 
-		this.pageConfig.ShowCommandRules = [
+		this.pageProvider.showCommandRules = [
 			{ Status: 'Open', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] },
 			{ Status: 'Unapproved', ShowBtns: ['ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] },
 			{ Status: 'Submitted', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel'] },
 			{ Status: 'Approved', ShowBtns: ['ShowDisapprove', 'ShowCancel', 'ShowConfirm'] },
 			{ Status: 'Confirmed', ShowBtns: [] },
-			{ Status: 'Cancelled', ShowBtns: ['ShowDelete', 'ShowArchive'] },
+			{ Status: 'Canceled', ShowBtns: ['ShowDelete', 'ShowArchive'] },
 		];
 	}
 
@@ -82,7 +82,7 @@ export class SaleQuotationPage extends PageBase {
 		});
 	}
 
-	submit() {
+	submitForApproval() {
 		if (this.submitAttempt) return;
 		this.env
 			.showPrompt(

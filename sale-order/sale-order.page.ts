@@ -56,7 +56,7 @@ export class SaleOrderPage extends PageBase {
 
 		//const allCommands =               ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit',  'ShowApprove', 'ShowDisapprove', 'ShowCopyToARInvoice', 'ShowCancel', 'ShowDelete', 'ShowArchive'];
 
-		this.pageConfig.ShowCommandRules = [
+		this.pageProvider.showCommandRules = [
 			{ Status: 'New', ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Mới
 			{ Status: 'Unapproved', ShowBtns: ['ShowChangeBranch', 'ShowMerge', 'ShowSplit', 'ShowSubmit', 'ShowApprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Không duyệt
 			{ Status: 'Submitted', ShowBtns: ['ShowApprove', 'ShowDisapprove', 'ShowCancel', 'ShowDelete', 'ShowArchive'] }, // Chờ duyệt
@@ -71,7 +71,7 @@ export class SaleOrderPage extends PageBase {
 			{ Status: 'Merged', ShowBtns: ['ShowArchive'] }, // Đơn đã gộp
 			{ Status: 'Debt', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Còn nợ
 			{ Status: 'Done', ShowBtns: ['ShowCopyToARInvoice', 'ShowArchive'] }, // Đã xong
-			{ Status: 'Cancelled', ShowBtns: ['ShowDelete', 'ShowArchive'] }, // Đã hủy
+			{ Status: 'Canceled', ShowBtns: ['ShowDelete', 'ShowArchive'] }, // Đã hủy
 		];
 
 		let today = new Date();
@@ -221,7 +221,7 @@ export class SaleOrderPage extends PageBase {
 		this.refresh();
 	}
 
-	submit() {
+	submitForApproval() {
 		if (!this.pageConfig.canSubmitOrdersForApproval) {
 			return;
 		}
@@ -623,7 +623,7 @@ export class SaleOrderPage extends PageBase {
 				i.Status == 'Redelivery' ||
 				i.Status == 'Splitted' ||
 				i.Status == 'Merged' ||
-				i.Status == 'Cancelled'
+				i.Status == 'Canceled'
 		);
 		if (itemsCanNotProcess.length == this.selectedItems.length) {
 			this.env.showMessage('Cannot generate invoice from your chosen orders. Please only select approved orders!', 'warning');

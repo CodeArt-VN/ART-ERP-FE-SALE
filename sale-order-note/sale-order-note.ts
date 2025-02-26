@@ -95,7 +95,7 @@ export class SaleOrderNotePage extends PageBase {
 
 		this.env.showLoading('Please wait for a few moments', this.pageProvider.read({ IDParent: this.id })).then((resp) => {
 			let SOList = resp['data'];
-			SOList = SOList.filter((d) => d.Status != 'Cancelled');
+			SOList = SOList.filter((d) => d.Status != 'Canceled');
 
 			let queryLines = SOList.map((m) => m.Id);
 			queryLines.push(parseInt(this.id));

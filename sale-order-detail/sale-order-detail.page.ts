@@ -295,7 +295,7 @@ export class SaleOrderDetailPage extends PageBase {
 				'Merged', // Đã có phiếu thu
 				'Debt', // Còn nợ
 				'Done', // Đã xong
-				'Cancelled',
+				'Canceled',
 			];
 
 			if (blockedStatus.indexOf(this.item.Status) > -1) {
@@ -940,7 +940,7 @@ export class SaleOrderDetailPage extends PageBase {
 	async createARInvoice(o) {
 		let Status = this.selectedItems[0].Status;
 
-		if (Status == 'New' || Status == 'Unapproved' || Status == 'Submitted' || Status == 'Redelivery' || Status == 'Splitted' || Status == 'Merged' || Status == 'Cancelled') {
+		if (Status == 'New' || Status == 'Unapproved' || Status == 'Submitted' || Status == 'Redelivery' || Status == 'Splitted' || Status == 'Merged' || Status == 'Canceled') {
 			this.env.showMessage('Cannot generate invoice with this orders status', 'warning');
 			return;
 		}
