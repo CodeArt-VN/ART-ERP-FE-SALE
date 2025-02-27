@@ -421,78 +421,78 @@ export class SaleOrderPage extends PageBase {
 		}
 	}
 
-	cancel() {
-		if (!this.pageConfig.canCancel) {
-			return;
-		}
-		// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110)
-		let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery'));
-		if (itemsCanNotProcess.length == this.selectedItems.length) {
-			this.env.showMessage('Your chosen invoice cannot be canceled. Please only select draft and waiting for approval invoices.', 'warning');
-		} else {
-			itemsCanNotProcess.forEach((i) => {
-				i.checked = false;
-			});
-			//   i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110
-			this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery');
+	// cancel() {
+	// 	if (!this.pageConfig.canCancel) {
+	// 		return;
+	// 	}
+	// 	// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110)
+	// 	let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery'));
+	// 	if (itemsCanNotProcess.length == this.selectedItems.length) {
+	// 		this.env.showMessage('Your chosen invoice cannot be canceled. Please only select draft and waiting for approval invoices.', 'warning');
+	// 	} else {
+	// 		itemsCanNotProcess.forEach((i) => {
+	// 			i.checked = false;
+	// 		});
+	// 		//   i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110
+	// 		this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery');
 
-			this.alertCtrl
-				.create({
-					header: 'HỦY ' + this.selectedItems.length + ' đơn hàng',
-					//subHeader: '---',
-					message: 'Bạn có chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
-					buttons: [
-						{
-							text: 'Không',
-							role: 'cancel',
-							handler: () => {
-								//console.log('Không xóa');
-							},
-						},
-						{
-							text: 'Hủy',
-							cssClass: 'danger-btn',
-							handler: () => {
-								let publishEventCode = this.pageConfig.pageName;
-								let apiPath = {
-									method: 'POST',
-									url: function () {
-										return ApiSetting.apiDomain('SALE/Order/CancelOrders/');
-									},
-								};
+	// 		this.alertCtrl
+	// 			.create({
+	// 				header: 'HỦY ' + this.selectedItems.length + ' đơn hàng',
+	// 				//subHeader: '---',
+	// 				message: 'Bạn có chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+	// 				buttons: [
+	// 					{
+	// 						text: 'Không',
+	// 						role: 'cancel',
+	// 						handler: () => {
+	// 							//console.log('Không xóa');
+	// 						},
+	// 					},
+	// 					{
+	// 						text: 'Hủy',
+	// 						cssClass: 'danger-btn',
+	// 						handler: () => {
+	// 							let publishEventCode = this.pageConfig.pageName;
+	// 							let apiPath = {
+	// 								method: 'POST',
+	// 								url: function () {
+	// 									return ApiSetting.apiDomain('SALE/Order/CancelOrders/');
+	// 								},
+	// 							};
 
-								if (this.submitAttempt == false) {
-									this.submitAttempt = true;
+	// 							if (this.submitAttempt == false) {
+	// 								this.submitAttempt = true;
 
-									let postDTO = { Ids: [] };
-									postDTO.Ids = this.selectedItems.map((e) => e.Id);
+	// 								let postDTO = { Ids: [] };
+	// 								postDTO.Ids = this.selectedItems.map((e) => e.Id);
 
-									this.pageProvider.commonService
-										.connect(apiPath.method, apiPath.url(), postDTO)
-										.toPromise()
-										.then((savedItem: any) => {
-											if (publishEventCode) {
-												this.env.publishEvent({
-													Code: publishEventCode,
-												});
-											}
-											this.env.showMessage('Saving completed!', 'success');
-											this.submitAttempt = false;
-										})
-										.catch((err) => {
-											this.submitAttempt = false;
-											//console.log(err);
-										});
-								}
-							},
-						},
-					],
-				})
-				.then((alert) => {
-					alert.present();
-				});
-		}
-	}
+	// 								this.pageProvider.commonService
+	// 									.connect(apiPath.method, apiPath.url(), postDTO)
+	// 									.toPromise()
+	// 									.then((savedItem: any) => {
+	// 										if (publishEventCode) {
+	// 											this.env.publishEvent({
+	// 												Code: publishEventCode,
+	// 											});
+	// 										}
+	// 										this.env.showMessage('Saving completed!', 'success');
+	// 										this.submitAttempt = false;
+	// 									})
+	// 									.catch((err) => {
+	// 										this.submitAttempt = false;
+	// 										//console.log(err);
+	// 									});
+	// 							}
+	// 						},
+	// 					},
+	// 				],
+	// 			})
+	// 			.then((alert) => {
+	// 				alert.present();
+	// 			});
+	// 	}
+	// }
 
 	delete() {
 		// !(i.IDStatus == 101 || i.IDStatus == 102)
