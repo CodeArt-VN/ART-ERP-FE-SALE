@@ -201,298 +201,298 @@ export class SaleOrderPage extends PageBase {
 		this.refresh();
 	}
 
-	submitForApproval() {
-		if (!this.pageConfig.canSubmitOrdersForApproval) {
-			return;
-		}
-		// !(i.IDStatus == 101 || i.IDStatus == 102)
-		let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
-		if (itemsCanNotProcess.length == this.selectedItems.length) {
-			this.env.showMessage('Your selected invoices cannot be approved. Please select new or draft or disapproved ones', 'warning');
-		} else {
-			itemsCanNotProcess.forEach((i) => {
-				i.checked = false;
-			});
-			//   i.IDStatus == 101 || i.IDStatus == 102
-			this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
+	// submitForApproval() {
+	// 	if (!this.pageConfig.canSubmitOrdersForApproval) {
+	// 		return;
+	// 	}
+	// 	// !(i.IDStatus == 101 || i.IDStatus == 102)
+	// 	let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved'));
+	// 	if (itemsCanNotProcess.length == this.selectedItems.length) {
+	// 		this.env.showMessage('Your selected invoices cannot be approved. Please select new or draft or disapproved ones', 'warning');
+	// 	} else {
+	// 		itemsCanNotProcess.forEach((i) => {
+	// 			i.checked = false;
+	// 		});
+	// 		//   i.IDStatus == 101 || i.IDStatus == 102
+	// 		this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved');
 
-			this.alertCtrl
-				.create({
-					header: 'Gửi duyệt ' + this.selectedItems.length + ' đơn hàng',
-					//subHeader: '---',
-					message: 'Bạn có chắc muốn gửi duyệt ' + this.selectedItems.length + ' đơn hàng đang chọn?',
-					buttons: [
-						{
-							text: 'Không',
-							role: 'cancel',
-							handler: () => {
-								//console.log('Không xóa');
-							},
-						},
-						{
-							text: 'Gửi duyệt',
-							cssClass: 'danger-btn',
-							handler: () => {
-								let publishEventCode = this.pageConfig.pageName;
-								let apiPath = {
-									method: 'POST',
-									url: function () {
-										return ApiSetting.apiDomain('SALE/Order/SubmitOrdersForApproval/');
-									},
-								};
+	// 		this.alertCtrl
+	// 			.create({
+	// 				header: 'Gửi duyệt ' + this.selectedItems.length + ' đơn hàng',
+	// 				//subHeader: '---',
+	// 				message: 'Bạn có chắc muốn gửi duyệt ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+	// 				buttons: [
+	// 					{
+	// 						text: 'Không',
+	// 						role: 'cancel',
+	// 						handler: () => {
+	// 							//console.log('Không xóa');
+	// 						},
+	// 					},
+	// 					{
+	// 						text: 'Gửi duyệt',
+	// 						cssClass: 'danger-btn',
+	// 						handler: () => {
+	// 							let publishEventCode = this.pageConfig.pageName;
+	// 							let apiPath = {
+	// 								method: 'POST',
+	// 								url: function () {
+	// 									return ApiSetting.apiDomain('SALE/Order/SubmitOrdersForApproval/');
+	// 								},
+	// 							};
 
-								if (this.submitAttempt == false) {
-									this.submitAttempt = true;
+	// 							if (this.submitAttempt == false) {
+	// 								this.submitAttempt = true;
 
-									let postDTO = { Ids: [] };
-									postDTO.Ids = this.selectedItems.map((e) => e.Id);
+	// 								let postDTO = { Ids: [] };
+	// 								postDTO.Ids = this.selectedItems.map((e) => e.Id);
 
-									this.pageProvider.commonService
-										.connect(apiPath.method, apiPath.url(), postDTO)
-										.toPromise()
-										.then((savedItem: any) => {
-											if (publishEventCode) {
-												this.env.publishEvent({
-													Code: publishEventCode,
-												});
-											}
-											this.env.showMessage('Saving completed!', 'warning');
-											this.submitAttempt = false;
-										})
-										.catch((err) => {
-											this.submitAttempt = false;
-											//console.log(err);
-										});
-								}
-							},
-						},
-					],
-				})
-				.then((alert) => {
-					alert.present();
-				});
-		}
-	}
+	// 								this.pageProvider.commonService
+	// 									.connect(apiPath.method, apiPath.url(), postDTO)
+	// 									.toPromise()
+	// 									.then((savedItem: any) => {
+	// 										if (publishEventCode) {
+	// 											this.env.publishEvent({
+	// 												Code: publishEventCode,
+	// 											});
+	// 										}
+	// 										this.env.showMessage('Saving completed!', 'warning');
+	// 										this.submitAttempt = false;
+	// 									})
+	// 									.catch((err) => {
+	// 										this.submitAttempt = false;
+	// 										//console.log(err);
+	// 									});
+	// 							}
+	// 						},
+	// 					},
+	// 				],
+	// 			})
+	// 			.then((alert) => {
+	// 				alert.present();
+	// 			});
+	// 	}
+	// }
 
-	approve() {
-		if (!this.pageConfig.canApprove) {
-			return;
-		}
-		// !(i.IDStatus == 103 || i.IDStatus == 110)
-		let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Redelivery'));
-		if (itemsCanNotProcess.length == this.selectedItems.length) {
-			this.env.showMessage('Your selected order cannot be approved. Please only select pending for approval order', 'warning');
-		} else {
-			itemsCanNotProcess.forEach((i) => {
-				i.checked = false;
-			});
-			//   i.IDStatus == 103 || i.IDStatus == 110
-			this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Redelivery');
+	// approve() {
+	// 	if (!this.pageConfig.canApprove) {
+	// 		return;
+	// 	}
+	// 	// !(i.IDStatus == 103 || i.IDStatus == 110)
+	// 	let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Redelivery'));
+	// 	if (itemsCanNotProcess.length == this.selectedItems.length) {
+	// 		this.env.showMessage('Your selected order cannot be approved. Please only select pending for approval order', 'warning');
+	// 	} else {
+	// 		itemsCanNotProcess.forEach((i) => {
+	// 			i.checked = false;
+	// 		});
+	// 		//   i.IDStatus == 103 || i.IDStatus == 110
+	// 		this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Redelivery');
 
-			this.alertCtrl
-				.create({
-					header: 'Duyệt ' + this.selectedItems.length + ' đơn hàng',
-					//subHeader: '---',
-					message: 'Bạn có chắc muốn xác nhận ' + this.selectedItems.length + ' đơn hàng đang chọn?',
-					buttons: [
-						{
-							text: 'Không',
-							role: 'cancel',
-							handler: () => {
-								//console.log('Không xóa');
-							},
-						},
-						{
-							text: 'Duyệt',
-							cssClass: 'danger-btn',
-							handler: () => {
-								let publishEventCode = this.pageConfig.pageName;
-								let apiPath = {
-									method: 'POST',
-									url: function () {
-										return ApiSetting.apiDomain('SALE/Order/ApproveOrders/');
-									},
-								};
+	// 		this.alertCtrl
+	// 			.create({
+	// 				header: 'Duyệt ' + this.selectedItems.length + ' đơn hàng',
+	// 				//subHeader: '---',
+	// 				message: 'Bạn có chắc muốn xác nhận ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+	// 				buttons: [
+	// 					{
+	// 						text: 'Không',
+	// 						role: 'cancel',
+	// 						handler: () => {
+	// 							//console.log('Không xóa');
+	// 						},
+	// 					},
+	// 					{
+	// 						text: 'Duyệt',
+	// 						cssClass: 'danger-btn',
+	// 						handler: () => {
+	// 							let publishEventCode = this.pageConfig.pageName;
+	// 							let apiPath = {
+	// 								method: 'POST',
+	// 								url: function () {
+	// 									return ApiSetting.apiDomain('SALE/Order/ApproveOrders/');
+	// 								},
+	// 							};
 
-								if (this.submitAttempt == false) {
-									this.submitAttempt = true;
+	// 							if (this.submitAttempt == false) {
+	// 								this.submitAttempt = true;
 
-									let postDTO = { Ids: [] };
-									postDTO.Ids = this.selectedItems.map((e) => e.Id);
+	// 								let postDTO = { Ids: [] };
+	// 								postDTO.Ids = this.selectedItems.map((e) => e.Id);
 
-									this.pageProvider.commonService
-										.connect(apiPath.method, apiPath.url(), postDTO)
-										.toPromise()
-										.then((savedItem: any) => {
-											if (publishEventCode) {
-												this.env.publishEvent({
-													Code: publishEventCode,
-												});
-											}
-											this.env.showMessage('Saving completed!', 'success');
-											this.submitAttempt = false;
-										})
-										.catch((err) => {
-											this.submitAttempt = false;
-											//console.log(err);
-										});
-								}
-							},
-						},
-					],
-				})
-				.then((alert) => {
-					alert.present();
-				});
-		}
-	}
+	// 								this.pageProvider.commonService
+	// 									.connect(apiPath.method, apiPath.url(), postDTO)
+	// 									.toPromise()
+	// 									.then((savedItem: any) => {
+	// 										if (publishEventCode) {
+	// 											this.env.publishEvent({
+	// 												Code: publishEventCode,
+	// 											});
+	// 										}
+	// 										this.env.showMessage('Saving completed!', 'success');
+	// 										this.submitAttempt = false;
+	// 									})
+	// 									.catch((err) => {
+	// 										this.submitAttempt = false;
+	// 										//console.log(err);
+	// 									});
+	// 							}
+	// 						},
+	// 					},
+	// 				],
+	// 			})
+	// 			.then((alert) => {
+	// 				alert.present();
+	// 			});
+	// 	}
+	// }
 
-	disapprove() {
-		if (!this.pageConfig.canApprove) {
-			return;
-		}
-		// !(i.IDStatus == 103 || i.IDStatus == 104)
-		let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Approved'));
-		if (itemsCanNotProcess.length == this.selectedItems.length) {
-			this.env.showMessage('Your selected invoices cannot be disaaproved. Please select approved or pending for approval invoice', 'warning');
-		} else {
-			itemsCanNotProcess.forEach((i) => {
-				i.checked = false;
-			});
+	// disapprove() {
+	// 	if (!this.pageConfig.canApprove) {
+	// 		return;
+	// 	}
+	// 	// !(i.IDStatus == 103 || i.IDStatus == 104)
+	// 	let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'Submitted' || i.Status == 'Approved'));
+	// 	if (itemsCanNotProcess.length == this.selectedItems.length) {
+	// 		this.env.showMessage('Your selected invoices cannot be disaaproved. Please select approved or pending for approval invoice', 'warning');
+	// 	} else {
+	// 		itemsCanNotProcess.forEach((i) => {
+	// 			i.checked = false;
+	// 		});
 
-			//   i.IDStatus == 103 || i.IDStatus == 104
-			this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Approved');
+	// 		//   i.IDStatus == 103 || i.IDStatus == 104
+	// 		this.selectedItems = this.selectedItems.filter((i) => i.Status == 'Submitted' || i.Status == 'Approved');
 
-			this.alertCtrl
-				.create({
-					header: 'Trả lại ' + this.selectedItems.length + ' đơn hàng',
-					//subHeader: '---',
-					message: 'Bạn có chắc muốn trả lại ' + this.selectedItems.length + ' đơn hàng đang chọn?',
-					buttons: [
-						{
-							text: 'Không',
-							role: 'cancel',
-							handler: () => {
-								//console.log('Không xóa');
-							},
-						},
-						{
-							text: 'Trả lại',
-							cssClass: 'danger-btn',
-							handler: () => {
-								let publishEventCode = this.pageConfig.pageName;
-								let apiPath = {
-									method: 'POST',
-									url: function () {
-										return ApiSetting.apiDomain('SALE/Order/DisapproveOrders/');
-									},
-								};
+	// 		this.alertCtrl
+	// 			.create({
+	// 				header: 'Trả lại ' + this.selectedItems.length + ' đơn hàng',
+	// 				//subHeader: '---',
+	// 				message: 'Bạn có chắc muốn trả lại ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+	// 				buttons: [
+	// 					{
+	// 						text: 'Không',
+	// 						role: 'cancel',
+	// 						handler: () => {
+	// 							//console.log('Không xóa');
+	// 						},
+	// 					},
+	// 					{
+	// 						text: 'Trả lại',
+	// 						cssClass: 'danger-btn',
+	// 						handler: () => {
+	// 							let publishEventCode = this.pageConfig.pageName;
+	// 							let apiPath = {
+	// 								method: 'POST',
+	// 								url: function () {
+	// 									return ApiSetting.apiDomain('SALE/Order/DisapproveOrders/');
+	// 								},
+	// 							};
 
-								if (this.submitAttempt == false) {
-									this.submitAttempt = true;
+	// 							if (this.submitAttempt == false) {
+	// 								this.submitAttempt = true;
 
-									let postDTO = { Ids: [] };
-									postDTO.Ids = this.selectedItems.map((e) => e.Id);
+	// 								let postDTO = { Ids: [] };
+	// 								postDTO.Ids = this.selectedItems.map((e) => e.Id);
 
-									this.pageProvider.commonService
-										.connect(apiPath.method, apiPath.url(), postDTO)
-										.toPromise()
-										.then((savedItem: any) => {
-											if (publishEventCode) {
-												this.env.publishEvent({
-													Code: publishEventCode,
-												});
-											}
-											this.env.showMessage('Saving completed!', 'success');
-											this.submitAttempt = false;
-										})
-										.catch((err) => {
-											this.submitAttempt = false;
-											//console.log(err);
-										});
-								}
-							},
-						},
-					],
-				})
-				.then((alert) => {
-					alert.present();
-				});
-		}
-	}
+	// 								this.pageProvider.commonService
+	// 									.connect(apiPath.method, apiPath.url(), postDTO)
+	// 									.toPromise()
+	// 									.then((savedItem: any) => {
+	// 										if (publishEventCode) {
+	// 											this.env.publishEvent({
+	// 												Code: publishEventCode,
+	// 											});
+	// 										}
+	// 										this.env.showMessage('Saving completed!', 'success');
+	// 										this.submitAttempt = false;
+	// 									})
+	// 									.catch((err) => {
+	// 										this.submitAttempt = false;
+	// 										//console.log(err);
+	// 									});
+	// 							}
+	// 						},
+	// 					},
+	// 				],
+	// 			})
+	// 			.then((alert) => {
+	// 				alert.present();
+	// 			});
+	// 	}
+	// }
 
-	cancel() {
-		if (!this.pageConfig.canCancel) {
-			return;
-		}
-		// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110)
-		let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery'));
-		if (itemsCanNotProcess.length == this.selectedItems.length) {
-			this.env.showMessage('Your chosen invoice cannot be canceled. Please only select draft and waiting for approval invoices.', 'warning');
-		} else {
-			itemsCanNotProcess.forEach((i) => {
-				i.checked = false;
-			});
-			//   i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110
-			this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery');
+	// cancel() {
+	// 	if (!this.pageConfig.canCancel) {
+	// 		return;
+	// 	}
+	// 	// !(i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110)
+	// 	let itemsCanNotProcess = this.selectedItems.filter((i) => !(i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery'));
+	// 	if (itemsCanNotProcess.length == this.selectedItems.length) {
+	// 		this.env.showMessage('Your chosen invoice cannot be canceled. Please only select draft and waiting for approval invoices.', 'warning');
+	// 	} else {
+	// 		itemsCanNotProcess.forEach((i) => {
+	// 			i.checked = false;
+	// 		});
+	// 		//   i.IDStatus == 101 || i.IDStatus == 102 || i.IDStatus == 103 || i.IDStatus == 110
+	// 		this.selectedItems = this.selectedItems.filter((i) => i.Status == 'New' || i.Status == 'Unapproved' || i.Status == 'Submitted' || i.Status == 'Redelivery');
 
-			this.alertCtrl
-				.create({
-					header: 'HỦY ' + this.selectedItems.length + ' đơn hàng',
-					//subHeader: '---',
-					message: 'Bạn có chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
-					buttons: [
-						{
-							text: 'Không',
-							role: 'cancel',
-							handler: () => {
-								//console.log('Không xóa');
-							},
-						},
-						{
-							text: 'Hủy',
-							cssClass: 'danger-btn',
-							handler: () => {
-								let publishEventCode = this.pageConfig.pageName;
-								let apiPath = {
-									method: 'POST',
-									url: function () {
-										return ApiSetting.apiDomain('SALE/Order/CancelOrders/');
-									},
-								};
+	// 		this.alertCtrl
+	// 			.create({
+	// 				header: 'HỦY ' + this.selectedItems.length + ' đơn hàng',
+	// 				//subHeader: '---',
+	// 				message: 'Bạn có chắc muốn HỦY ' + this.selectedItems.length + ' đơn hàng đang chọn?',
+	// 				buttons: [
+	// 					{
+	// 						text: 'Không',
+	// 						role: 'cancel',
+	// 						handler: () => {
+	// 							//console.log('Không xóa');
+	// 						},
+	// 					},
+	// 					{
+	// 						text: 'Hủy',
+	// 						cssClass: 'danger-btn',
+	// 						handler: () => {
+	// 							let publishEventCode = this.pageConfig.pageName;
+	// 							let apiPath = {
+	// 								method: 'POST',
+	// 								url: function () {
+	// 									return ApiSetting.apiDomain('SALE/Order/CancelOrders/');
+	// 								},
+	// 							};
 
-								if (this.submitAttempt == false) {
-									this.submitAttempt = true;
+	// 							if (this.submitAttempt == false) {
+	// 								this.submitAttempt = true;
 
-									let postDTO = { Ids: [] };
-									postDTO.Ids = this.selectedItems.map((e) => e.Id);
+	// 								let postDTO = { Ids: [] };
+	// 								postDTO.Ids = this.selectedItems.map((e) => e.Id);
 
-									this.pageProvider.commonService
-										.connect(apiPath.method, apiPath.url(), postDTO)
-										.toPromise()
-										.then((savedItem: any) => {
-											if (publishEventCode) {
-												this.env.publishEvent({
-													Code: publishEventCode,
-												});
-											}
-											this.env.showMessage('Saving completed!', 'success');
-											this.submitAttempt = false;
-										})
-										.catch((err) => {
-											this.submitAttempt = false;
-											//console.log(err);
-										});
-								}
-							},
-						},
-					],
-				})
-				.then((alert) => {
-					alert.present();
-				});
-		}
-	}
+	// 								this.pageProvider.commonService
+	// 									.connect(apiPath.method, apiPath.url(), postDTO)
+	// 									.toPromise()
+	// 									.then((savedItem: any) => {
+	// 										if (publishEventCode) {
+	// 											this.env.publishEvent({
+	// 												Code: publishEventCode,
+	// 											});
+	// 										}
+	// 										this.env.showMessage('Saving completed!', 'success');
+	// 										this.submitAttempt = false;
+	// 									})
+	// 									.catch((err) => {
+	// 										this.submitAttempt = false;
+	// 										//console.log(err);
+	// 									});
+	// 							}
+	// 						},
+	// 					},
+	// 				],
+	// 			})
+	// 			.then((alert) => {
+	// 				alert.present();
+	// 			});
+	// 	}
+	// }
 
 	delete() {
 		// !(i.IDStatus == 101 || i.IDStatus == 102)
