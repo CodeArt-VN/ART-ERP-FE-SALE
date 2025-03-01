@@ -38,8 +38,9 @@
 		<datatable-column class="col-name" name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
 				<ng-container *ngFor="let uom of i.UoMs; let j = index">
-					<span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
-					<span *ngIf="j != 0">&nbsp;+&nbsp;</span> <span>{{uom?.Quantity | number}} {{uom?.UoMName}} </span>
+					<app-format-quantity [quantity]="i.CloseQuantity" [splitQuantityList]="i.UoMs"></app-format-quantity>
+					<!-- <span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
+					<span *ngIf="j != 0">&nbsp;+&nbsp;</span> <span>{{uom?.Quantity | number}} {{uom?.UoMName}} </span> -->
 					<!-- <span class="hideSmall">{{i.UoM?.Name}}</span> -->
 				</ng-container>
 				<span *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</span>
