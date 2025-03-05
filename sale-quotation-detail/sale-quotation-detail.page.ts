@@ -152,7 +152,7 @@ export class SaleQuotationDetailPage extends PageBase {
 
 	setQuotationLines() {
 		this.formGroup.controls.QuotationLines = new FormArray([]);
-		if (this.item?.QuotationLines.length)
+		if (this.item?.QuotationLines?.length)
 			this.item?.QuotationLines.forEach((i) => {
 				this.addLine(i);
 			});
