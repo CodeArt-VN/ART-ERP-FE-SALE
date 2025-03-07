@@ -26,6 +26,7 @@ import { lib } from 'src/app/services/static/global-functions';
 })
 export class SaleQuotationDetailPage extends PageBase {
 	@ViewChild('importfile') importfile: any;
+	checkingCanEdit = false;
 	statusList = [];
 	statusLinesList = [];
 	contentTypeList = [];
@@ -66,6 +67,9 @@ export class SaleQuotationDetailPage extends PageBase {
 	) {
 		super();
 		this.pageConfig.isDetailPage = true;
+		this.buildFormGroup();
+	}
+	buildFormGroup(){
 		this.formGroup = this.formBuilder.group({
 			IDBranch: [this.env.selectedBranch, Validators.required],
 			IDRequester: [''],
@@ -97,13 +101,13 @@ export class SaleQuotationDetailPage extends PageBase {
 			DeletedLines: [''],
 		});
 	}
-
 	preLoadData(event) {
+		this.checkingCanEdit = this.pageConfig.canEdit;
 		this.contentTypeList = [
 			{ Code: 'Item', Name: 'Items' },
 			{ Code: 'Service', Name: 'Service' },
 		];
-		Promise.all([this.env.getStatus('PurchaseQuotation'), this.contactProvider.read({ IsVendor: true, Take: 20 }), this.env.getStatus('PurchaseQuotaionLine')]).then(
+		Promise.all([this.env.getStatus('PurchaseQuotation'), this.contactProvider.read({ IsVendor: true, Take: 20 }), this.env.getStatus('PurchaseQuotationLine')]).then(
 			(values: any) => {
 				if (values[0]) this.statusList = values[0];
 				if (values[1] && values[1].data) {
@@ -116,14 +120,8 @@ export class SaleQuotationDetailPage extends PageBase {
 	}
 
 	loadedData(event) {
-		// if (this.item.Status != 'Open') this.pageConfig.canEdit = false;
-		// if (this.item.SourceType == 'FromPurchaseQuotation') {
-		//   this.formGroup.disable();
-		//   if (this.item.Status == 'Open') this.formGroup.controls.ValidUntilDate.enable();
-		// }
-		// this.setQuotationLines();
-		// super.loadedData(event);
-
+		this.pageConfig.canEdit = this.checkingCanEdit;
+		this.buildFormGroup();
 		if (!['Open', 'Confirmed', 'Unapproved'].includes(this.item.Status)) this.pageConfig.canEdit = false;
 		super.loadedData(event);
 		this.setQuotationLines();
