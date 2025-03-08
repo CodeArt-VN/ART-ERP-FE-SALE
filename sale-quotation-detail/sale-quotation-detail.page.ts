@@ -69,7 +69,7 @@ export class SaleQuotationDetailPage extends PageBase {
 		this.pageConfig.isDetailPage = true;
 		this.buildFormGroup();
 	}
-	buildFormGroup(){
+	buildFormGroup() {
 		this.formGroup = this.formBuilder.group({
 			IDBranch: [this.env.selectedBranch, Validators.required],
 			IDRequester: [''],
