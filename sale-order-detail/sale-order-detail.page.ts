@@ -99,7 +99,7 @@ export class SaleOrderDetailPage extends PageBase {
 			IDStatus: new FormControl({ value: '', disabled: false }),
 			Status: ['New'],
 			Type: new FormControl({ value: 'FMCGSalesOrder', disabled: true }),
-			SubType: [''],
+			SubType: ['PreSales'],
 			PaymentMethod: [''],
 			OrderDate: new FormControl({ value: '', disabled: true }),
 			ExpectedDeliveryDate: [''],
@@ -293,6 +293,8 @@ export class SaleOrderDetailPage extends PageBase {
 			}
 			this.item.Type = 'FMCGSalesOrder';
 			this.item.SubType = 'PreSales';
+			this.formGroup.controls.Type.markAsDirty();
+			this.formGroup.controls.SubType.markAsDirty();
 			this.item.OrderLines = [];
 			super.loadedData(event, true);
 		}
