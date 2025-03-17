@@ -4,7 +4,6 @@ import { PageBase } from 'src/app/page-base';
 import { ActivatedRoute } from '@angular/router';
 import { EnvService } from 'src/app/services/core/env.service';
 import {
-	SALE_OrderProvider,
 	BRA_BranchProvider,
 	AC_ARInvoiceProvider,
 	CRM_ContactProvider,
@@ -16,9 +15,6 @@ import {
 import { FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { CommonService } from 'src/app/services/core/common.service';
 import { NgSelectConfig } from '@ng-select/ng-select';
-import { concat, of, Subject } from 'rxjs';
-import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
 
 import { EInvoiceService } from 'src/app/services/einvoice.service';
@@ -282,55 +278,29 @@ export class SaleOrderDetailPage extends PageBase {
 				this.formGroup.get('IDAddress').enable();
 			}
 
-			this.item.OrderDateText = lib.dateFormat(this.item.OrderDate, 'hh:MM dd/mm/yyyy');
-
 			this.LoadTaxCodeDataSource(this.item._Customer);
-
-			super.loadedData(event, true);
-		} else {
-			if (!this.pageConfig.canEdit) {
-				this.pageConfig.canEdit = this.pageConfig.canAdd;
-			}
-			this.item.Type = 'FMCGSalesOrder';
-			this.item.SubType = 'PreSales';
-			this.formGroup.controls.Type.markAsDirty();
-			this.formGroup.controls.SubType.markAsDirty();
-			this.item.OrderLines = [];
-			super.loadedData(event, true);
-		}
+		} 
+		super.loadedData(event, true);
 		this.setOrderLines();
 
 		if (this.item._Customer) {
-			this.contactProvider
-				.search({
-					Take: 20,
-					Skip: 0,
-					SkipMCP: true,
-					Term: 'BP:' + this.item.IDContact,
-				})
-				.subscribe((data: any) => {
-					this._contactDataSource.initSearch();
-					this._contactDataSource.selected.push(this.item._Customer);
-					this.cdr.detectChanges();
-				});
-		} else {
-			this._contactDataSource.initSearch();
-		}
-
+			this._contactDataSource.selected.push(this.item._Customer);
+		} 
 		if (this.item.IDOwner) {
 			this.staffPovider.getAnItem(this.item.IDOwner).then((seller: any) => {
 				this._staffDataSource.selected.push(seller);
-			});
 			this._staffDataSource.initSearch();
+		});
 		}
+		else this._staffDataSource.initSearch();
+		this._contactDataSource.initSearch();
 
-		if (this.item.IDBranch) {
-			this.branchProvider.getAnItem(this.item.IDBranch).then((branch: any) => {
-				this.branch = branch;
-			});
-		}
+		
 		if (!(this.item?.Id > 0)) {
 			this.formGroup.get('Status').markAsDirty();
+			this.formGroup.controls.Type.markAsDirty();
+			this.formGroup.controls.SubType.markAsDirty();
+			//this.formGroup.get('Type').markAsDirty();
 		}
 	}
 
@@ -429,8 +399,10 @@ export class SaleOrderDetailPage extends PageBase {
 
 			line.controls._ProductWeight.setValue(u.Weight);
 			line.controls._ProductDimensions.setValue(u.Length * u.Width * u.Height);
-			line.controls.UoMPrice.setValue(line._UoMPrice);
-			line.controls.UoMPrice.markAsDirty();
+			if(!(this.pageConfig.canEditPrice && line.controls.UoMPrice.value)){
+				line.controls.UoMPrice.setValue(line._UoMPrice);
+				line.controls.UoMPrice.markAsDirty();
+			}
 		}
 
 		if (line.controls.IDItem.value && line.controls.IDUoM.value && line.controls.Quantity.value) {
@@ -493,10 +465,10 @@ export class SaleOrderDetailPage extends PageBase {
 			OriginalDiscount1:new FormControl({ value: orderLine.OriginalDiscount1, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }), 
 			OriginalDiscount2:new FormControl({ value: orderLine.OriginalDiscount2, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }) ,
 
-			OriginalDiscountByItem: [orderLine.OriginalDiscountByItem],
-			OriginalDiscountByGroup: [orderLine.OriginalDiscountByGroup],
-			OriginalDiscountByLine: [orderLine.OriginalDiscountByLine],
-			OriginalDiscountByOrder: [orderLine.OriginalDiscountByOrder],
+			OriginalDiscountByItem: new FormControl({ value:orderLine.OriginalDiscountByItem,disabled:true}),
+			OriginalDiscountByGroup: new FormControl({ value:orderLine.OriginalDiscountByGroup,disabled:true}),
+			OriginalDiscountByLine: new FormControl({ value:orderLine.OriginalDiscountByLine,disabled:true}), 
+			OriginalDiscountByOrder:  new FormControl({ value:orderLine.OriginalDiscountByOrder,disabled:true}),
 			OriginalDiscountFromSalesman: new FormControl({
 				value: orderLine.OriginalDiscountFromSalesman,
 				disabled: !(this.pageConfig.canEdit || (this.pageConfig.canUseDiscountFromSalesman && this.item.Status == 'Submitted')) || this.submitAttempt,

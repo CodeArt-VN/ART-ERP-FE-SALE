@@ -34,8 +34,8 @@
 						<app-form-control [field]="{id: 'OriginalTotalAfterTax', label: 'Total amount', type: 'span-number', form: formGroup}"> </app-form-control>
 
 						<app-form-control
-							*ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount"
-							[field]="{id: 'OriginalTotalAfterDiscountFromSalesman', label: 'Total amount paid', type: 'number', form: formGroup}"
+							*ngIf="formGroup.get('OriginalTotalAfterDiscountFromSalesman').value != formGroup.get('OriginalTotalAfterDiscount').value"
+							[field]="{id: 'OriginalTotalAfterDiscountFromSalesman', label: 'Total amount paid', type: 'span-number', form: formGroup}"
 						>
 						</app-form-control>
 					</ion-col>
@@ -177,19 +177,19 @@
 
 							<datatable-column *ngIf="pageConfig.canUseDiscountFromVendor" class="col-discount" name="Discount 1" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control [field]="{ id: 'OriginalDiscount1', type: 'number', form: g }"></app-input-control>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscount1', type: 'number', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
 							<datatable-column *ngIf="pageConfig.canUseDiscountFromDistributor" class="col-discount" name="Discount 2" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control [field]="{ id: 'OriginalDiscount2', type: 'number', form: g }"></app-input-control>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscount2', type: 'number', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
-							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" [checkbox]="true" class="col-promotion" name="Promotion goods" property="value">
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-promotion" name="Promotion goods" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control (change)="changeIsPromotion(g)" [field]="{ id: 'IsPromotionItem', type: 'number', form: g }"></app-input-control>
+									<app-input-control (change)="changeIsPromotion(g)" [field]="{ id: 'IsPromotionItem', type: 'checkbox', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
@@ -217,19 +217,19 @@
 
 							<datatable-column class="col-number" name="Unit price" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control [field]="{ id: 'UoMPrice', type: 'number', form: g }"></app-input-control>
+									<app-input-control  (change)="IDUoMChange(g)" [field]="{ id: 'UoMPrice', type: 'number', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
 							<datatable-column class="col-total" name="Amount" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control [field]="{ id: 'OriginalTotalAfterDiscount', type: 'span-number', form: g }"></app-input-control>
+									<app-input-control  (change)="IDUoMChange(g)" [field]="{ id: 'OriginalTotalAfterDiscount', type: 'span-number', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
 							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-total" name="Discount from saleman" property="value">
 								<ng-template let-g="row" datatable-cell-template>
-									<app-input-control (change)="changedItemUoM(g)" [field]="{ id: 'OriginalDiscountFromSalesman', type: 'number', form: g }"></app-input-control>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscountFromSalesman', type: 'number', form: g }"></app-input-control>
 								</ng-template>
 							</datatable-column>
 
