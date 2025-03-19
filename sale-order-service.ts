@@ -142,6 +142,7 @@ export class SALE_OrderService extends SALE_OrderProvider {
 			formGroup.controls.TotalAfterDiscount.setValue(formGroup.controls.TotalAfterDiscount.value + line.TotalAfterDiscount);
 			formGroup.controls.Tax.setValue(formGroup.controls.Tax.value + line.Tax);
 			formGroup.controls.TotalAfterTax.setValue(formGroup.controls.TotalAfterTax.value + line.TotalAfterTax);
+            formGroup.controls.OriginalTotalAfterDiscountFromSalesman.setValue(formGroup.controls.OriginalTotalAfterDiscountFromSalesman.value + line.OriginalTotalAfterDiscountFromSalesman);
 		}
 
 		formGroup.controls.ProductDimensions.setValue(formGroup.controls.ProductDimensions.value / 10 ** 6);

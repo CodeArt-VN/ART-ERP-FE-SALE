@@ -27,7 +27,7 @@
 						<app-form-control [clearable]="true" [field]="{id: 'Id', label: 'Id', type: 'span-text',form: formGroup}"></app-form-control>
 
 						<app-form-control
-							[field]="{id: 'IDAddress', label: 'Customer', type: 'ng-select-bp', form: formGroup, dataSource: _contactDataSource, bindLabel: 'Name', bindValue: 'Id', placeholder: 'Search for name, code or phone number', clearable: true, appendTo: '#ng-select-header' }"
+							[field]="{id: 'IDContact', label: 'Customer', type: 'ng-select-bp', form: formGroup, dataSource: _contactDataSource, bindLabel: 'Name', bindValue: 'Id', placeholder: 'Search for name, code or phone number', clearable: true, appendTo: '#ng-select-header' }"
 							(change)="changedIDAddress($event)"
 						></app-form-control>
 
@@ -255,8 +255,8 @@
 							</datatable-column>
 
 							<datatable-column class="col-icon" name="" property="value" *ngIf="pageConfig.canEdit">
-								<ng-template let-g="row" datatable-cell-template>
-									<ion-icon color="danger" class="min-btn clickable" name="trash-outline" (click)="deleteOrderLine(g)"></ion-icon>
+								<ng-template let-g="row" let-idx="idx" datatable-cell-template>
+									<ion-icon color="danger" class="min-btn clickable" name="trash-outline" (click)="deleteOrderLine(g,idx)"></ion-icon>
 								</ng-template>
 							</datatable-column>
 						</app-data-table>
@@ -284,23 +284,23 @@
 										<app-form-control [field]="{id:'Code', label: 'Code', type : 'text', form : formGroup }" (change)="saveChange()"></app-form-control>
 										<app-form-control [field]="{id:'Name', label: 'Name', type : 'text', form : formGroup }" (change)="saveChange()"></app-form-control>
 										<app-form-control
-											[field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
+											[field]="{id:'TaxCode', label: 'Invoice required', type : 'ng-select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup ,appendTo:'#ng-select-header'}"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'Status', label: 'Order Status', type : 'ng-select', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											[field]="{id:'Status', label: 'Order Status', type : 'ng-select-status', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											[field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
-											(change)="saveChange()"
+											[field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
+											(change)="changeSubType()"
 										></app-form-control>
 									</ion-col>
 									<ion-col size="12" size-sm size-xl="4">
@@ -312,7 +312,7 @@
 
 										<app-form-control
 											*ngIf="item.IDOwner"
-											[field]="{id:'IDOwner', label: 'Sales staff', type : 'ng-select-staff', dataSource: _staffDataSource, bindLabel: 'FullName', bindValue: 'Id',  form : formGroup }"
+											[field]="{id:'IDOwner', label: 'Sales staff', type : 'ng-select-staff', dataSource: _staffDataSource, bindLabel: 'FullName', bindValue: 'Id',  form : formGroup,appendTo:'#ng-select-header' }"
 											(change)="saveChange()"
 										></app-form-control>
 

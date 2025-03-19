@@ -36,7 +36,7 @@ export class SaleOrderDetailPage extends PageBase {
 	branch = null;
 	billOfLanding: any = {};
 	disableCustomerChange = true;
-
+	currentSubType;
 	constructor(
 		public pageProvider: SALE_OrderService,
 		public orderDetailProvider: SALE_OrderDetailProvider,
@@ -93,7 +93,7 @@ export class SaleOrderDetailPage extends PageBase {
 			Name: [''],
 			Remark: [''],
 			IDStatus: new FormControl({ value: '', disabled: false }),
-			Status: ['New'],
+			Status: new FormControl({ value: 'New', disabled: true }),
 			Type: new FormControl({ value: 'FMCGSalesOrder', disabled: true }),
 			SubType: ['PreSales'],
 			PaymentMethod: [''],
@@ -175,21 +175,27 @@ export class SaleOrderDetailPage extends PageBase {
 			Sort: [''],
 			IsDisabled: new FormControl({ value: '', disabled: true }),
 			IsDeleted: [''],
-			CreatedBy: [''],
-			ModifiedBy: [''],
+			CreatedBy: new FormControl({
+				value: '',
+				disabled: true,
+			}),
+			ModifiedBy: new FormControl({
+				value: '',
+				disabled: true,
+			}),
 			CreatedDate: [''],
 			ModifiedDate: [''],
 			RefWarehouse: [''],
 			RefDepartment: [''],
 			RefShipper: [''],
-			InvoiceDate :[''],
+			InvoiceDate: [''],
 			OrderLines: this.formBuilder.array([]),
-			DeletedLines:[],
-			IsUrgentOrders:[],
-			IsSampleOrder:[],
-			IsWholeSale:[],
-			IsShipBySaleMan:[]
-
+			DeletedLines: [],
+			IsUrgentOrders: [],
+			IsSampleOrder: [],
+			IsWholeSale: [],
+			IsShipBySaleMan: [],
+			IsVendor: [''],
 		});
 	}
 
@@ -279,35 +285,63 @@ export class SaleOrderDetailPage extends PageBase {
 			}
 
 			this.LoadTaxCodeDataSource(this.item._Customer);
-		} 
+		}
+		this.buidFormGroup();
 		super.loadedData(event, true);
 		this.setOrderLines();
 
+		if (this.formGroup.controls.SubType.value == 'ReturnOrders') {
+			this._contactDataSource = this.buildSelectDataSource((term) => {
+				return this.contactProvider.search({
+					IsVendor: true,
+					Take: 20,
+					Skip: 0,
+					SkipMCP: term ? false : true,
+					Term: term ? term : 'BP:' + this.item.IDContact,
+				});
+			});
+		}
 		if (this.item._Customer) {
-			this._contactDataSource.selected.push(this.item._Customer);
-		} 
+			if (this._contactDataSource.selected.findIndex((d) => d.Id == this.item._Customer.Id) == -1) {
+				this._contactDataSource.selected.push(this.item._Customer);
+			}
+			this.formGroup.controls.IsVendor.setValue(this.item._Customer.IsVendor);
+		}
 		if (this.item.IDOwner) {
 			this.staffPovider.getAnItem(this.item.IDOwner).then((seller: any) => {
 				this._staffDataSource.selected.push(seller);
-			this._staffDataSource.initSearch();
-		});
-		}
-		else this._staffDataSource.initSearch();
+				this._staffDataSource.initSearch();
+			});
+		} else this._staffDataSource.initSearch();
 		this._contactDataSource.initSearch();
 
-		
 		if (!(this.item?.Id > 0)) {
 			this.formGroup.get('Status').markAsDirty();
 			this.formGroup.controls.Type.markAsDirty();
 			this.formGroup.controls.SubType.markAsDirty();
 			//this.formGroup.get('Type').markAsDirty();
 		}
+		this.currentSubType = this.formGroup.controls.SubType.value;
+
+		if (this.formGroup.get('Id').value && this.formGroup.get('Status').value != 'New' && this.formGroup.get('Status').value != 'Unapproved') {
+			this.formGroup.disable();
+			this.pageConfig.canEdit = false;
+		}
+
+		let groups = <FormArray>this.formGroup.controls.OrderLines;
+		groups.controls.forEach((line) => {
+			this.pageProvider.calcOrderLine(line).then(() => {
+				this.pageProvider.calcOrder(this.item, this.env, this.formGroup);
+			});
+		});
 	}
 
 	TaxCodeDataSource = [];
 	LoadTaxCodeDataSource(i) {
 		this.TaxCodeDataSource = [];
-		this._contactDataSource.selected.push(i);
+		if (this._contactDataSource.selected.findIndex((d) => d.Id == i.Id) == -1) {
+			this._contactDataSource.selected.push(i);
+		}
 		if (i?.TaxAddresses) {
 			this.TaxCodeDataSource = i.TaxAddresses;
 		}
@@ -329,14 +363,33 @@ export class SaleOrderDetailPage extends PageBase {
 		if (i) {
 			this.LoadTaxCodeDataSource(i);
 			this.item.IDContact = i.Id;
-			this.formGroup.controls.IDContact.setValue(i.Id);
-			this.formGroup.controls.IDContact.markAsDirty();
+			this.formGroup.controls.IDAddress.setValue(i.Address.Id);
+			this.formGroup.controls.IDAddress.markAsDirty();
 			if (this._contactDataSource.selected.findIndex((d) => d.Id == i.Id) == -1) {
 				this._contactDataSource.selected.push(i);
-				// this.contactSearch();
-				this._contactDataSource.initSearch();
 			}
-			this.saveChange();
+			this._contactDataSource.initSearch();
+			if (this.formGroup.controls.SubType?.value == 'ReturnOrders') {
+				let orderLines = this.formGroup.get('OrderLines') as FormArray;
+				if (orderLines.controls.length > 0) {
+					this.env
+						.showPrompt('Tất cả hàng hoá trong danh sách khác với nhà cung cấp được chọn sẽ bị xoá. Bạn có muốn tiếp tục ? ', null, 'Thông báo')
+						.then(() => {
+							// let DeletedLines = orderLines
+							// 	.getRawValue()
+							// 	.filter((f) => f.Id && !f._Item._Vendors.map((v) => v.Id)?.includes(i.Id))
+							// 	.map((o) => o.Id);
+							// this.formGroup.get('DeletedLines').setValue(DeletedLines);
+							// this.formGroup.get('DeletedLines').markAsDirty();
+							this.saveChange();
+						})
+						.catch(() => {});
+				} else {
+					this.saveChange();
+				}
+			} else {
+				this.saveChange();
+			}
 		}
 	}
 
@@ -362,7 +415,13 @@ export class SaleOrderDetailPage extends PageBase {
 			// this.resetLine(line);
 
 			line.controls._Item.setValue(selectedItem);
-			line.controls.TaxRate.setValue(selectedItem.SalesTaxInPercent); //Tax by Item
+			if (this.formGroup.controls.SubType?.value == 'ReturnOrders') {
+				line.controls.TaxRate.setValue(selectedItem.PurchaseTaxInPercent); //Tax by Item
+				line.controls.TaxRate.markAsDirty();
+			} else {
+				line.controls.TaxRate.setValue(selectedItem.SalesTaxInPercent); //Tax by Item
+				line.controls.TaxRate.markAsDirty();
+			}
 
 			this.item.OriginalPromotion = this.item.OriginalPromotion ? parseFloat(this.item.OriginalPromotion) : 0;
 			line.controls.OriginalPromotion.setValue(this.item.OriginalPromotion); //Lấy theo order
@@ -374,7 +433,7 @@ export class SaleOrderDetailPage extends PageBase {
 		}
 	}
 
-	IDUoMChange(line) {
+	IDUoMChange(line,changeSubType = false) {
 		let idUoM = line.controls._Item.value?.SalesUoM;
 
 		let UoMs = line.controls._IDUoMDataSource?.value;
@@ -384,12 +443,21 @@ export class SaleOrderDetailPage extends PageBase {
 			line.controls.IDUoM.markAsDirty();
 			let salePrice = u.PriceList.find((d) => d.IDPriceList == 1 || d.Type == 'PriceListForCustomerAndVendor');
 			let buyPrice = u.PriceList.find((d) => d.IDPriceList == 2 || d.Type == 'PriceListForCustomerAndVendor');
-
+		
+			let taxRate = line.controls.TaxRate.value;
 			line._UoMPrice = salePrice ? salePrice.Price : 0;
 			line._BuyPrice = buyPrice ? buyPrice.Price : 0;
 
+			if (salePrice.IsTaxIncluded) {
+				line._UoMPrice = salePrice.Price / (1 + taxRate / 100);
+			} else {
+				line._UoMPrice = salePrice.Price;
+			}
+
 			if (this.item.IsSampleOrder) {
 				line._UoMPrice = line._BuyPrice;
+				line.controls.UoMPrice.setValue(line._UoMPrice);
+				line.controls.UoMPrice.markAsDirty();
 			}
 
 			if (!line.controls.Quantity.value) {
@@ -399,13 +467,17 @@ export class SaleOrderDetailPage extends PageBase {
 
 			line.controls._ProductWeight.setValue(u.Weight);
 			line.controls._ProductDimensions.setValue(u.Length * u.Width * u.Height);
-			if(!(this.pageConfig.canEditPrice && line.controls.UoMPrice.value)){
+			if (!(this.pageConfig.canEditPrice && line.controls.UoMPrice.value)) {
+				line.controls.UoMPrice.setValue(line._UoMPrice);
+				line.controls.UoMPrice.markAsDirty();
+			}
+			if(changeSubType){
 				line.controls.UoMPrice.setValue(line._UoMPrice);
 				line.controls.UoMPrice.markAsDirty();
 			}
 		}
 
-		if (line.controls.IDItem.value && line.controls.IDUoM.value && line.controls.Quantity.value) {
+		if (line.controls.IDItem.value && line.controls.IDUoM.value && line.controls.Quantity.value ) {
 			this.pageProvider.calcOrderLine(line).then(() => {
 				this.pageProvider.calcOrder(this.item, this.env, this.formGroup);
 				this.saveChange();
@@ -436,6 +508,7 @@ export class SaleOrderDetailPage extends PageBase {
 		let newFormGroup = this.formBuilder.group({
 			_IDItemDataSource: this.buildSelectDataSource((term) => {
 				return this.itemProvider.search({
+					ARSearch: true,
 					IDSO: this.item.Id,
 					Take: 20,
 					Skip: 0,
@@ -462,13 +535,13 @@ export class SaleOrderDetailPage extends PageBase {
 			TaxRate: [orderLine.TaxRate],
 			OriginalTotalBeforeDiscount: [orderLine.OriginalTotalBeforeDiscount],
 			OriginalPromotion: [orderLine.OriginalPromotion],
-			OriginalDiscount1:new FormControl({ value: orderLine.OriginalDiscount1, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }), 
-			OriginalDiscount2:new FormControl({ value: orderLine.OriginalDiscount2, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }) ,
+			OriginalDiscount1: new FormControl({ value: orderLine.OriginalDiscount1, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }),
+			OriginalDiscount2: new FormControl({ value: orderLine.OriginalDiscount2, disabled: !this.pageConfig.canEdit || orderLine.IsPromotionItem || this.submitAttempt }),
 
-			OriginalDiscountByItem: new FormControl({ value:orderLine.OriginalDiscountByItem,disabled:true}),
-			OriginalDiscountByGroup: new FormControl({ value:orderLine.OriginalDiscountByGroup,disabled:true}),
-			OriginalDiscountByLine: new FormControl({ value:orderLine.OriginalDiscountByLine,disabled:true}), 
-			OriginalDiscountByOrder:  new FormControl({ value:orderLine.OriginalDiscountByOrder,disabled:true}),
+			OriginalDiscountByItem: new FormControl({ value: orderLine.OriginalDiscountByItem, disabled: true }),
+			OriginalDiscountByGroup: new FormControl({ value: orderLine.OriginalDiscountByGroup, disabled: true }),
+			OriginalDiscountByLine: new FormControl({ value: orderLine.OriginalDiscountByLine, disabled: true }),
+			OriginalDiscountByOrder: new FormControl({ value: orderLine.OriginalDiscountByOrder, disabled: true }),
 			OriginalDiscountFromSalesman: new FormControl({
 				value: orderLine.OriginalDiscountFromSalesman,
 				disabled: !(this.pageConfig.canEdit || (this.pageConfig.canUseDiscountFromSalesman && this.item.Status == 'Submitted')) || this.submitAttempt,
@@ -513,6 +586,59 @@ export class SaleOrderDetailPage extends PageBase {
 		newFormGroup.controls._IDItemDataSource?.value.initSearch();
 	}
 
+	changeSubType(e: any) {
+		if (this.formGroup.controls.SubType?.value == 'ReturnOrders') {
+			this._contactDataSource = this.buildSelectDataSource((term) => {
+				return this.contactProvider.search({
+					IsVendor: true,
+					Take: 20,
+					Skip: 0,
+					SkipMCP: term ? false : true,
+					Term: term ? term : 'BP:' + this.item.IDContact,
+				});
+			});
+			this._contactDataSource.initSearch();
+			if (this.formGroup.controls.IsVendor.value) {
+				this.formGroup.controls.IDContact.markAsDirty();
+				let orderLines = this.formGroup.get('OrderLines') as FormArray;
+				if (orderLines.controls.length > 0) {
+					this.env
+						.showPrompt('Tất cả hàng hoá trong danh sách khác với nhà cung cấp đang chọn sẽ bị xoá. Bạn có muốn tiếp tục ? ', null, 'Thông báo')
+						.then(() => {
+							this.saveChange();
+						})
+						.catch(() => {
+							this.formGroup.controls.SubType.setValue(this.currentSubType);
+						});
+				} else {
+					this.saveChange();
+				}
+			} else {
+				this.formGroup.controls.IDContact.setValue(null);
+				this.formGroup.controls.IDContact.markAsDirty();
+				this.saveChange();
+			}
+		} else {
+			let _temp = this._contactDataSource.selected.find((d) => d.Id == this.formGroup.controls.IDContact.value);
+			this._contactDataSource = this.buildSelectDataSource((term) => {
+				return this.contactProvider.search({
+					Take: 20,
+					Skip: 0,
+					SkipMCP: term ? false : true,
+					Term: term ? term : 'BP:' + this.item.IDContact,
+				});
+			});
+			this._contactDataSource.selected.push(_temp);
+			this._contactDataSource.initSearch();
+			// let groups = <FormArray>this.formGroup.controls.OrderLines;
+			// groups.controls.forEach((line) => {
+			// 	this.IDUoMChange(line,true);
+			// });
+			this.saveChange();
+			
+		}
+	}
+
 	changedSampleOrder() {
 		this.formGroup.controls.IsSampleOrder.setValue(this.item.IsSampleOrder);
 		this.formGroup.controls.IsSampleOrder.markAsDirty();
@@ -522,19 +648,19 @@ export class SaleOrderDetailPage extends PageBase {
 			this.IDUoMChange(line);
 		}
 	}
-	changeUrgent(){
+	changeUrgent() {
 		this.formGroup.controls.IsUrgentOrders.setValue(this.item.IsUrgentOrders);
 		this.formGroup.controls.IsUrgentOrders.markAsDirty();
 		this.saveChange();
 	}
 
-	changeWholesale(){
+	changeWholesale() {
 		this.formGroup.controls.IsWholeSale.setValue(this.item.IsWholeSale);
 		this.formGroup.controls.IsWholeSale.markAsDirty();
 		this.saveChange();
 	}
 
-	changeCoverage(){
+	changeCoverage() {
 		this.formGroup.controls.IsShipBySaleMan.setValue(this.item.IsShipBySaleMan);
 		this.formGroup.controls.IsShipBySaleMan.markAsDirty();
 		this.saveChange();
@@ -612,27 +738,29 @@ export class SaleOrderDetailPage extends PageBase {
 		}, 0);
 	}
 
-	deleteOrderLine(line) {
+	deleteOrderLine(line, idx) {
 		let groups = <FormArray>this.formGroup.controls.OrderLines;
-		let Ids =[line.controls.Id?.value];
-		if (Ids && Ids.length > 0) {
-			this.formGroup.get('DeletedLines').setValue(Ids);
-			this.formGroup.get('DeletedLines').markAsDirty();
-			this.saveChange().then((s) => {
-				Ids.forEach((id) => {
-					let index = groups.controls.findIndex((x) => x.get('Id').value == id);
-					if (index >= 0) groups.removeAt(index);
-					this.pageProvider.calcOrder(this.item, this.env, this.formGroup);
-				});
-			});
+		if (!line.controls.Id?.value) {
+			groups.removeAt(idx);
+		} else {
+			this.env
+				.showPrompt('Bạn có chắc muốn xóa sản phẩm?', null, 'Xóa sản phẩm')
+				.then((_) => {
+					let Ids = [line.controls.Id?.value];
+					if (Ids && Ids.length > 0) {
+						this.formGroup.get('DeletedLines').setValue(Ids);
+						this.formGroup.get('DeletedLines').markAsDirty();
+						this.saveChange().then((s) => {
+							Ids.forEach((id) => {
+								let index = groups.controls.findIndex((x) => x.get('Id').value == id);
+								if (index >= 0) groups.removeAt(index);
+								this.pageProvider.calcOrder(this.item, this.env, this.formGroup);
+							});
+						});
+					}
+				})
+				.catch((_) => {});
 		}
-
-		// const index = this.item.OrderLines.indexOf(line);
-		// if (index > -1) {
-		// 	this.item.OrderLines.splice(index, 1);
-		// }
-		// this.pageProvider.calcOrder(this.item, this.env, this.formGroup);
-		// this.saveChange();
 	}
 
 	saveChange() {
@@ -658,9 +786,11 @@ export class SaleOrderDetailPage extends PageBase {
 
 	savedChange(savedItem = null, form = this.formGroup) {
 		super.savedChange(savedItem, form);
-		if (!this.item.OrderLines || this.item.OrderLines.length == 0) {
-			this.refresh();
-		}
+		this.item = savedItem;
+		this.loadedData(null);
+		// if (!this.item.OrderLines || this.item.OrderLines.length == 0) {
+		// 	this.refresh();
+		// }
 	}
 
 	async addContact() {
