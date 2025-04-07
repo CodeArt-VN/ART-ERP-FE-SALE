@@ -11,6 +11,7 @@ import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-me
 import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
 
 import { EInvoiceService } from 'src/app/services/einvoice.service';
+import { SALE_OrderService } from '../sale-order-service';
 
 @Component({
 	selector: 'app-sale-order',
@@ -38,7 +39,7 @@ export class SaleOrderPage extends PageBase {
 	};
 
 	constructor(
-		public pageProvider: SALE_OrderProvider,
+		public pageProvider: SALE_OrderService,
 		public shipmentProvider: SHIP_ShipmentProvider,
 		public vehicleProvider: SHIP_VehicleProvider,
 		public arInvoiceProvider: AC_ARInvoiceProvider,
