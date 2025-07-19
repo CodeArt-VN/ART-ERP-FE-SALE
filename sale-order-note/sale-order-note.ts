@@ -365,14 +365,14 @@ export class SaleOrderNotePage extends PageBase {
 			let data: printData = {
 				content: content.outerHTML,
 				type: 'html',
-				options: {
+				options: [{
 					// tray: '1',
 					jobName: `PrintJob_${new Date().toISOString()}.pdf`,
 					copies: 2,
 					//orientation: 'landscape',
 					duplex: 'duplex',
 					autoStyle: content,
-				},
+				}],
 			};
 			this.printingService.print(data);
 		}
