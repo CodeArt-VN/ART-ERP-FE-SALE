@@ -411,7 +411,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 			Icon: ''
 		});
 		this.TaxCodeDataSource.unshift({
-			TaxCode: '-1',
+			TaxCode: '',
 			CompanyName: 'Xuất khách vãng lai',
 			Icon: !this.TaxCodeDataSource.some(d => d.IsDefault) ? 'checkmark-outline' : ''
 		});
@@ -436,7 +436,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 				this.item.TaxCode = selectedDefault.TaxCode;
 				this.formGroup.controls.TaxCode.setValue(selectedDefault.TaxCode);
 			}else {
-				this.formGroup.controls.TaxCode.setValue('-1');
+				this.formGroup.controls.TaxCode.setValue('');
 			}
 			this.formGroup.controls.TaxCode.markAsDirty();
 			this.saveChange();
