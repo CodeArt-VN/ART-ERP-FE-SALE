@@ -413,11 +413,6 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		this.TaxCodeDataSource.unshift({
 			TaxCode: '-1',
 			CompanyName: 'Xuất khách vãng lai',
-			Icon: ''
-		});
-		this.TaxCodeDataSource.unshift({
-			TaxCode: null,
-			CompanyName: 'Xuất theo MST mặc định',
 			Icon: !this.TaxCodeDataSource.some(d => d.IsDefault) ? 'checkmark-outline' : ''
 		});
 	}
@@ -435,6 +430,15 @@ export class SaleOrderMobileDetailPage extends PageBase {
 				this.contactListSelected.push(i);
 				this.contactSearch();
 			}
+
+			const selectedDefault =  this.TaxCodeDataSource.find(d => d.IsDefault);
+			if (selectedDefault) {
+				this.item.TaxCode = selectedDefault.TaxCode;
+				this.formGroup.controls.TaxCode.setValue(selectedDefault.TaxCode);
+			}else {
+				this.formGroup.controls.TaxCode.setValue('-1');
+			}
+			this.formGroup.controls.TaxCode.markAsDirty();
 			this.saveChange();
 		}
 	}
