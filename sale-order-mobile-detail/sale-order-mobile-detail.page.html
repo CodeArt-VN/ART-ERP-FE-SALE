@@ -115,10 +115,20 @@
 
 						<ng-container *ngIf="showRemark">
 							<app-form-control
-								[field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
-								(change)="saveChange()"
-							></app-form-control>
-
+							[field]="{id: 'TaxCode', label: 'Invoice required', type: 'ng-select', dataSource: TaxCodeDataSource, bindValue: 'TaxCode', bindLabel: 'CompanyName', form: formGroup }"
+							(change)="saveChange()"
+							>
+								<ng-template input-control-template ng-label-tmp let-i="item" let-search="searchTerm">
+									<ion-icon *ngIf="i.Icon" [name]="i.Icon" slot="start" [color]="i.Color"></ion-icon>
+									<ion-text [color]="i.Color">{{ i[bindLabel ? bindLabel: 'CompanyName'] | translate }}</ion-text>
+								</ng-template>
+								<ng-template input-control-template ng-option-tmp let-i="item" let-search="searchTerm">
+									<ng-container class="option" *ngIf="i">
+										<ion-icon *ngIf="i.Icon" [name]="i.Icon" slot="start"></ion-icon>
+										<ion-text [color]="i.Color || 'dark'" [ngOptionHighlight]="search">{{ i[bindLabel ? bindLabel: 'CompanyName'] | translate }}</ion-text>
+									</ng-container>
+								</ng-template>
+							</app-form-control>
 							<app-form-control [field]="{id:'Name', label: 'Content', form : formGroup }" (change)="saveChange()"></app-form-control>
 
 							<app-form-control [field]="{id:'Remark', type:'textarea', form : formGroup }" (change)="saveChange()"></app-form-control>

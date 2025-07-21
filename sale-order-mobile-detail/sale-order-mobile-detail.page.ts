@@ -399,19 +399,26 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		this.TaxCodeDataSource = [];
 		this.contactSelected = i;
 		if (i?.TaxAddresses) {
-			this.TaxCodeDataSource = i.TaxAddresses;
+			this.TaxCodeDataSource = this.contactSelected;
+			this.TaxCodeDataSource = i.TaxAddresses.map(addr => ({
+				...addr,
+				Icon: addr.IsDefault ? 'checkmark-outline' : ''
+			}));
 		}
 		this.TaxCodeDataSource.unshift({
 			CompanyName: '----------',
 			disabled: true,
+			Icon: ''
 		});
 		this.TaxCodeDataSource.unshift({
 			TaxCode: '-1',
 			CompanyName: 'Xuất khách vãng lai',
+			Icon: ''
 		});
 		this.TaxCodeDataSource.unshift({
 			TaxCode: null,
 			CompanyName: 'Xuất theo MST mặc định',
+			Icon: !this.TaxCodeDataSource.some(d => d.IsDefault) ? 'checkmark-outline' : ''
 		});
 	}
 
