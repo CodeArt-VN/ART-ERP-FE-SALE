@@ -408,10 +408,13 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		if (i?.TaxAddresses) {
 			this.TaxCodeDataSource = i.TaxAddresses;
 		}
-		this.TaxCodeDataSource.unshift({
+		if(i?.TaxAddresses?.length)
+		{
+			this.TaxCodeDataSource.unshift({
 			CompanyName: '----------',
 			disabled: true
 		});
+		}
 		this.TaxCodeDataSource.unshift({
 			TaxCode: '',
 			CompanyName : this.textDefault
