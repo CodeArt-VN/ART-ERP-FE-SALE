@@ -19,6 +19,7 @@ import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators
 import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
 import { SaleOrderMobileAddContactModalPage } from '../sale-order-mobile-add-contact-modal/sale-order-mobile-add-contact-modal.page';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'app-sale-order-mobile-detail',
@@ -50,7 +51,8 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		public cdr: ChangeDetectorRef,
 		public loadingController: LoadingController,
 		public commonService: CommonService,
-		private config: NgSelectConfig
+		private config: NgSelectConfig,
+		public translate: TranslateService
 	) {
 		super();
 		this.item = {};
@@ -137,7 +139,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 			IsDebt: [''],
 			IsPaymentReceived: [''],
 
-			TaxCode: [''],
+			TaxCode: [null],
 			InvoiceNumber: [''],
 			InvoicDate: [''],
 			Sort: [''],
@@ -237,9 +239,14 @@ export class SaleOrderMobileDetailPage extends PageBase {
 	//     newFormGroup.patchValue(orderLine);
 	//     this.orderLineFormGroups.push(newFormGroup);
 	// }
-
+	textDefault = 'Guest customer';
 	preLoadData(event) {
-		super.preLoadData(event);
+		Promise.all([this.translate.get('Guest customer').toPromise()]).then((value : any) => {	
+			this.textDefault = value[0];
+			super.preLoadData(event);
+		});
+
+		
 	}
 
 	loadedData(event) {
@@ -401,17 +408,16 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		if (i?.TaxAddresses) {
 			this.TaxCodeDataSource = i.TaxAddresses;
 		}
-		this.TaxCodeDataSource.unshift({
+		if(i?.TaxAddresses?.length)
+		{
+			this.TaxCodeDataSource.unshift({
 			CompanyName: '----------',
-			disabled: true,
+			disabled: true
 		});
+		}
 		this.TaxCodeDataSource.unshift({
-			TaxCode: '-1',
-			CompanyName: 'Xuất khách vãng lai',
-		});
-		this.TaxCodeDataSource.unshift({
-			TaxCode: null,
-			CompanyName: 'Xuất theo MST mặc định',
+			TaxCode: '',
+			CompanyName : this.textDefault
 		});
 	}
 
@@ -427,6 +433,13 @@ export class SaleOrderMobileDetailPage extends PageBase {
 			if (this.contactListSelected.findIndex((d) => d.Id == i.Id) == -1) {
 				this.contactListSelected.push(i);
 				this.contactSearch();
+			}
+
+			const selectedDefault =  this.TaxCodeDataSource.find(d => d.IsDefault);
+			if (selectedDefault) {
+				this.item.TaxCode = selectedDefault.TaxCode;
+				this.formGroup.controls.TaxCode.setValue(selectedDefault.TaxCode);
+				this.formGroup.controls.TaxCode.markAsDirty();
 			}
 			this.saveChange();
 		}
