@@ -358,7 +358,7 @@ export class SaleOrderNotePage extends PageBase {
 		}
 		return KetQua;
 	}
-	print() {
+	printPrepare() {
 		let contents = document.getElementsByClassName('sheet');
 		for (let content of [...Array.from(contents)]) {
 			//let ele = this.printingService.applyAllStyles(content);
@@ -374,7 +374,7 @@ export class SaleOrderNotePage extends PageBase {
 					autoStyle: content,
 				}],
 			};
-			this.printingService.print(data);
+			this.printingService.print([data]);
 		}
 	}
 	DocTienBangChu(SoTien) {
