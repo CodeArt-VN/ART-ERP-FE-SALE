@@ -374,7 +374,7 @@ export class SaleOrderNotePage extends PageBase {
 					autoStyle: content,
 				}],
 			};
-			this.printingService.print(data);
+			this.printingService.print([data]);
 		}
 	}
 	DocTienBangChu(SoTien) {
