@@ -358,7 +358,7 @@ export class SaleOrderNotePage extends PageBase {
 		}
 		return KetQua;
 	}
-	printPrepare() {
+	print() {
 		let contents = document.getElementsByClassName('sheet');
 		for (let content of [...Array.from(contents)]) {
 			//let ele = this.printingService.applyAllStyles(content);
