@@ -518,8 +518,8 @@ export class SaleOrderDetailPage extends PageBase {
 				distinctUntilChanged(),
 				tap(() => (this.itemListLoading = true)),
 				switchMap((term) =>
-					this.itemProvider
-						.search({
+					this.pageProvider.commonService
+						.connect('GET', 'SALE/Order/ItemSearch/', {
 							IDSO: this.item.Id,
 							Take: 20,
 							Skip: 0,
