@@ -8,6 +8,7 @@
 
 <ion-content appScrollbarTheme class="ion-padding">
 	<div id="order-detail-page" style="position: absolute"></div>
+	<div id="ng-select-header" style="position: absolute; z-index: 30005"></div>
 	<div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
 		<ion-grid fixed>
 			<form [formGroup]="formGroup">
@@ -18,203 +19,32 @@
 						</ion-list-header>
 					</ion-col>
 					<ion-col size="12" size-sm size-xl="4">
-						<div class="c-control" *ngIf="item.Id">
+						<!-- <div class="c-control" *ngIf="item.Id">
 							<label class="c-label" for="Id"># Id</label>
 							<input class="c-input" id="Id" formControlName="Id" type="number" />
-						</div>
+						</div> -->
 
-						<div class="c-control">
-							<label class="c-label" for="IDAddress"
-								>{{'Customer' | translate}}
-								<small>#{{item.IDContact}}</small>
-								<span
-									*ngIf="!formGroup.controls.IDAddress.valid && !formGroup.controls.IDAddress.pending && (formGroup.controls.IDAddress.dirty || submitAttempt)"
-									ion-text
-									color="danger"
-									>(*)</span
-								>
-							</label>
-							<ng-select
-								*ngIf="item.Id && item.IDContact && !item.IDAddress"
-								class="c-input"
-								(change)="changedIDAddress($event)"
-								#IDContact
-								labelForId="IDContact"
-								formControlName="IDContact"
-								[items]="contactList$ | async"
-								[typeahead]="contactListInput$"
-								[loading]="contactListLoading"
-								[virtualScroll]="true"
-								bindLabel="Name"
-								bindValue="Id"
-								placeholder="{{'Search for name, code or phone number' | translate}}"
-							>
-								<ng-template ng-label-tmp let-i="item"> {{i.Name}} </ng-template>
-								<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-									<div *ngIf="i">
-										<div>
-											<span [ngOptionHighlight]="search">{{i.Name}}</span>
-											<span *ngIf="i.WorkPhone">
-												|
-												<small>
-													<b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
-												</small></span
-											>
-										</div>
-									</div>
-								</ng-template>
-							</ng-select>
+						<app-form-control [clearable]="true" [field]="{id: 'Id', label: 'Id', type: 'span-text',form: formGroup}"></app-form-control>
 
-							<ng-select
-								*ngIf="!item.Id || item.IDAddress"
-								class="c-input"
-								(change)="changedIDAddress($event)"
-								#IDAddress
-								labelForId="IDAddress"
-								formControlName="IDAddress"
-								[items]="contactList$ | async"
-								[typeahead]="contactListInput$"
-								[loading]="contactListLoading"
-								[virtualScroll]="true"
-								bindLabel="Name"
-								bindValue="IDAddress"
-								placeholder="{{'Search for name, code or phone number' | translate}}"
-							>
-								<ng-template ng-label-tmp let-i="item" let-a="item.Address">
-									{{i.Name}}
-									<small *ngIf="a">
-										<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-										<span *ngIf="a.Ward">, {{a.Ward}}</span>
-										<span *ngIf="a.District">, {{a.District}}</span>
-										<span *ngIf="a.Province">, {{a.Province}}</span>
-									</small>
-								</ng-template>
-								<ng-template ng-option-tmp let-i="item" let-a="item.Address" let-search="searchTerm">
-									<div *ngIf="i">
-										<div>
-											<span [ngOptionHighlight]="search">{{i.Name}}</span>
-											<span *ngIf="i.WorkPhone">
-												|
-												<small>
-													<b [ngOptionHighlight]="search">{{i.WorkPhone}}</b>
-												</small></span
-											>
-										</div>
-										<small *ngIf="a">
-											<b *ngIf="i.Code"><span class="important" [ngOptionHighlight]="search">{{i.Code}}</span></b>
-											<span *ngIf="a.AddressLine1"> | {{a.AddressLine1}}</span>
-											<span *ngIf="a.Ward">, {{a.Ward}}</span>
-											<span *ngIf="a.District">, {{a.District}}</span>
-											<span *ngIf="a.Province">, {{a.Province}}</span>
-											<br *ngIf="a.AddressLine2 || a.Contact" />
-											<span *ngIf="a.AddressLine2">{{a.AddressLine2}}</span>
-											<span *ngIf="a.Contact"> | {{'Contact' | translate}}: {{a.Contact}}</span>
-											<span *ngIf="a.Phone1"> - {{a.Phone1}}</span>
-											<span *ngIf="a.Phone2"> - {{a.Phone2}}</span>
-										</small>
-									</div>
-								</ng-template>
-							</ng-select>
-						</div>
+						<app-form-control
+							[field]="{id: 'IDContact', label: 'Customer', type: 'ng-select-bp', form: formGroup, dataSource: _contactDataSource, bindLabel: 'Name', bindValue: 'Id', placeholder: 'Search for name, code or phone number', clearable: true, appendTo: '#ng-select-header' }"
+							(change)="changedIDAddress($event)"
+						></app-form-control>
 
-						<div class="c-control">
-							<label class="c-label" for="OriginalTotalAfterTax"
-								>{{'Total amount' | translate}}
-								<span
-									*ngIf="!formGroup.controls.OriginalTotalAfterTax.valid && !formGroup.controls.OriginalTotalAfterTax.pending && (formGroup.controls.OriginalTotalAfterTax.dirty || submitAttempt)"
-									ion-text
-									color="danger"
-									>(*)</span
-								>
-							</label>
-							<input
-								(change)="saveChange()"
-								mask="separator.2"
-								thousandSeparator=","
-								[allowNegativeNumbers]="true"
-								suffix=" ₫"
-								class="c-input"
-								id="OriginalTotalAfterTax"
-								formControlName="OriginalTotalAfterTax"
-								type="text"
-							/>
-						</div>
+						<app-form-control [field]="{id: 'OriginalTotalAfterTax', label: 'Total amount', type: 'span-number', form: formGroup}"> </app-form-control>
 
-						<div class="c-control" *ngIf="item.OriginalTotalAfterDiscountFromSalesman != item.OriginalTotalAfterDiscount">
-							<label class="c-label" for="OriginalTotalAfterDiscountFromSalesman">{{'Total amount paid' | translate}}</label>
-							<input
-								[disabled]="true"
-								mask="separator.2"
-								thousandSeparator=","
-								[allowNegativeNumbers]="true"
-								suffix=" ₫"
-								class="c-input"
-								id="OriginalTotalAfterDiscountFromSalesman"
-								[ngModelOptions]="{standalone: true}"
-								[ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
-								type="text"
-							/>
-						</div>
+						<app-form-control
+							*ngIf="formGroup.get('OriginalTotalAfterDiscountFromSalesman').value != formGroup.get('OriginalTotalAfterDiscount').value"
+							[field]="{id: 'OriginalTotalAfterDiscountFromSalesman', label: 'Total amount paid', type: 'span-number', form: formGroup}"
+						>
+						</app-form-control>
 					</ion-col>
 					<ion-col size="12" size-sm size-xl="4">
-						<div class="c-control" *ngIf="item.Id">
-							<label class="c-label">{{'Order created date' | translate}}</label>
+						<app-form-control [field]="{id: 'OrderDate', label: 'Order created date', type: 'span-datetime',form: formGroup}"></app-form-control>
 
-							<span class="c-input disable">{{item.OrderDateText}}</span>
-						</div>
+						<app-form-control [field]="{id: 'ProductWeight', label: 'Weight', type: 'number', form: formGroup,suffix:' kg'}"> </app-form-control>
 
-						<div class="c-control">
-							<label class="c-label" for="ProductWeight"
-								>{{'Weight' | translate}}
-								<span
-									*ngIf="!formGroup.controls.ProductWeight.valid && !formGroup.controls.ProductWeight.pending && (formGroup.controls.ProductWeight.dirty || submitAttempt)"
-									ion-text
-									color="danger"
-									>(*)</span
-								>
-							</label>
-							<input
-								readonly
-								class="c-input"
-								id="ProductWeight"
-								formControlName="ProductWeight"
-								type="text"
-								mask="separator.2"
-								thousandSeparator=","
-								[allowNegativeNumbers]="true"
-								suffix=" kg"
-							/>
-						</div>
-
-						<div class="c-control">
-							<label class="c-label" for="ProductDimensions"
-								>{{'Volume' | translate}}
-								<ion-text color="primary" *ngIf="item.ProductDimensionsM">{{item.ProductDimensionsM | mask: 'separator.2':','}} m³</ion-text>
-								<span
-									*ngIf="!formGroup.controls.ProductDimensions.valid && !formGroup.controls.ProductDimensions.pending && (formGroup.controls.ProductDimensions.dirty || submitAttempt)"
-									ion-text
-									color="danger"
-									>(*)</span
-								>
-							</label>
-
-							<input
-								readonly
-								class="c-input"
-								id="ProductDimensions"
-								formControlName="ProductDimensions"
-								type="text"
-								mask="separator.2"
-								thousandSeparator=","
-								[allowNegativeNumbers]="true"
-								suffix=" cm³"
-							/>
-						</div>
-
-						<!-- <div class="c-control">
-                            <label class="c-label" for=""></label>
-                            <ion-button *ngIf="!item.Id && pageConfig.canAdd" expand="block" (click)="saveChange()" [disabled]="!formGroup.dirty">{{'add-order' | translate}}</ion-button>
-                        </div> -->
+						<app-form-control [field]="{id: 'ProductDimensions', label: 'Volume', type: 'number', form: formGroup,suffix:' cm³'}"> </app-form-control>
 
 						<div class="c-control ion-text-right">
 							<ion-button
@@ -228,7 +58,7 @@
 							<ion-button
 								size="small"
 								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
-								(click)="item.IsUrgentOrders = !item.IsUrgentOrders; saveChange()"
+								(click)="item.IsUrgentOrders = !item.IsUrgentOrders;  changeUrgent(); "
 								[fill]=" item.IsUrgentOrders? 'solid' : 'outline' "
 							>
 								{{'Urgent order' | translate}}
@@ -236,7 +66,7 @@
 							<ion-button
 								size="small"
 								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted')) || submitAttempt"
-								(click)="item.IsWholeSale = !item.IsWholeSale; saveChange()"
+								(click)="item.IsWholeSale = !item.IsWholeSale; changeWholesale();"
 								[fill]=" item.IsWholeSale? 'solid' : 'outline' "
 							>
 								{{'Wholesale customer' | translate}}
@@ -244,7 +74,7 @@
 							<ion-button
 								size="small"
 								[disabled]="!(pageConfig.canEdit || (this.pageConfig.canChangeTypeOfReviewOrder && this.item.Status == 'Submitted'))|| submitAttempt"
-								(click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; saveChange()"
+								(click)="item.IsShipBySaleMan = !item.IsShipBySaleMan; changeCoverage()"
 								[fill]=" item.IsShipBySaleMan? 'solid' : 'outline' "
 								color="blue"
 							>
@@ -289,440 +119,154 @@
 			<div>
 				<div *ngIf="segmentView == 's1'">
 					<div class="table-contain">
-						<section class="table" style="min-width: 1550px">
-							<header class="bold">
-								<div class="col-id cell">#</div>
-								<div class="col-name cell">{{'Product' | translate}}</div>
-								<div class="col-uom cell">{{'Unit' | translate}}</div>
-								<div class="col-qty cell">{{'Quantity' | translate}}</div>
-								<div class="col-discount cell" title="{{'Discount from vendor' | translate}}" *ngIf="pageConfig.canUseDiscountFromVendor">
-									{{'Discount 1' | translate}}
-								</div>
-								<div class="col-discount cell" title="{{'Discount from distributor' | translate}}" *ngIf="pageConfig.canUseDiscountFromDistributor">
-									{{'Discount 2' | translate}}
-								</div>
+						<app-data-table [rows]="formGroup.get('OrderLines')['controls']" [showSpinner]="pageConfig.showSpinner">
+							<datatable-empty-message subMessage="Please click add new to start...">
+								<ng-template datatable-empty-message-template>
+									<div>
+										<ion-button *ngIf="pageConfig.canEdit && item.Id" size="small" (click)="addOrderLine({})">
+											<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+											{{ 'Add product' | translate }}
+										</ion-button>
+									</div>
+								</ng-template>
+							</datatable-empty-message>
 
-								<div class="col-promotion cell" title="{{'Promotion goods' | translate}}" *ngIf="pageConfig.canUsePromotionItem">{{'Promotion' | translate}}</div>
-								<div class="col-discount cell" title="{{'Discount per product' | translate}}">{{'Discount/product' | translate}}</div>
-								<div class="col-discount cell" title="{{'= [%discount] * [value before discount]' | translate}}">{{'Discount by group' | translate}}</div>
-								<div class="col-discount cell" title="{{'= [Discount /product] + [Group discount]' | translate}}">{{'Discount by line' | translate}}</div>
-								<div class="col-discount cell" title="{{'= [%Discount] * ([value before discount] - [Line discount])' | translate}}">
-									{{'Discount by order' | translate}}
-								</div>
-								<div class="col-price cell">{{'Unit price' | translate}}</div>
-								<div class="col-total cell">{{'Amount' | translate}}</div>
-								<div class="col-discount cell" title="{{'Discount from saleman' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									{{'Discount from saleman' | translate}}
-								</div>
-								<div class="col-discount cell" title="{{'Unit price before salesman discount' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									{{'Unit price' | translate}} <br />
-									{{'(before discount from salesman)' | translate}}
-								</div>
-								<div class="col-total cell" title="{{'[Customer pays] = [Total amount] - [Discount 3]' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									{{'Customers payable' | translate}}
-								</div>
-								<div class="col-price cell">{{'VAT(%)' | translate}}</div>
-								<div *ngIf="pageConfig.SOIsShowOrderDetailRemark" class="col-remark cell">Remark</div>
-								<div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
-							</header>
+							<datatable-column class="col-id" name="No." property="#"></datatable-column>
+							<datatable-column class="col-name item-name" name="Items" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control
+										[field]="{
+											id: 'IDItem',
+											label: 'Item',
+											type: 'ng-select-item',
+									form: g,
+									dataSource: g.get('_IDItemDataSource').value,
+									bindValue: 'Id',
+									bindLabel: 'Name',
+									clearable: true,
+									placeholder: 'Type to search...',
+									appendTo: '#ng-select-header',
+										}"
+										(change)="IDItemChange($event, g)"
+									></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-							<div class="row" *ngFor="let i of item.OrderLines; let idx = index;">
-								<div class="col-id cell">{{idx+1}}</div>
-								<div class="col-name cell">
-									<ng-select
-										appendTo="#order-detail-page"
-										[disabled]="!pageConfig.canEdit || submitAttempt"
-										class="c-input"
-										[(ngModel)]="i.IDItem"
-										(change)="changedIDItem($event, i)"
-										[labelForId]="'IDItem'+idx"
-										[items]="itemList$ | async"
-										[typeahead]="itemListInput$"
-										[virtualScroll]="true"
-										bindLabel="Name"
-										bindValue="Id"
-										placeholder="{{'Search for name, code or phone number' | translate}}"
-									>
-										<ng-template ng-label-tmp let-i="item">
-											<b *ngIf="i.Code" [title]="i.Id" [title]="i.Name"> {{i.Code}} </b>
-											{{i.Name}}
-										</ng-template>
-										<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-											<div *ngIf="i">
-												<div>
-													<span [ngOptionHighlight]="search">{{i.Name}}</span>
-												</div>
-												<small
-													>#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b></small
-												>
-											</div>
-										</ng-template>
-									</ng-select>
-								</div>
-								<div class="col-uom cell">
-									<select
-										[disabled]="!pageConfig.canEdit || submitAttempt"
-										class="c-input c-dropdown"
-										(change)="changedItemUoM(i)"
-										[(ngModel)]="i.IDUoM"
-										*ngIf="i._itemData && i._itemData.UoMs.length"
-									>
-										<option value="">{{'Select unit' | translate}}</option>
-										<option [disabled]="t.Flag" *ngFor="let t of i._itemData.UoMs" [value]="t.Id">{{t.Name}}</option>
-									</select>
-								</div>
+							<datatable-column class="col-code" name="Unit" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control
+										[field]="{
+											id: 'IDUoM',
+											type: 'ng-select',
+											form: g,
+											dataSource: g.controls._IDUoMDataSource.value,
+											bindLabel: 'Name',
+											bindValue: 'Id',
+											appendTo: '#ng-select-header',
+										}"
+										(change)="IDUoMChange(g)"
+									></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div [ngClass]="{disable: !pageConfig.canEdit}" class="col-qty cell">
-									<input
-										[readonly]="!pageConfig.canEdit || submitAttempt"
-										(focus)="$event.target.select()"
-										*ngIf="i._itemData && i._itemData.UoMs.length && i.IDUoM"
-										(change)="changedItemUoM(i)"
-										class="c-input"
-										type="number"
-										[min]="i._UoM?i._UoM.MinQuantity:0.000000001"
-										[max]="i._UoM?i._UoM.MaxQuantity:999999999999999999"
-										step="1"
-										[(ngModel)]="i.Quantity"
-										onkeydown="return event.keyCode !== 190"
-									/>
-								</div>
-								<div [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}" class="col-discount cell" *ngIf="pageConfig.canUseDiscountFromVendor">
-									<input
-										[readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
-										(focus)="$event.target.select()"
-										*ngIf="i.Quantity"
-										(change)="changedItemUoM(i)"
-										class="c-input"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscount1"
-									/>
-								</div>
-								<div [ngClass]="{disable: !pageConfig.canEdit || i.IsPromotionItem}" class="col-discount cell" *ngIf="pageConfig.canUseDiscountFromDistributor">
-									<input
-										[readonly]="!pageConfig.canEdit || i.IsPromotionItem || submitAttempt"
-										(focus)="$event.target.select()"
-										*ngIf="i.Quantity"
-										(change)="changedItemUoM(i)"
-										class="c-input"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscount2"
-									/>
-								</div>
+							<datatable-column class="col-number" name="Quantity" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'Quantity', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div [ngClass]="{disable: !pageConfig.canEdit}" class="col-promotion cell" *ngIf="pageConfig.canUsePromotionItem">
-									<input
-										[disabled]="!pageConfig.canEdit || submitAttempt"
-										(change)="changeIsPromotion(i);"
-										class="c-checkbox"
-										[(ngModel)]="i.IsPromotionItem"
-										type="checkbox"
-									/>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromVendor" class="col-discount" name="Discount 1" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscount1', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscountByItem"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscountByGroup"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscountByLine"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalDiscountByOrder"
-									/>
-								</div>
-								<div class="col-price cell disable" [ngClass]="{disable: !pageConfig.canEdit || !pageConfig.canEditPrice, 'price-warning': i._ShowPriceWarning}">
-									<input
-										class="c-input"
-										[readonly]="!(pageConfig.canEdit && pageConfig.canEditPrice && !i.IsPromotionItem)"
-										(focus)="$event.target.select()"
-										(change)="changedItemUoM(i)"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="false"
-										[(ngModel)]="i.UoMPrice"
-									/>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromDistributor" class="col-discount" name="Discount 2" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscount2', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-total cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[(ngModel)]="i.OriginalTotalAfterDiscount"
-									/>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-promotion" name="Promotion goods" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="changeIsPromotion(g)" [field]="{ id: 'IsPromotionItem', type: 'checkbox', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-discount cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									<input
-										*ngIf="i.Quantity && !i.IsPromotionItem"
-										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt || i.IsPromotionItem"
-										(focus)="$event.target.select()"
-										(change)="changedItemUoM(i)"
-										class="c-input"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="i.IsPromotionItem"
-										[(ngModel)]="i.OriginalDiscountFromSalesman"
-									/>
-								</div>
+							<datatable-column class="col-discount" name="Discount/product" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control [field]="{ id: 'OriginalDiscountByItem', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-discount cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									<input
-										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
-										(focus)="$event.target.select()"
-										*ngIf="i.Quantity"
-										(change)="changedSalesmanPrice(i)"
-										class="c-input"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="false"
-										[(ngModel)]="i.SalesmanPrice"
-									/>
-								</div>
+							<datatable-column class="col-discount" name="Discount by group" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control [field]="{ id: 'OriginalDiscountByGroup', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
+							<datatable-column class="col-discount" name="Discount by line" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control [field]="{ id: 'OriginalDiscountByLine', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
+							<datatable-column class="col-discount" name="Discount by order" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control [field]="{ id: 'OriginalDiscountByOrder', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-total cell" [ngClass]="{disable: !pageConfig.canEdit}" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									<input
-										[readonly]="!(pageConfig.canEdit || (pageConfig.canUseDiscountFromSalesman && item.Status == 'Submitted')) || submitAttempt"
-										(focus)="$event.target.select()"
-										*ngIf="i.Quantity"
-										(change)="changedOriginalTotalAfterDiscountFromSalesman(i)"
-										class="c-input"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="false"
-										[(ngModel)]="i.OriginalTotalAfterDiscountFromSalesman"
-									/>
-								</div>
+							<datatable-column class="col-number" name="Unit price" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control  (change)="IDUoMChange(g)" [field]="{ id: 'UoMPrice', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-price cell">
-									<input class="c-input" [disabled]="true" mask="separator.2" thousandSeparator="," [allowNegativeNumbers]="true" [(ngModel)]="i.TaxRate" />
-								</div>
-								<div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark">
-									<input [readonly]="!pageConfig.canEdit" [(ngModel)]="i.Remark" class="c-input" (change)="saveChange()" />
-								</div>
-								<div class="col-del cell" *ngIf="pageConfig.canEdit" (click)="deleteOrderLine(i)">
-									<ion-icon color="danger" class="min-btn" name="trash-outline"></ion-icon>
-								</div>
-							</div>
+							<datatable-column class="col-total" name="Amount" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control  (change)="IDUoMChange(g)" [field]="{ id: 'OriginalTotalAfterDiscount', type: 'span-number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-							<div class="row" *ngIf="item.Id && item?.OrderLines?.length > 1">
-								<div class="col-id cell" *ngIf="pageConfig.canEdit" (click)="addOrderLine()">
-									<ion-icon class="min-btn" title="{{'Add product' | translate}}" name="add-circle-outline"></ion-icon>
-								</div>
-								<div class="col-id cell" *ngIf="!pageConfig.canEdit"></div>
-								<div class="col-name cell">
-									<b (click)="addOrderLine()" *ngIf="pageConfig.canEdit">{{'Add product' | translate}}</b>
-								</div>
-								<div class="col-uom cell">
-									<b>{{'Total' | translate}}:</b>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-total" name="Discount from saleman" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="IDUoMChange(g)" [field]="{ id: 'OriginalDiscountFromSalesman', type: 'number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-qty cell"></div>
-								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromVendor">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscount1"
-									/>
-								</div>
-								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromDistributor">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscount2"
-									/>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-total" name="Unit price (before discount from salesman)" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control (change)="changedSalesmanPrice(g)" [field]="{ id: 'SalesmanPrice', type: 'number', form: g } "></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-promotion cell disable" *ngIf="pageConfig.canUsePromotionItem"></div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscountByItem"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscountByGroup"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscountByLine"
-									/>
-								</div>
-								<div class="col-discount cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscountByOrder"
-									/>
-								</div>
-								<div class="col-price cell disable"></div>
-								<div class="col-total cell disable">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalTotalAfterTax"
-									/>
-								</div>
+							<datatable-column *ngIf="pageConfig.canUseDiscountFromSalesman" class="col-total" name="Customers payable" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control
+										(change)="changedOriginalTotalAfterDiscountFromSalesman(g)"
+										[field]="{ id: 'OriginalTotalAfterDiscountFromSalesman', type: 'number', form: g }"
+									></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalDiscountFromSalesman"
-									/>
-								</div>
-								<div class="col-discount cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman"></div>
-								<div class="col-total cell disable" *ngIf="pageConfig.canUseDiscountFromSalesman">
-									<input
-										class="c-input"
-										[disabled]="true"
-										mask="separator.2"
-										thousandSeparator=","
-										[allowNegativeNumbers]="true"
-										[ngModel]="item.OriginalTotalAfterDiscountFromSalesman"
-									/>
-								</div>
-								<div class="col-price cell"></div>
-								<div class="col-remark cell" *ngIf="pageConfig.SOIsShowOrderDetailRemark"></div>
+							<datatable-column class="col-price" name="Tax rate" property="value">
+								<ng-template let-g="row" datatable-cell-template>
+									<app-input-control [field]="{ id: 'TaxRate', type: 'span-number', form: g }"></app-input-control>
+								</ng-template>
+							</datatable-column>
 
-								<div class="col-del cell" *ngIf="pageConfig.canEdit"></div>
-							</div>
-						</section>
+							<datatable-column class="col-icon" name="" property="value" *ngIf="pageConfig.canEdit">
+								<ng-template let-g="row" let-idx="idx" datatable-cell-template>
+									<ion-icon color="danger" class="min-btn clickable" name="trash-outline" (click)="deleteOrderLine(g,idx)"></ion-icon>
+								</ng-template>
+							</datatable-column>
+						</app-data-table>
 					</div>
-					<div class="table-contain">
-						<div class="row" *ngIf="pageConfig.canEdit && item.Id && item?.OrderLines?.length < 2  ">
-							<div class="cell">
-								<ion-button fill="clear" size="small" (click)="addOrderLine()">
-									<ion-icon slot="start" name="add-circle-outline"></ion-icon>
-									{{'Add product' | translate}}
-								</ion-button>
-							</div>
-						</div>
+					<div class="ion-padding" *ngIf="pageConfig.canEdit">
+						<ion-button fill="clear" size="small" (click)="addOrderLineForm({})">
+							<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+							{{ 'Add product' | translate }}
+						</ion-button>
 					</div>
-
-					<!-- <div class="ion-padding">
-
-                        <ion-grid fixed *ngIf="OrderLines.controls.length">
-
-                            <form [formGroup]="formGroup">
-                                <ion-row [formGroup]="line" class="hr-group" *ngFor="let line of OrderLines.controls; let idx = index;">
-                                    <ion-col size="12" size-sm="12" size-md="12" size-xl="3">
-                                        <ion-list-header class="ion-no-padding">
-                                            <ion-label color="primary">{{'line-header' | translate}} #{{idx+1}}</ion-label>
-                                        </ion-list-header>
-                                    </ion-col>
-                                    <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="4">
-
-                                        <div class="c-control">
-                                            <label class="c-label" [for]="'IDItem'+idx">{{'item' | translate}}
-                                                <span *ngIf="!line.controls.IDItem.valid && !line.controls.IDItem.pending && (line.controls.IDItem.dirty || submitAttempt)" ion-text color="danger">(*)</span>
-                                            </label>
-
-                                            <ng-select class="c-input" (change)="changedIDItem($event)" #IDItem [labelForId]="'IDItem'+idx" formControlName="IDItem" [items]="itemList$ | async" [typeahead]="itemListInput$" [virtualScroll]="true" bindLabel="Name" bindValue="Id" placeholder="{{'item-placeholder' | translate}}">
-                                                <ng-template ng-option-tmp let-i="item" let-search="searchTerm">
-                                                    <div *ngIf="i">
-                                                        <div><span [ngOptionHighlight]="search">{{i.Name}}</span></div>
-                                                        <small>#<b><span class="important" [ngOptionHighlight]="search">{{i.Id}} - {{i.Code}}</span></b></small>
-                                                    </div>
-                                                </ng-template>
-                                            </ng-select>
-                                        </div>
-
-                                        <div class="c-control">
-                                            <label class="c-label" [for]="'Quantity'+idx">{{'Quantity' | translate}}
-                                                <span *ngIf="!line.controls.Quantity.valid && !line.controls.Quantity.pending && (line.controls.Quantity.dirty || submitAttempt)" ion-text color="danger">(*)</span>
-                                            </label>
-                                            <input (change)="saveChange()" class="c-input" [id]="'Quantity'+idx" formControlName="Quantity" type="number">
-                                        </div>
-
-                                    </ion-col>
-                                    <ion-col size-xs="6" size-sm="6" size-md="3" size-lg="3" size-xl="2">
-
-                                        <div class="c-control">
-                                            <label class="c-label" [for]="'IDUoM'+idx">{{'id-uom' | translate}}</label>
-                                            <input class="c-input" [id]="'IDUoM'+idx" formControlName="IDUoM">
-                                        </div>
-
-                                    </ion-col>
-                                    <ion-col size-xs="6" size-sm="6" size-md="3" size-lg="3" size-sm size-xl="2">
-                                        <div class="c-control">
-                                            <label class="c-label" [for]="'UoMPrice'+idx">{{'uom-price' | translate}}</label>
-                                            <input class="c-input" [id]="'UoMPrice'+idx" formControlName="UoMPrice" mask="separator.2" thousandSeparator="," [allowNegativeNumbers]="false">
-                                        </div>
-
-                                    </ion-col>
-                                </ion-row>
-                            </form>
-
-                        </ion-grid>
-                    </div> -->
 				</div>
 				<div *ngIf="segmentView == 's2'"></div>
 
@@ -737,79 +281,40 @@
 										</ion-list-header>
 									</ion-col>
 									<ion-col size="12" size-sm size-xl="4">
-										<div class="c-control">
-											<label class="c-label" for="Code"
-												>{{'Code' | translate}}
-												<span
-													*ngIf="!formGroup.controls.Code.valid && !formGroup.controls.Code.pending && (formGroup.controls.Code.dirty || submitAttempt)"
-													ion-text
-													color="danger"
-													>(*)</span
-												>
-											</label>
-											<input (change)="saveChange()" class="c-input" id="Code" formControlName="Code" type="text" />
-										</div>
-										<div class="c-control">
-											<label class="c-label" for="Name"
-												>{{'Content' | translate}}
-												<span
-													*ngIf="!formGroup.controls.Name.valid && !formGroup.controls.Name.pending && (formGroup.controls.Name.dirty || submitAttempt)"
-													ion-text
-													color="danger"
-													>(*)</span
-												>
-											</label>
-											<input (change)="saveChange()" class="c-input" id="Name" formControlName="Name" type="text" />
-										</div>
-
+										<app-form-control [field]="{id:'Code', label: 'Code', type : 'text', form : formGroup }" (change)="saveChange()"></app-form-control>
+										<app-form-control [field]="{id:'Name', label: 'Name', type : 'text', form : formGroup }" (change)="saveChange()"></app-form-control>
 										<app-form-control
-											[field]="{id:'TaxCode', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup }"
+											[field]="{id:'TaxCode', label: 'Invoice required', type : 'ng-select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'TaxCode', form : formGroup ,appendTo:'#ng-select-header'}"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'Status', label: 'Order Status', type : 'ng-select', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											[field]="{id:'Status', label: 'Order Status', type : 'ng-select-status', dataSource: statusList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
+											[field]="{id:'Type', label: 'Type', type : 'ng-select', dataSource: typeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
 											(change)="saveChange()"
 										></app-form-control>
 
 										<app-form-control
-											[field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup }"
-											(change)="saveChange()"
+											[field]="{id:'SubType', label: 'Sub type', type : 'ng-select', dataSource: subTypeList, bindLabel: 'Name', bindValue: 'Code', form : formGroup,appendTo:'#ng-select-header' }"
+											(change)="changeSubType()"
 										></app-form-control>
 									</ion-col>
 									<ion-col size="12" size-sm size-xl="4">
-										<div class="c-control" *ngIf="item.Id">
-											<label class="c-label" for="ExpectedDeliveryDate"
-												>Ngày giao hàng dự kiến
-												<span
-													*ngIf="!formGroup.controls.ExpectedDeliveryDate.valid && !formGroup.controls.ExpectedDeliveryDate.pending && (formGroup.controls.ExpectedDeliveryDate.dirty || submitAttempt)"
-													ion-text
-													color="danger"
-													>(*)</span
-												>
-											</label>
-											<input (change)="saveChange()" formControlName="ExpectedDeliveryDate" class="c-input" id="ExpectedDeliveryDate" type="datetime-local" />
-										</div>
+										<app-form-control
+											*ngIf="item.Id"
+											[field]="{id:'ExpectedDeliveryDate', label: 'Expected delivery date', type : 'datetime-local', form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
 
-										<div class="c-control" *ngIf="item.IDOwner">
-											<label class="c-label" for="IDOwner"
-												>{{'Sales staff' | translate}}
-												<span
-													*ngIf="!formGroup.controls.IDOwner.valid && !formGroup.controls.IDOwner.pending && (formGroup.controls.IDOwner.dirty || submitAttempt)"
-													ion-text
-													color="danger"
-													>(*)</span
-												>
-											</label>
-											<select class="c-input c-dropdown" formControlName="IDOwner">
-												<option *ngIf="saller" [value]="saller.Id">{{saller.FullName}}</option>
-											</select>
-										</div>
+										<app-form-control
+											*ngIf="item.IDOwner"
+											[field]="{id:'IDOwner', label: 'Sales staff', type : 'ng-select-staff', dataSource: _staffDataSource, bindLabel: 'FullName', bindValue: 'Id',  form : formGroup,appendTo:'#ng-select-header' }"
+											(change)="saveChange()"
+										></app-form-control>
 
 										<div class="c-control">
 											<label class="c-label" for="IDOpportunity"
@@ -841,20 +346,11 @@
 											</select>
 										</div>
 
-										<div class="c-control">
-											<label class="c-label" for="PaymentMethod"
-												>{{'Payment method' | translate}}
-												<span
-													*ngIf="!formGroup.controls.PaymentMethod.valid && !formGroup.controls.PaymentMethod.pending && (formGroup.controls.PaymentMethod.dirty || submitAttempt)"
-													ion-text
-													color="danger"
-													>(*)</span
-												>
-											</label>
-											<select (change)="saveChange()" class="c-input c-dropdown" formControlName="PaymentMethod">
-												<option *ngFor="let t of paymentMethodList" [value]="t.Code">{{t.Name}}</option>
-											</select>
-										</div>
+										<app-form-control
+											*ngIf="item.IDOwner"
+											[field]="{id:'PaymentMethod', label: 'Payment method', type : 'ng-select', dataSource: paymentMethodList, bindLabel: 'Name', bindValue: 'Code',  form : formGroup }"
+											(change)="saveChange()"
+										></app-form-control>
 									</ion-col>
 								</ion-row>
 							</form>
@@ -915,67 +411,20 @@
 									</ion-list-header>
 								</ion-col>
 								<ion-col size="12" size-sm size-xl="4">
-									<div class="c-control">
-										<label class="c-label">{{'Total' | translate}} </label>
-										<input
-											readonly
-											class="c-input"
-											mask="separator.2"
-											thousandSeparator=","
-											[allowNegativeNumbers]="false"
-											suffix=" ₫"
-											[(ngModel)]="item.OriginalTotalAfterTax"
-											[ngModelOptions]="{standalone: true}"
-											type="text"
-										/>
-									</div>
+									<app-form-control [field]="{id: 'OriginalTotalAfterTax', label: 'Total', type: 'span-number', form: formGroup,suffix:' ₫'}"> </app-form-control>
 
-									<div class="c-control">
-										<label class="c-label">{{'Received' | translate}} </label>
-										<input
-											readonly
-											class="c-input"
-											mask="separator.2"
-											thousandSeparator=","
-											[allowNegativeNumbers]="false"
-											suffix=" ₫"
-											[(ngModel)]="item.Received"
-											[ngModelOptions]="{standalone: true}"
-											type="text"
-										/>
-									</div>
+							
+									<app-form-control [field]="{id: 'Received', label: 'Received', type: 'span-number', form: formGroup,suffix:' ₫'}"> </app-form-control>
 
-									<div class="c-control">
-										<label class="c-label">{{'Remaining debt' | translate}} </label>
-										<input
-											readonly
-											class="c-input"
-											mask="separator.2"
-											thousandSeparator=","
-											[allowNegativeNumbers]="false"
-											suffix=" ₫"
-											[(ngModel)]="item.Debt"
-											[ngModelOptions]="{standalone: true}"
-											type="text"
-										/>
-									</div>
+									<app-form-control [field]="{id: 'Debt', label: 'Remaining debt', type: 'span-number', form: formGroup,suffix:' ₫'}"> </app-form-control>
 
 									<!-- IsDebt bit Unchecked -->
 									<!-- IsPaymentReceived bit Unchecked -->
 								</ion-col>
 								<ion-col size="12" size-sm size-xl="4">
-									<div class="c-control">
-										<label class="c-label">{{'Invoice' | translate}}</label>
-										<input readonly class="c-input" [(ngModel)]="item.InvoiceNumber" [ngModelOptions]="{standalone: true}" type="text" />
-									</div>
-									<div class="c-control">
-										<label class="c-label">{{'Invoice date' | translate}} </label>
-										<input readonly class="c-input" [(ngModel)]="item.InvoiceDate" [ngModelOptions]="{standalone: true}" type="text" />
-									</div>
-									<div class="c-control">
-										<label class="c-label">{{'Tax' | translate}} </label>
-										<input readonly class="c-input" [(ngModel)]="item.TaxRate" [ngModelOptions]="{standalone: true}" type="text" />
-									</div>
+									<app-form-control [field]="{id: 'InvoiceNumber', label: 'Invoice', type: 'span-text', form: formGroup}"> </app-form-control>
+									<app-form-control [field]="{id: 'InvoiceDate', label: 'Invoice date', type: 'span-datetime', form: formGroup}"> </app-form-control>
+									<app-form-control [field]="{id: 'TaxRate', label: 'Tax', type: 'span-number', form: formGroup}"> </app-form-control>
 								</ion-col>
 							</ion-row>
 
