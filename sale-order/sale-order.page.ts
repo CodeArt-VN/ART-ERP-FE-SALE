@@ -10,7 +10,7 @@ import { SaleOrderMergeARInvoiceModalPage } from '../sale-order-merge-arinvoice-
 import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-merge-modal.page';
 import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
 
-import { EInvoiceService } from 'src/app/services/einvoice.service';
+import { EInvoiceService } from 'src/app/services/custom/einvoice.service';
 
 @Component({
 	selector: 'app-sale-order',
@@ -789,15 +789,6 @@ export class SaleOrderPage extends PageBase {
 			return;
 		}
 		this.submitAttempt = true;
-		this.env.publishEvent({
-			Code: 'app:ShowAppMessage',
-			IsShow: true,
-			Id: 'MasanImport',
-			Icon: 'flash',
-			IsBlink: true,
-			Color: 'danger',
-			Message: 'đang import đơn Masan',
-		});
 
 		this.pageProvider.commonService
 			.connect('GET', 'SALE/Order/MasanImport', {
@@ -809,13 +800,7 @@ export class SaleOrderPage extends PageBase {
 			.toPromise()
 			.then((fileurl) => {
 				this.submitAttempt = false;
-				this.env.publishEvent({
-					Code: 'app:ShowAppMessage',
-					IsShow: false,
-					Id: 'MasanImport',
-				});
 				this.pageConfig.isShowSearch = true;
-				// this.query.IDStatus = '';
 				this.query.Status = '';
 				this.refresh();
 				this.download(fileurl);
@@ -823,12 +808,6 @@ export class SaleOrderPage extends PageBase {
 			.catch((err) => {
 				debugger;
 				this.submitAttempt = false;
-				this.env.publishEvent({
-					Code: 'app:ShowAppMessage',
-					IsShow: false,
-					Id: 'MasanImport',
-				});
-				//this.refresh();
 				if (err.error.Message != null && err.error != null) {
 					this.env.showMessage(err.message, 'danger');
 				} else {
@@ -849,15 +828,6 @@ export class SaleOrderPage extends PageBase {
 			return;
 		}
 		this.submitAttempt = true;
-		this.env.publishEvent({
-			Code: 'app:ShowAppMessage',
-			IsShow: true,
-			Id: 'FileImport',
-			Icon: 'flash',
-			IsBlink: true,
-			Color: 'danger',
-			Message: 'đang import',
-		});
 
 		let wareHouse = this.masanImportParam.wareHouse;
 		this.pageProvider.apiPath.postImport.method = 'UPLOAD';
@@ -869,21 +839,11 @@ export class SaleOrderPage extends PageBase {
 			.import(event.target.files[0])
 			.then((response) => {
 				this.submitAttempt = false;
-				this.env.publishEvent({
-					Code: 'app:ShowAppMessage',
-					IsShow: false,
-					Id: 'FileImport',
-				});
 				this.refresh();
 				this.download(response);
 			})
 			.catch((err) => {
 				this.submitAttempt = false;
-				this.env.publishEvent({
-					Code: 'app:ShowAppMessage',
-					IsShow: false,
-					Id: 'FileImport',
-				});
 				this.refresh();
 				this.env.showMessage('Import error, please check again', 'danger');
 			});

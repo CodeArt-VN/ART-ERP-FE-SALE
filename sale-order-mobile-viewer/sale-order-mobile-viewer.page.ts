@@ -20,6 +20,7 @@ import { SaleOrderMobileAddContactModalPage } from '../sale-order-mobile-add-con
 	standalone: false,
 })
 export class SaleOrderMobileViewerPage extends PageBase {
+	statusList = [];
 	constructor(
 		public pageProvider: SALE_OrderProvider,
 		public orderDetailProvider: SALE_OrderDetailProvider,
@@ -45,6 +46,14 @@ export class SaleOrderMobileViewerPage extends PageBase {
 
 		this.pageConfig.isDetailPage = true;
 		this.id = this.route.snapshot.paramMap.get('id');
+	}
+
+	preLoadData(event) {
+		this.env.getStatus('SalesOrder').then((data: any) => {
+			this.statusList = data;
+		}).finally(() => {
+			super.preLoadData(event);
+		});
 	}
 
 	loadData(event) {
@@ -86,7 +95,7 @@ export class SaleOrderMobileViewerPage extends PageBase {
 			});
 		}
 		if (this.item.IDContact) {
-			this.item.Status = this.env.statusList.find((d) => d.Id == this.item.IDStatus);
+			this.item.Status = this.statusList.find((d) => d.Id == this.item.IDStatus);
 		}
 	}
 

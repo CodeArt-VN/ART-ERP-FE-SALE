@@ -21,7 +21,7 @@ import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators
 import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
 
-import { EInvoiceService } from 'src/app/services/einvoice.service';
+import { EInvoiceService } from 'src/app/services/custom/einvoice.service';
 
 @Component({
 	selector: 'app-sale-order-detail',

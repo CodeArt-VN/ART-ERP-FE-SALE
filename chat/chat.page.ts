@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PageBase } from 'src/app/page-base';
-import { CustomService } from 'src/app/services/custom.service';
+import { CustomService } from 'src/app/services/custom/custom.service';
 import { EnvService } from 'src/app/services/core/env.service';
 import { NavController } from '@ionic/angular';
 

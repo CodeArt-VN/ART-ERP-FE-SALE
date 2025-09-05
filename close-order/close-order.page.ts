@@ -332,8 +332,12 @@ export class CloseOrderPage extends PageBase {
 			if (Array.isArray(obj[key])) for (let sobj of obj[key]) this.removeTempProperties(sobj);
 		}
 	}
-
-	async saveChange(isClosed = false, form = this.formGroup, publishEventCode = this.pageConfig.pageName, provider = this.pageProvider) {
+	
+	
+	
+	isClosed = false;
+	async saveChange( publishEventCode = this.pageConfig.pageName) {
+		const form = this.formGroup;
 		this.formGroup.updateValueAndValidity();
 		if (!form.valid) {
 			this.env.showMessage('Please recheck information highlighted in red above', 'warning');
@@ -341,7 +345,7 @@ export class CloseOrderPage extends PageBase {
 			this.submitAttempt = true;
 			let submitItem = form.getRawValue();
 			this.removeTempProperties(submitItem);
-			submitItem.IsClosedOrder = isClosed;
+			submitItem.IsClosedOrder = this.isClosed;
 
 			this.env
 				.showLoading('Please wait for a few moments', this.pageProvider.commonService.put('SALE/Order/CloseOrder/' + this.item.Id, submitItem))
@@ -362,7 +366,8 @@ export class CloseOrderPage extends PageBase {
 		this.env
 			.showPrompt('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
 			.then((_) => {
-				this.saveChange(true);
+				this.isClosed = true;
+				this.saveChange();
 			})
 			.catch((_) => {});
 	}

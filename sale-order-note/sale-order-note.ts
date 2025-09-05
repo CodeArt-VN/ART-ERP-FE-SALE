@@ -7,7 +7,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import QRCode from 'qrcode';
 import { lib } from 'src/app/services/static/global-functions';
-import { printData, PrintingService } from 'src/app/services/printing.service';
+import { printData, PrintingService } from 'src/app/services/util/printing.service';
 
 @Component({
 	selector: 'app-sale-order-note',
@@ -150,7 +150,7 @@ export class SaleOrderNotePage extends PageBase {
 									o.WorkPhone = this.customer?.WorkPhone;
 
 									o.OrderDateText = lib.dateFormat(o.OrderDate, 'dd/mm/yy hh:MM');
-									o.StatusText = lib.getAttrib(o.IDStatus, this.env.statusList, 'Name', 'NA', 'Id');
+									o.StatusText = lib.getAttrib(o.IDStatus, this.statusList, 'Name', 'NA', 'Id');
 									o._Status = this.statusList.find((d) => d.Id == o.IDStatsu || (o.Status && d.Code == o.Status));
 
 									QRCode.toDataURL(
