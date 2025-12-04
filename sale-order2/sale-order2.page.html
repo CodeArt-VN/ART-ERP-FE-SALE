@@ -1,0 +1,408 @@
+<ion-header>
+	<app-toolbar [page]="this">
+		<ion-button
+			tollbarSelected
+			title="{{ 'Create A/R invoice' | translate }}"
+			*ngIf="pageConfig.ShowCopyToARInvoice && pageConfig.canAddARInvoice && selectedItems.length >= 1 && !query.IsDisabled"
+			(click)="createARInvoice()"
+		>
+			<ion-icon color="success" slot="icon-only" name="receipt-outline"></ion-icon>
+		</ion-button>
+
+		
+	</app-toolbar>
+<!-- 
+	<section class="table">
+		<header class="bold">
+			<div class="col-checkbox cell"></div>
+			<div class="col-id cell" (click)="sortToggle('Id')">
+				{{'#' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Id" [name]="sort.Id == 'Id'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Id" name="search" color="primary"></ion-icon>
+			</div>
+
+			<div class="col-status cell" (click)="sortToggle('Status')">
+				{{'Status' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Status" [name]="sort.Status == 'Status'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Status" name="search" color="primary"></ion-icon>
+			</div>
+
+			<div class="col-code cell" (click)="sortToggle('OrderDate')">
+				{{'Daily order' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.OrderDate" [name]="sort.OrderDate == 'OrderDate'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.OrderDate" name="search" color="primary"></ion-icon>
+
+				<small
+					title="{{'Sample' | translate}}"
+					class="clickable"
+					(click)="query.IsSampleOrder = query.IsSampleOrder? '' : true; refresh(); $event.stopPropagation()"
+					[ngClass]="{active: query.IsSampleOrder}"
+				>
+					<ion-text color="primary">Sa</ion-text>
+				</small>
+				<small
+					title="{{'Coverage' | translate}}"
+					class="clickable"
+					(click)="query.IsShipBySaleMan = query.IsShipBySaleMan? '' : true; refresh(); $event.stopPropagation()"
+					[ngClass]="{active: query.IsShipBySaleMan}"
+				>
+					<ion-text color="primary">BP</ion-text>
+				</small>
+			</div>
+
+			<div *ngIf="pageConfig.isShowExpectedDeliveryDate" class="col-date cell" (click)="sortToggle('ExpectedDeliveryDate')">
+				{{'Expected delivery date' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.ExpectedDeliveryDate" [name]="sort.ExpectedDeliveryDate == 'ExpectedDeliveryDate'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.ExpectedDeliveryDate" name="search" color="primary"></ion-icon>
+			</div>
+
+			<div class="col-name cell" (click)="sortToggle('CustomerName')">
+				{{'Customer' | translate}}
+				<small>#Id</small>
+
+				<ion-icon class="min-btn" *ngIf="sort.CustomerName" [name]="sort.CustomerName == 'CustomerName'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.CustomerName" name="search" color="primary"></ion-icon>
+
+				<small class="address">
+					<ion-text color="dark">{{'Address' | translate}}</ion-text>
+				</small>
+			</div>
+			<div class="col-code cell" (click)="sortToggle('Saleman')">
+				{{'Sales staff' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Saleman" [name]="sort.Saleman == 'Saleman'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Saleman" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-code cell money">
+				{{'Value after discount' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.OriginalTotalAfterTax" [name]="sort.OriginalTotalAfterTax == 'OriginalTotalAfterTax'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.OriginalTotalAfterTax" name="search" color="primary"></ion-icon>
+			</div>
+			<div class="col-code cell" (click)="sortToggle('Code')">
+				{{'Vendor code' | translate}}
+				<ion-icon class="min-btn" *ngIf="sort.Code" [name]="sort.Code == 'Code'?'arrow-down': 'arrow-up'"></ion-icon>
+				<ion-icon class="min-btn" (click)="pageConfig.isShowSearch = !pageConfig.isShowSearch" *ngIf="query.Code" name="search" color="primary"></ion-icon>
+			</div>
+		</header>
+		<form (submit)="refresh()" action="#">
+			<header class="filter" *ngIf="pageConfig.isShowSearch">
+				<div class="col-checkbox cell"></div>
+				<div class="col-id cell">
+					<input placeholder="{{'Id' | translate}}" [ngModelOptions]="{standalone: true}" [(ngModel)]="query.Id" class="c-input" [ngClass]="{active: query.Id}" type="" />
+					<ion-icon class="min-btn" (click)="query.Id=''; refresh()" *ngIf="query.Id" name="close-circle-outline"></ion-icon>
+				</div>
+
+				<div class="col-status cell">
+					<select (change)="refresh()" class="c-input c-dropdown" [ngModelOptions]="{standalone: true}" [(ngModel)]="query.Status" [ngClass]="{active: query.Status}">
+						<option value="">{{'All' | translate}}</option>
+						<option value="['Submitted', 'Redelivery']">{{'Order to be approved' | translate}}</option>
+						<option value="['Approved','Debt']">{{'Orders waiting for Driver allocation' | translate}}</option>
+						<option value="['New','Unapproved','Submitted','Approved','Redelivery']">{{'Not yet delivered' | translate}}</option>
+						<option disabled value="">----------</option>
+						<option *ngFor="let t of statusList" [value]="t.Code">{{t.Name}}</option>
+					</select>
+					<ion-icon
+						class="min-btn"
+						(click)="query.Status =  ['New','Unapproved','Submitted','Approved','Redelivery']; refresh()"
+						*ngIf="query.Status != ['New','Unapproved','Submitted','Approved','Redelivery']"
+						name="close-circle-outline"
+					></ion-icon>
+				</div>
+				<div class="col-code cell">
+					<input
+						placeholder="{{'Daily order' | translate}}"
+						(change)="refresh()"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.OrderDate"
+						class="c-input"
+						[ngClass]="{active: query.OrderDate}"
+						type="date"
+					/>
+					<ion-icon class="min-btn" (click)="query.OrderDate=''; refresh()" *ngIf="query.OrderDate" name="close-circle-outline"></ion-icon>
+				</div>
+				<div *ngIf="pageConfig.isShowExpectedDeliveryDate" class="col-date cell">
+					<input
+						placeholder="{{'Daily order' | translate}}"
+						(change)="refresh()"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.ExpectedDeliveryDate"
+						class="c-input"
+						[ngClass]="{active: query.ExpectedDeliveryDate}"
+						type="date"
+					/>
+					<ion-icon class="min-btn" (click)="query.ExpectedDeliveryDate=''; refresh()" *ngIf="query.ExpectedDeliveryDate" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-name cell">
+					<input
+						placeholder="{{'Customer' | translate}}"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.CustomerName"
+						class="c-input"
+						[ngClass]="{active: query.CustomerName}"
+						type="text"
+					/>
+					<ion-icon class="min-btn" (click)="query.CustomerName=''; refresh()" *ngIf="query.CustomerName" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-code cell">
+					<input
+						placeholder="{{'Sales staff' | translate}}"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.Saleman"
+						class="c-input"
+						[ngClass]="{active: query.Saleman}"
+						type="text"
+					/>
+					<ion-icon class="min-btn" (click)="query.Saleman=''; refresh()" *ngIf="query.Saleman" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-code cell money">
+					<input
+						placeholder="{{'Value after discount' | translate}}"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.OriginalTotalAfterTax"
+						class="c-input"
+						[ngClass]="{active: query.OriginalTotalAfterTax}"
+						type="text"
+					/>
+					<ion-icon class="min-btn" (click)="query.OriginalTotalAfterTax=''; refresh()" *ngIf="query.OriginalTotalAfterTax" name="close-circle-outline"></ion-icon>
+				</div>
+				<div class="col-code cell">
+					<input
+						placeholder="{{'Vendor code' | translate}}"
+						[ngModelOptions]="{standalone: true}"
+						[(ngModel)]="query.Code"
+						class="c-input"
+						[ngClass]="{active: query.Code}"
+						type="text"
+					/>
+					<ion-icon class="min-btn" (click)="query.Code=''; refresh()" *ngIf="query.Code" name="close-circle-outline"></ion-icon>
+				</div>
+
+				<button mat-raised-button type="submit" style="display: none">{{'Search' | translate}}</button>
+			</header>
+		</form>
+	</section> -->
+</ion-header>
+
+<ion-content appScrollbarTheme class="scrollx">
+	<ion-fab
+		*ngIf="pageConfig.isShowFeature"
+		style="height: 45px; z-index: 100"
+		[ngClass]="{withSearch: pageConfig.isShowSearch}"
+		class="feature"
+		vertical="top"
+		horizontal="end"
+		slot="fixed"
+	>
+		<ion-toolbar color="primary">
+			<ion-segment scrollable="true" (ionChange)="segmentView = $event.detail.value;" [value]="segmentView">
+				<ion-segment-button value="s1">
+					<ion-label>{{'Driver allocation' | translate}}</ion-label>
+				</ion-segment-button>
+				<ion-segment-button value="s2" *ngIf="pageConfig.canImportMasanSaleOrder">
+					<ion-label>{{'Import order' | translate}}</ion-label>
+				</ion-segment-button>
+			</ion-segment>
+		</ion-toolbar>
+	</ion-fab>
+	<ion-fab
+		*ngIf="pageConfig.isShowFeature"
+		style="top: -25px !important"
+		[ngClass]="{withSearch: pageConfig.isShowSearch}"
+		class="feature"
+		vertical="top"
+		horizontal="end"
+		slot="fixed"
+	>
+		<div class="ion-padding"></div>
+
+		<div *ngIf="segmentView=='s1'">
+			<div class="ion-padding">
+				<div class="c-control">
+					<label class="c-label" for="DeliveryDate">{{'Ngày giao hàng' | translate}}</label>
+					<input class="c-input" (change)="loadShipmentList()" id="DeliveryDate" type="date" [(ngModel)]="shipmentQuery.DeliveryDate" />
+				</div>
+
+				<div class="c-control">
+					<label class="c-label" for="IDVehicle">{{'License plate' | translate}}</label>
+					<ng-select
+						appendTo=""
+						(change)="loadShipmentList()"
+						class="c-input"
+						#IDVehicle
+						[(ngModel)]="shipmentQuery.IDVehicle"
+						labelForId="IDVehicle"
+						[items]="vehicleList"
+						bindLabel="Name"
+						bindValue="Id"
+						placeholder="{{'Search for license plate' | translate}}"
+					>
+						<ng-template ng-option-tmp let-i="item" let-search="searchTerm">
+							<div *ngIf="i">
+								<div>
+									<span [ngOptionHighlight]="search">{{i.Name}}</span>
+								</div>
+							</div>
+						</ng-template>
+					</ng-select>
+				</div>
+			</div>
+
+			<ion-list-header lines="full">
+				<ion-label color="dark">{{'delivery list' | translate}}</ion-label>
+				<ion-button size="small" title="{{'Add shipment' | translate}}" (click)="nav('shipment/0','forward', {queryParams: {shipment: shipmentQuery}})">
+					<ion-icon slot="icon-only" name="add"></ion-icon>
+				</ion-button>
+			</ion-list-header>
+			<ion-list>
+				<ion-item lines="full" *ngFor="let i of shipmentList">
+					<ion-label class="ion-text-wrap clickable" (click)="nav('shipment/'+i.Id,'forward')">
+						<ion-text>
+							<h3>{{i.ShipperName}}</h3>
+						</ion-text>
+						<p>
+							<ion-text color="primary"> {{i.VehicleName}} </ion-text>
+							{{i.DeliveryDateText}}
+						</p>
+					</ion-label>
+					<ion-badge color="success" [ngClass]="{show: !selectedItems.length}" class="count" slot="end"
+						>{{i.OrderCount}}<ion-text color="danger" *ngIf="i.DebtCount">+{{i.DebtCount}}</ion-text> đơn</ion-badge
+					>
+					<ion-button [disabled]="submitAttempt" color="primary" *ngIf="selectedItems.length" class="add" slot="end" (click)="addSOtoShipment(i)"
+						>+ {{selectedItems.length}} {{'đơn' | translate}}</ion-button
+					>
+				</ion-item>
+			</ion-list>
+
+			<div class="ion-padding" *ngIf="!shipmentList.length">
+				<ion-button (click)="nav('shipment/0','forward', {queryParams: {shipment: shipmentQuery}})" expand="block" shape="round" [disabled]="submitAttempt">
+					{{'Add shipment' | translate}}
+				</ion-button>
+			</div>
+		</div>
+
+		<div *ngIf="pageConfig.canImportMasanSaleOrder && segmentView=='s2'">
+			<!-- <ion-list-header lines="inset">
+				<ion-label color="dark">{{'order-import-title' | translate}}</ion-label>
+			</ion-list-header> -->
+
+			<div class="ion-padding">
+				<div class="c-control">
+					<label class="c-label" for="featureDate">{{'Order created date' | translate}}</label>
+					<input class="c-input" [(ngModel)]="masanImportParam.featureDate" id="featureDate" type="date" />
+				</div>
+
+				<div class="c-control">
+					<label class="c-label" for="kho">{{'Warehouse' | translate}}</label>
+					<select id="kho" [(ngModel)]="masanImportParam.wareHouse" class="c-input c-dropdown">
+						<option value="KF1652T01">{{'long-thanh' | translate}}</option>
+						<option value="KF1652">{{'xuan-loc' | translate}}</option>
+					</select>
+				</div>
+
+				<div class="c-control">
+					<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="masanImport()"> {{'Import Masan order' | translate}}</ion-button>
+					<!-- shape="round" -->
+				</div>
+
+				<div class="c-control">
+					<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="onClickImport()"> {{'Import file' | translate}}</ion-button>
+					<input class="hide-all" #importfile2 type="file" accept=".xlsx" (change)="import2($event)" />
+				</div>
+				<div class="col-control"></div>
+			</div>
+		</div>
+
+		<div class="ion-padding ion-margin"></div>
+	</ion-fab>
+	<app-page-title class="ion-padding safe-max-width" [pageConfig]="pageConfig"></app-page-title>
+	
+	<div class="safe-max-width">
+		<app-data-table
+			class="box-shadow responsive"
+			[rows]="items"
+			[trackBy]="'Id'"
+			[(selectedRows)]="selectedItems"
+			[showSpinner]="pageConfig.showSpinner"
+			[showFilter]="pageConfig.isShowSearch"
+			[(query)]="query"
+			(dataInfinite)="loadData($event)"
+			(filter)="onDatatableFilter($event)"
+			(sort)="onSort($event)"
+			(selectedRowsChange)="showCommandBySelectedRows($event)"
+		>
+			<datatable-column [checkbox]="true"></datatable-column>
+			<datatable-column class="col-id" name="#" property="Id">
+				<ng-template let-i="row" datatable-cell-template>
+					<span class="spacing" *ngFor="let l of i._levels"></span>
+					<ion-icon
+						(click)="toggleRow(i, $event);"
+						class="min-btn clickable"
+						[name]="i._HasSubOrder? (!i._ShowSubOrder? 'chevron-forward-outline':'chevron-down-outline') : '' "
+					></ion-icon>
+					<a (click)="nav('sale-order/'+i.Id,'forward')" [routerLink]="['sale-order/'+i.Id]" [title]="i.Id">{{i.Id}}</a>
+				</ng-template>
+			</datatable-column>
+			
+			<datatable-column class="col-date" format="yyyy-MM-dd" name="Order date" property="OrderDate" filterControlType="date"></datatable-column>
+			<datatable-column class="col-name flex-break" name="Customer name" property="_Customer">
+				<ng-template let-i="row" datatable-cell-template>
+					<div>
+						<span title="{{'View order details' | translate}}"
+							>{{i._Customer?.Name}}
+							<a
+								[href]="'#/'+'business-partner/'+i._Customer?.Id"
+								(click)="nav('business-partner/'+i._Customer?.Id,'forward')"
+								title="{{'View customers information' | translate}}"
+							>
+								<ion-icon name="open-outline"></ion-icon>
+							</a>
+							<small class="taxid" *ngIf="i._Customer?.TaxCode"> {{i._Customer?.TaxCode}} </small>
+						</span>
+						<div *ngIf="i.Remark">
+							<ion-text color="warning">
+								<i [innerHtml]="i.Remark"></i>
+							</ion-text>
+						</div>
+					</div>
+				</ng-template>
+			</datatable-column>
+			<datatable-column class="col-code" name="Invoice No." property="_Invoices">
+				<ng-template let-i="row" datatable-cell-template>
+					<ng-container *ngFor="let invoice of i._Invoices; let isLast = last">
+						<span *ngIf="invoice.InvoiceNo">
+							
+							<a [href]="'https://tchd.ehoadon.vn/Lookup?InvoiceGUID='+invoice.InvoiceGUID+''" target="_blank" title="{{'Search e-invoice' | translate}}">
+								<i class="show-small-inline">{{'eHĐ:' | translate}} </i>
+								{{invoice.InvoiceForm}}{{invoice.InvoiceSerial}}-{{invoice.InvoiceNo}}
+							</a>
+						</span>
+						<span *ngIf="!isLast">, </span>
+					</ng-container>
+					
+				</ng-template>
+			</datatable-column>
+
+			<datatable-column class="col-id" name="SO Id" property="Id">
+				<ng-template let-i="row" datatable-cell-template>
+					<a *ngIf="i.Id" [routerLink]="['/sale-order-mobile/viewer/'+i.Id]" class="col-id cell"
+						><span class="show-small-inline">{{'SO:' | translate}} </span> {{i.Id}}</a
+					>
+				</ng-template>
+			</datatable-column>
+
+			<datatable-column class="col-code" name="SO Code" property="Code"> </datatable-column>
+			<datatable-column class="col-number bold" format="1.0-0" name="Total" property="OriginalTotalAfterTax"></datatable-column>
+			<datatable-column class="col-status" name="Status" property="Status" filterControlType="ng-select" [filterDataSource]="statusList">
+				<ng-template let-i="row" datatable-cell-template>
+					<ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name">
+						{{i._Status?.Name}}
+					</ion-badge>
+				</ng-template>
+			</datatable-column>
+		</app-data-table>
+	</div>
+	<div class="ion-padding"></div>
+
+	<ion-infinite-scroll color="primary" threshold="30%" (ionInfinite)="loadData($event)" [disabled]="!pageConfig.infiniteScroll || pageConfig.isEndOfData">
+		<ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+	</ion-infinite-scroll>
+</ion-content>
