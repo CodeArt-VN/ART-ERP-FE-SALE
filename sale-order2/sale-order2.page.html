@@ -34,7 +34,6 @@
 	</ion-fab>
 	<ion-fab
 		*ngIf="pageConfig.isShowFeature"
-		style="top: -25px !important"
 		[ngClass]="{withSearch: pageConfig.isShowSearch}"
 		class="feature"
 		vertical="top"
@@ -167,7 +166,7 @@
 						class="min-btn clickable"
 						[name]="i._HasSubOrder? (!i._ShowSubOrder? 'chevron-forward-outline':'chevron-down-outline') : '' "
 					></ion-icon>
-					<a (click)="nav('sale-order/'+i.Id,'forward')" [routerLink]="['sale-order/'+i.Id]" [title]="i.Id">{{i.Id}}</a>
+					<a (click)="nav('/sale-order/'+i.Id,'forward')" [routerLink]="['/sale-order/'+i.Id]" [title]="i.Id">{{i.Id}}</a>
 				</ng-template>
 			</datatable-column>
 			
