@@ -4,6 +4,7 @@ import { AuthGuard } from 'src/app/guards/app.guard';
 export const SALERoutes: Routes = [
     
     { path: 'sale-order', loadChildren: () => import('./sale-order/sale-order.module').then(m => m.SaleOrderPageModule), canActivate: [AuthGuard] },
+    { path: 'sale-order2', loadChildren: () => import('./sale-order2/sale-order2.module').then(m => m.SaleOrder2PageModule), canActivate: [AuthGuard] },
     { path: 'sale-order/:id', loadChildren: () => import('./sale-order-detail/sale-order-detail.module').then(m => m.SaleOrderDetailPageModule), canActivate: [AuthGuard] },
     { path: 'sale-order/close-order/:id', loadChildren: () => import('./close-order/close-order.module').then(m => m.CloseOrderPageModule), canActivate: [AuthGuard] },
   
