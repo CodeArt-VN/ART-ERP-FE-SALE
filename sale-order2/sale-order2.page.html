@@ -218,7 +218,7 @@
 			</datatable-column>
 
 			<datatable-column class="col-code" name="SO Code" property="Code"> </datatable-column>
-			<datatable-column class="col-number bold" format="1.0-0" name="Total" property="OriginalTotalAfterTax"></datatable-column>
+			<datatable-column class="col-number bold" format="1.0-0" name="Total" property="CalcTotalOriginal"></datatable-column>
 			<datatable-column class="col-status" name="Status" property="Status" filterControlType="ng-select" [filterDataSource]="statusList">
 				<ng-template let-i="row" datatable-cell-template>
 					<ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name">
