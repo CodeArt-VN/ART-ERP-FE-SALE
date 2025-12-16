@@ -2,12 +2,13 @@ import { Component } from '@angular/core';
 import { NavController, ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { EnvService } from 'src/app/services/core/env.service';
 import { PageBase } from 'src/app/page-base';
-import { BRA_BranchProvider, CRM_ContactProvider, SALE_OrderDetailProvider, SALE_OrderProvider, SYS_ConfigProvider } from 'src/app/services/static/services.service';
+import { BRA_BranchProvider, CRM_ContactProvider, SALE_OrderDetailProvider, SALE_OrderProvider } from 'src/app/services/static/services.service';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import QRCode from 'qrcode';
 import { lib } from 'src/app/services/static/global-functions';
 import { printData, PrintingService } from 'src/app/services/util/printing.service';
+import { SYS_ConfigService } from 'src/app/services/custom/system-config.service';
 
 @Component({
 	selector: 'app-sale-order-note',
@@ -24,7 +25,7 @@ export class SaleOrderNotePage extends PageBase {
 		public pageProvider: SALE_OrderProvider,
 		public saleOrderDetailProvider: SALE_OrderDetailProvider,
 		public contactProvider: CRM_ContactProvider,
-		public sysConfigProvider: SYS_ConfigProvider,
+		public sysConfigService: SYS_ConfigService,
 		public branchProvider: BRA_BranchProvider,
 		public printingService: PrintingService,
 		public modalController: ModalController,
@@ -47,21 +48,17 @@ export class SaleOrderNotePage extends PageBase {
 	isShowPackingUoM = true;
 
 	preLoadData(event) {
-		let sysConfigQuery = ['SOIsRemoveItemsWithZeroPriceOnOrderNote'];
 		Promise.all([
 			this.env.getStatus('SalesOrder'),
-			this.sysConfigProvider.read({
-				Code_in: sysConfigQuery,
-				IDBranch: this.env.selectedBranch,
-			}),
+			this.sysConfigService.getConfig(this.env.selectedBranch, ['SOIsRemoveItemsWithZeroPriceOnOrderNote']),
 		]).then((values: any) => {
 			this.statusList = values[0];
-			values[1]['data'].forEach((e) => {
-				if ((e.Value == null || e.Value == 'null') && e._InheritedConfig) {
-					e.Value = e._InheritedConfig.Value;
-				}
-				this.pageConfig[e.Code] = JSON.parse(e.Value);
-			});
+			if(values[1]){
+				this.pageConfig = {
+					...this.pageConfig,
+					...values[1]
+				};
+			}
 			super.preLoadData(event);
 		});
 	}
