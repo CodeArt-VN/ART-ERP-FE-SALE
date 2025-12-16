@@ -53,7 +53,7 @@ export class SaleOrderPage extends PageBase {
 	) {
 		super();
 		this.pageConfig.ShowFeature = true;
-
+		this.pageConfig.IsRequiredDateRangeToExport = true;
 		let today = new Date();
 		today.setDate(today.getDate() + 1);
 		this.shipmentQuery.DeliveryDate = lib.dateFormat(today, 'yyyy-mm-dd');
