@@ -161,7 +161,7 @@ export class CloseOrderPage extends PageBase {
 						distinctUntilChanged(),
 						tap(() => (this.loading = true)),
 						switchMap((term) =>
-							this.searchProvider.search({ IDSO: this.id, SortBy: ['Id_desc'], Take: 20, Skip: 0, Term: term }).pipe(
+							this.searchProvider.search({ IDSO: this.id, SortBy: ['Id_desc'], Take: 20, Skip: 0, Keyword: term }).pipe(
 								catchError(() => of([])), // empty list on error
 								tap(() => (this.loading = false))
 							)
