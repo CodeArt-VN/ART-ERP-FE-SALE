@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { NavController, ModalController, AlertController, LoadingController, PopoverController } from '@ionic/angular';
 import { EnvService } from 'src/app/services/core/env.service';
 import { PageBase } from 'src/app/page-base';
-import { PURCHASE_QuotationProvider, SALE_QuotationProvider, SYS_ConfigProvider } from 'src/app/services/static/services.service';
+import { SALE_QuotationProvider } from 'src/app/services/static/services.service';
 import { Location } from '@angular/common';
 import { lib } from 'src/app/services/static/global-functions';
 import { ApiSetting } from 'src/app/services/static/api-setting';
+import { SYS_ConfigService } from 'src/app/services/custom/system-config.service';
 @Component({
 	selector: 'app-sale-quotation',
 	templateUrl: 'sale-quotation.page.html',
@@ -16,7 +17,7 @@ export class SaleQuotationPage extends PageBase {
 	statusList: any = [];
 	constructor(
 		public pageProvider: SALE_QuotationProvider,
-		public sysConfigProvider: SYS_ConfigProvider,
+		public sysConfigService: SYS_ConfigService,
 		public modalController: ModalController,
 		public popoverCtrl: PopoverController,
 		public alertCtrl: AlertController,
@@ -35,15 +36,14 @@ export class SaleQuotationPage extends PageBase {
 			this.sort.Id = 'Id';
 			this.sortToggle('Id', true);
 		}
-		let sysConfigQuery = ['PRUsedApprovalModule'];
-		Promise.all([this.env.getStatus('PurchaseQuotation'), this.sysConfigProvider.read({ Code_in: sysConfigQuery })]).then((values) => {
+		Promise.all([this.env.getStatus('PurchaseQuotation'), this.sysConfigService.getConfig(this.env.selectedBranch, ['PRUsedApprovalModule'])]).then((values) => {
 			this.statusList = values[0];
-			values[1]['data'].forEach((e) => {
-				if ((e.Value == null || e.Value == 'null') && e._InheritedConfig) {
-					e.Value = e._InheritedConfig.Value;
-				}
-				this.pageConfig[e.Code] = JSON.parse(e.Value);
-			});
+			if(values[1]){
+				this.pageConfig = {
+					...this.pageConfig,
+					...values[1]
+				};
+			}
 			super.preLoadData(event);
 		});
 	}

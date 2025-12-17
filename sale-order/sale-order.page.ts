@@ -4,13 +4,14 @@ import { PageBase } from 'src/app/page-base';
 import { EnvService } from 'src/app/services/core/env.service';
 import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
-import { AC_ARInvoiceProvider, SALE_OrderProvider, SHIP_ShipmentProvider, SHIP_VehicleProvider, SYS_ConfigProvider } from 'src/app/services/static/services.service';
+import { AC_ARInvoiceProvider, SALE_OrderProvider, SHIP_ShipmentProvider, SHIP_VehicleProvider } from 'src/app/services/static/services.service';
 import { SaleOrderARInvoiceModalPage } from '../sale-order-create-arinvoice-modal/sale-order-create-arinvoice-modal.page';
 import { SaleOrderMergeARInvoiceModalPage } from '../sale-order-merge-arinvoice-modal/sale-order-merge-arinvoice-modal.page';
 import { SaleOrderMergeModalPage } from '../sale-order-merge-modal/sale-order-merge-modal.page';
 import { SaleOrderSplitModalPage } from '../sale-order-split-modal/sale-order-split-modal.page';
 
 import { EInvoiceService } from 'src/app/services/custom/einvoice.service';
+import { SYS_ConfigService } from 'src/app/services/custom/system-config.service';
 
 @Component({
 	selector: 'app-sale-order',
@@ -42,7 +43,7 @@ export class SaleOrderPage extends PageBase {
 		public shipmentProvider: SHIP_ShipmentProvider,
 		public vehicleProvider: SHIP_VehicleProvider,
 		public arInvoiceProvider: AC_ARInvoiceProvider,
-		public sysConfigProvider: SYS_ConfigProvider,
+		public sysConfigService: SYS_ConfigService,
 		public EInvoiceServiceProvider: EInvoiceService,
 		public modalController: ModalController,
 		public popoverCtrl: PopoverController,
@@ -69,7 +70,6 @@ export class SaleOrderPage extends PageBase {
 	preLoadData(event) {
 		this.query.IDOwner = this.pageConfig.canViewAllData ? 'all' : this.env.user.StaffID;
 		this.query.IDParent = null;
-		let sysConfigQuery = ['SOUsedApprovalModule', 'IsShowExpectedDeliveryDate'];
 		if (!this.sort.Id) {
 			this.sort.Id = 'Id';
 			this.sortToggle('Id', true);
@@ -80,19 +80,14 @@ export class SaleOrderPage extends PageBase {
 		}
 
 		Promise.all([
-			this.sysConfigProvider.read({
-				Code_in: sysConfigQuery,
-				IDBranch: this.env.selectedBranch,
-			}),
+			this.sysConfigService.getConfig(this.env.selectedBranch, ['SOUsedApprovalModule', 'IsShowExpectedDeliveryDate']),
 			this.env.getStatus('SalesOrder'),
 		]).then((values: any) => {
-			if (values[0]['data']) {
-				values[0]['data'].forEach((e) => {
-					if ((e.Value == null || e.Value == 'null') && e._InheritedConfig) {
-						e.Value = e._InheritedConfig.Value;
-					}
-					this.pageConfig[e.Code] = JSON.parse(e.Value);
-				});
+			if(values[0]){
+				this.pageConfig = {
+					...this.pageConfig,
+					...values[0]
+				};
 			}
 			if (this.pageConfig.SOUsedApprovalModule) {
 				this.pageConfig.canApprove = false;
