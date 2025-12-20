@@ -894,7 +894,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 	async addContact() {
 		const modal = await this.modalController.create({
 			component: SaleOrderMobileAddContactModalPage,
-			cssClass: 'my-custom-class',
+			cssClass: 'modal90vh',
 			componentProps: {
 				firstName: 'Douglas',
 				lastName: 'Adams',

@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header collapse="fade">
 	<ion-toolbar>
 		<ion-title>{{'Add new customer' | translate}}</ion-title>
 		<ion-buttons slot="primary">
@@ -15,10 +15,6 @@
 				<div class="c-control">
 					<label class="c-label" for="Phone1">{{'Phone number' | translate}}</label>
 					<input class="c-input" required [(ngModel)]="PhoneCheck" type="tel" />
-				</div>
-
-				<div class="c-control ion-text-right">
-					<ion-button (click)="checkBPexist()"> {{'Check' | translate}} </ion-button>
 				</div>
 			</ion-col>
 		</ion-row>
@@ -152,17 +148,31 @@
 						</label>
 						<textarea rows="3" class="c-input" id="Remark" formControlName="Remark" type="textarea"></textarea>
 					</div>
-
-					<div class="c-control ion-text-right" *ngIf="BPExist">
-						<label class="c-label" for=""></label>
-						<ion-button (click)="applyBP(true)">{{'Apply' | translate}}</ion-button>
-					</div>
-					<div class="c-control ion-text-right" *ngIf="!BPExist">
-						<label class="c-label" for=""></label>
-						<ion-button (click)="saveChange()">{{'Add customer' | translate}}</ion-button>
-					</div>
 				</ion-col>
 			</ion-row>
 		</ion-grid>
 	</form>
 </ion-content>
+
+<ion-footer collapse="fade">
+	<ion-toolbar>
+		<div slot="start">
+        </div>
+		
+		<div slot="end">
+			<ion-button [strong]="true" *ngIf="!BPView" (click)="checkBPexist()">
+				{{'Check' | translate}}
+			</ion-button>
+			<ion-button [strong]="true" *ngIf="BPView && BPExist"(click)="applyBP(true)">
+				{{'Apply' | translate}}
+			</ion-button>
+			<ion-button [strong]="true" *ngIf="BPView && !BPExist" (click)="saveChange()">
+				{{'Add customer' | translate}}
+			</ion-button>
+            <ion-button fill="outline" color="warning" (click)="closeModal()" >
+                {{'Cancel' | translate}}
+            </ion-button>
+        </div>
+		
+	</ion-toolbar>
+</ion-footer>
