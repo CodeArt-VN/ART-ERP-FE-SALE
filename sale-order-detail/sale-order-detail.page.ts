@@ -11,8 +11,9 @@ import {
 	SALE_OrderDetailProvider,
 	WMS_ItemProvider,
 	HRM_StaffProvider,
+	SYS_ConfigProvider,
 } from 'src/app/services/static/services.service';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { CommonService } from 'src/app/services/core/common.service';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { concat, of, Subject } from 'rxjs';
@@ -21,7 +22,6 @@ import { ApiSetting } from 'src/app/services/static/api-setting';
 import { lib } from 'src/app/services/static/global-functions';
 
 import { EInvoiceService } from 'src/app/services/custom/einvoice.service';
-import { SYS_ConfigService } from 'src/app/services/custom/system-config.service';
 
 @Component({
 	selector: 'app-sale-order-detail',
@@ -61,7 +61,7 @@ export class SaleOrderDetailPage extends PageBase {
 		public cdr: ChangeDetectorRef,
 		public loadingController: LoadingController,
 		public commonService: CommonService,
-		public sysConfigService: SYS_ConfigService,
+		public sysConfigProvider: SYS_ConfigProvider,
 		private config: NgSelectConfig
 	) {
 		super();
@@ -151,6 +151,7 @@ export class SaleOrderDetailPage extends PageBase {
 			IsDebt: [''],
 			IsPaymentReceived: [''],
 
+			IDTaxInfo: [''],
 			TaxCode: [''],
 			InvoiceNumber: [''],
 			InvoicDate: [''],
@@ -164,7 +165,7 @@ export class SaleOrderDetailPage extends PageBase {
 			RefWarehouse: [''],
 			RefDepartment: [''],
 			RefShipper: [''],
-
+			_idTaxInfo: [],
 			//OrderLines: new FormArray([])
 		});
 
@@ -233,24 +234,28 @@ export class SaleOrderDetailPage extends PageBase {
 	// }
 
 	preLoadData(event) {
+		let sysConfigQuery = ['SOIsShowOrderDetailRemark'];
 		Promise.all([
 			this.env.getStatus('SalesOrder'),
 			this.env.getType('OrderType'),
 			this.env.getType('FMCGSalesOrder'),
-			this.env.getType('PaymentMehod'),
-			this.sysConfigService.getConfig(this.env.selectedBranch, ['SOIsShowOrderDetailRemark']),
+			this.env.getType('PaymentMethod'),
+			this.sysConfigProvider.read({
+				Code_in: sysConfigQuery,
+				IDBranch: this.env.selectedBranch,
+			}),
 		]).then((results: any) => {
 			this.statusList = results[0];
 			this.typeList = results[1];
 			this.subTypeList = results[2];
 			this.paymentMethodList = results[3];
 			// this.pageConfig.systemConfig = {};
-			if(results[4]){
-				this.pageConfig = {
-					...this.pageConfig,
-					...results[4]
-				};
-			}
+			results[4]['data'].forEach((e) => {
+				if ((e.Value == null || e.Value == 'null') && e._InheritedConfig) {
+					e.Value = e._InheritedConfig.Value;
+				}
+				this.pageConfig[e.Code] = JSON.parse(e.Value);
+			});
 		});
 
 		super.preLoadData(event);
@@ -415,6 +420,12 @@ export class SaleOrderDetailPage extends PageBase {
 			});
 		}
 
+		if (!this.item.IDTaxInfo) {
+			this.formGroup.controls._idTaxInfo.setValue(-2);
+		} else {
+			this.formGroup.controls._idTaxInfo.setValue(this.item.IDTaxInfo);
+		}
+
 		if (this.item.IDBranch) {
 			this.branchProvider.getAnItem(this.item.IDBranch).then((branch: any) => {
 				this.branch = branch;
@@ -437,10 +448,12 @@ export class SaleOrderDetailPage extends PageBase {
 			disabled: true,
 		});
 		this.TaxCodeDataSource.unshift({
+			Id: -2,
 			TaxCode: '-1',
 			CompanyName: 'Xuất khách vãng lai',
 		});
 		this.TaxCodeDataSource.unshift({
+			Id: -1,
 			TaxCode: null,
 			CompanyName: 'Xuất theo MST mặc định',
 		});
@@ -490,7 +503,7 @@ export class SaleOrderDetailPage extends PageBase {
 							Take: 20,
 							Skip: 0,
 							SkipMCP: term ? false : true,
-							Keywork:term,
+							Keywork: term,
 						})
 						.pipe(
 							catchError(() => of([])), // empty list on error
@@ -897,6 +910,15 @@ export class SaleOrderDetailPage extends PageBase {
 			((this.pageConfig.canChangeTypeOfReviewOrder || this.pageConfig.canChangeTypeOfReviewOrder || this.pageConfig.canUseDiscountFromSalesman) &&
 				this.item.Status == 'Submitted')
 		) {
+			if (this.formGroup.controls._idTaxInfo.dirty) {
+				if (this.formGroup.controls._idTaxInfo.value == -2) {
+					this.formGroup.controls.IDTaxInfo.setValue(null);
+					this.formGroup.controls.IDTaxInfo.markAllAsDirty();
+				} else {
+					this.formGroup.controls.IDTaxInfo.setValue(this.formGroup.controls._idTaxInfo.value);
+					this.formGroup.controls.IDTaxInfo.markAllAsDirty();
+				}
+			}
 			return super.saveChange();
 		} else {
 			return null;
