@@ -75,7 +75,6 @@
 					</ion-button>
 				</ion-col>
 			</ion-row>
-
 		</ion-grid>
 	</div>
 
@@ -154,27 +153,20 @@
 						</ng-container>
 					</section>
 				</div>
-
-				
 			</div>
 		</div>
 	</div>
 </ion-content>
 <ion-footer collapse="fade">
 	<ion-toolbar>
-		<div slot="start">
-			
-        </div>
-		
+		<div slot="start"></div>
+
 		<div slot="end">
+			<ion-button fill="outline" color="warning" (click)="closeModal()"> {{'Cancel' | translate}} </ion-button>
 			<ion-button *ngIf="segmentView == 's1'" [strong]="true" (click)="addSplitedInvoice()"> {{'Add order' | translate}} </ion-button>
 			<ion-button *ngIf="segmentView != 's1'" [strong]="true" [disabled]="!isCanSplit || submitAttempt" (click)="splitARInvoice()">
 				{{'Split Order' | translate}}
 			</ion-button>
-            <ion-button fill="outline" color="warning" (click)="closeModal()" >
-                {{'Cancel' | translate}}
-            </ion-button>
-        </div>
-		
+		</div>
 	</ion-toolbar>
 </ion-footer>

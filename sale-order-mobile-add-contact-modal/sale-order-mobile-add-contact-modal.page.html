@@ -156,23 +156,13 @@
 
 <ion-footer collapse="fade">
 	<ion-toolbar>
-		<div slot="start">
-        </div>
-		
+		<div slot="start"></div>
+
 		<div slot="end">
-			<ion-button [strong]="true" *ngIf="!BPView" (click)="checkBPexist()">
-				{{'Check' | translate}}
-			</ion-button>
-			<ion-button [strong]="true" *ngIf="BPView && BPExist"(click)="applyBP(true)">
-				{{'Apply' | translate}}
-			</ion-button>
-			<ion-button [strong]="true" *ngIf="BPView && !BPExist" (click)="saveChange()">
-				{{'Add customer' | translate}}
-			</ion-button>
-            <ion-button fill="outline" color="warning" (click)="closeModal()" >
-                {{'Cancel' | translate}}
-            </ion-button>
-        </div>
-		
+			<ion-button fill="outline" color="warning" (click)="closeModal()"> {{'Cancel' | translate}} </ion-button>
+			<ion-button [strong]="true" *ngIf="!BPView" (click)="checkBPexist()"> {{'Check' | translate}} </ion-button>
+			<ion-button [strong]="true" *ngIf="BPView && BPExist" (click)="applyBP(true)"> {{'Apply' | translate}} </ion-button>
+			<ion-button [strong]="true" *ngIf="BPView && !BPExist" (click)="saveChange()"> {{'Add customer' | translate}} </ion-button>
+		</div>
 	</ion-toolbar>
 </ion-footer>
