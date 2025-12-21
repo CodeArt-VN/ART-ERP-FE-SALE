@@ -1,5 +1,5 @@
 <ion-header>
-	<ion-toolbar color="primary">
+	<ion-toolbar>
 		<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
 			<ion-segment-button value="s1">
 				<ion-label>{{'split order' | translate}}</ion-label>
@@ -76,19 +76,12 @@
 				</ion-col>
 			</ion-row>
 
-			<ion-row class="hr-group">
-				<ion-col size="11">
-					<div class="c-control ion-text-right">
-						<ion-button (click)="addSplitedInvoice()"> {{'Add order' | translate}} </ion-button>
-					</div>
-				</ion-col>
-			</ion-row>
 		</ion-grid>
 	</div>
 
 	<div class="main-view" *ngIf="segmentView != 's1'">
 		<div class="row-full shadow full-screen">
-			<div style="min-height: calc(90vh - 80px)">
+			<div style="min-height: calc(90vh - 150px)">
 				<div class="table-contain">
 					<section class="table">
 						<ng-container>
@@ -162,22 +155,26 @@
 					</section>
 				</div>
 
-				<div class="table-contain">
-					<div class="row">
-						<div class="cell">
-							<ion-button
-								(click)="splitARInvoice()"
-								[disabled]="!isCanSplit || submitAttempt"
-								style="max-width: 300px"
-								class="ion-margin ion-float-right"
-								size="block"
-							>
-								{{'Split Order' | translate}}
-							</ion-button>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 		</div>
 	</div>
 </ion-content>
+<ion-footer collapse="fade">
+	<ion-toolbar>
+		<div slot="start">
+			
+        </div>
+		
+		<div slot="end">
+			<ion-button *ngIf="segmentView == 's1'" [strong]="true" (click)="addSplitedInvoice()"> {{'Add order' | translate}} </ion-button>
+			<ion-button *ngIf="segmentView != 's1'" [strong]="true" [disabled]="!isCanSplit || submitAttempt" (click)="splitARInvoice()">
+				{{'Split Order' | translate}}
+			</ion-button>
+            <ion-button fill="outline" color="warning" (click)="closeModal()" >
+                {{'Cancel' | translate}}
+            </ion-button>
+        </div>
+		
+	</ion-toolbar>
+</ion-footer>
