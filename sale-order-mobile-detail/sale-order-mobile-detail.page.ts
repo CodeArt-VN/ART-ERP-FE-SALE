@@ -138,7 +138,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 			Debt: [''],
 			IsDebt: [''],
 			IsPaymentReceived: [''],
-
+			IDTaxInfo:[''],
 			TaxCode: [null],
 			InvoiceNumber: [''],
 			InvoicDate: [''],
@@ -245,8 +245,6 @@ export class SaleOrderMobileDetailPage extends PageBase {
 			this.textDefault = value[0];
 			super.preLoadData(event);
 		});
-
-		
 	}
 
 	loadedData(event) {
@@ -416,7 +414,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		});
 		}
 		this.TaxCodeDataSource.unshift({
-			TaxCode: '',
+			Id: null,
 			CompanyName : this.textDefault
 		});
 	}
