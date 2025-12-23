@@ -239,13 +239,6 @@ export class SaleOrderMobileDetailPage extends PageBase {
 	//     newFormGroup.patchValue(orderLine);
 	//     this.orderLineFormGroups.push(newFormGroup);
 	// }
-	textDefault = 'Guest customer';
-	preLoadData(event) {
-		Promise.all([this.translate.get('Guest customer').toPromise()]).then((value : any) => {	
-			this.textDefault = value[0];
-			super.preLoadData(event);
-		});
-	}
 
 	loadedData(event) {
 		if (this.item.Id) {
@@ -410,12 +403,29 @@ export class SaleOrderMobileDetailPage extends PageBase {
 		{
 			this.TaxCodeDataSource.unshift({
 			CompanyName: '----------',
+			_label: '----------',
 			disabled: true
 		});
 		}
+		// Add option for default tax info (null) - only if customer has tax addresses
+		if (i?.TaxAddresses?.length > 0) {
+			this.TaxCodeDataSource.unshift({
+				Id: null,
+				CompanyName: 'Default tax info',
+				_label: 'Default tax info'
+			});
+		}
+		// Add option for walk-in customer (-1) - always available
 		this.TaxCodeDataSource.unshift({
-			Id: null,
-			CompanyName : this.textDefault
+			Id: -1,
+			CompanyName: 'Walk-in customer',
+			_label: 'Walk-in customer'
+		});
+		// Set _label for all items in datasource
+		this.TaxCodeDataSource.forEach(item => {
+			if (!item._label) {
+				item._label = item.CompanyName || item.Name;
+			}
 		});
 	}
 

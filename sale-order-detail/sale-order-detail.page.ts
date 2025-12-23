@@ -165,7 +165,6 @@ export class SaleOrderDetailPage extends PageBase {
 			RefWarehouse: [''],
 			RefDepartment: [''],
 			RefShipper: [''],
-			_idTaxInfo: [],
 			//OrderLines: new FormArray([])
 		});
 
@@ -420,12 +419,6 @@ export class SaleOrderDetailPage extends PageBase {
 			});
 		}
 
-		if (!this.item.IDTaxInfo) {
-			this.formGroup.controls._idTaxInfo.setValue(-2);
-		} else {
-			this.formGroup.controls._idTaxInfo.setValue(this.item.IDTaxInfo);
-		}
-
 		if (this.item.IDBranch) {
 			this.branchProvider.getAnItem(this.item.IDBranch).then((branch: any) => {
 				this.branch = branch;
@@ -443,19 +436,32 @@ export class SaleOrderDetailPage extends PageBase {
 		if (i?.TaxAddresses) {
 			this.TaxCodeDataSource = i.TaxAddresses;
 		}
-		this.TaxCodeDataSource.unshift({
-			CompanyName: '----------',
-			disabled: true,
-		});
-		this.TaxCodeDataSource.unshift({
-			Id: -2,
-			TaxCode: '-1',
-			CompanyName: 'Xuất khách vãng lai',
-		});
+		if (i?.TaxAddresses?.length) {
+			this.TaxCodeDataSource.unshift({
+				CompanyName: '----------',
+				_label: '----------',
+				disabled: true,
+			});
+		}
+		// Add option for default tax info (null) - only if customer has tax addresses
+		if (i?.TaxAddresses?.length > 0) {
+			this.TaxCodeDataSource.unshift({
+				Id: null,
+				CompanyName: 'Default tax info',
+				_label: 'Default tax info',
+			});
+		}
+		// Add option for walk-in customer (-1) - always available
 		this.TaxCodeDataSource.unshift({
 			Id: -1,
-			TaxCode: null,
-			CompanyName: 'Xuất theo MST mặc định',
+			CompanyName: 'Walk-in customer',
+			_label: 'Walk-in customer',
+		});
+		// Set _label for all items in datasource
+		this.TaxCodeDataSource.forEach(item => {
+			if (!item._label) {
+				item._label = item.CompanyName || item.Name;
+			}
 		});
 	}
 
@@ -910,15 +916,6 @@ export class SaleOrderDetailPage extends PageBase {
 			((this.pageConfig.canChangeTypeOfReviewOrder || this.pageConfig.canChangeTypeOfReviewOrder || this.pageConfig.canUseDiscountFromSalesman) &&
 				this.item.Status == 'Submitted')
 		) {
-			if (this.formGroup.controls._idTaxInfo.dirty) {
-				if (this.formGroup.controls._idTaxInfo.value == -2) {
-					this.formGroup.controls.IDTaxInfo.setValue(null);
-					this.formGroup.controls.IDTaxInfo.markAllAsDirty();
-				} else {
-					this.formGroup.controls.IDTaxInfo.setValue(this.formGroup.controls._idTaxInfo.value);
-					this.formGroup.controls.IDTaxInfo.markAllAsDirty();
-				}
-			}
 			return super.saveChange();
 		} else {
 			return null;

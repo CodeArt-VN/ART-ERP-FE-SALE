@@ -137,20 +137,9 @@
 							</div> -->
 
 							<app-form-control
-								[field]="{id:'IDTaxInfo', label: 'Invoice required', type : 'ng-select', dataSource: TaxCodeDataSource, bindLabel: 'CompanyName', bindValue: 'Id', form : formGroup, appendTo:'#ng-select-holder' }"
+								[field]="{id:'IDTaxInfo', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: '_label', bindValue: 'Id', form : formGroup, appendTo:'#ng-select-holder' }"
 								(change)="saveChange($event)"
-							>
-								<ng-template input-control-template ng-label-tmp let-i="item">
-									<span *ngIf="i.CompanyName">{{i.CompanyName}}</span>
-									<span *ngIf="!i.CompanyName">{{i.Name}}</span>
-								</ng-template>
-								<ng-template input-control-template ng-option-tmp let-i="item" let-search="searchTerm">
-									<div *ngIf="i">
-										<span *ngIf="i.CompanyName">{{i.CompanyName}}</span>
-										<span *ngIf="!i.CompanyName">{{i.Name}}</span>
-									</div>
-								</ng-template>
-							</app-form-control>
+							></app-form-control>
 
 							<app-form-control [field]="{id:'Name', label: 'Content', form : formGroup }" (change)="saveChange()"></app-form-control>
 
