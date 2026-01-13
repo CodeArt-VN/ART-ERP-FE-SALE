@@ -449,26 +449,26 @@ export class SaleOrder2Page extends PageBase {
 		}
 		event.stopPropagation();
 
-		if (i._ShowSubOrder) {
+		if (i._ShowSubItem) {
 			this.hideSubRows(i);
 		} else {
 			let idx = this.items.indexOf(i, 0) + 1;
 
-			if (i._SubOrders) {
-				this.items = [...this.items.slice(0, idx), ...i._SubOrders, ...this.items.slice(idx)];
-				i._ShowSubOrder = true;
+			if (i._SubItems) {
+				this.items = [...this.items.slice(0, idx), ...i._SubItems, ...this.items.slice(idx)];
+				i._ShowSubItem = true;
 			} else {
 				this.env
 					.showLoading('Please wait for a few moments', this.pageProvider.read({ IDParent: i.Id }))
 					.then((result: any) => {
-						i._SubOrders = result.data;
-						i._SubOrders.forEach((so) => {
+						i._SubItems = result.data;
+						i._SubItems.forEach((so) => {
 							so._level = (i._level || 0) + 1;
 							so._levels = new Array(so._level).fill(null);
 							so._Status = this.statusList.find((s) => s.Code == so.Status);
 						});
-						this.items = [...this.items.slice(0, idx), ...i._SubOrders, ...this.items.slice(idx)];
-						i._ShowSubOrder = true;
+						this.items = [...this.items.slice(0, idx), ...i._SubItems, ...this.items.slice(idx)];
+						i._ShowSubItem = true;
 					})
 					.catch((err) => {
 						if (err.message != null) {
@@ -482,10 +482,10 @@ export class SaleOrder2Page extends PageBase {
 	}
 
 	hideSubRows(i) {
-		i._ShowSubOrder = false;
-		let subOrders = this.items.filter((d) => d.IDParent == i.Id);
+		i._ShowSubItem = false;
+		let subItems = this.items.filter((d) => d.IDParent == i.Id);
 
-		subOrders.forEach((it) => {
+		subItems.forEach((it) => {
 			this.hideSubRows(it);
 			const index = this.items.indexOf(it, 0);
 			if (index > -1) {

@@ -164,7 +164,7 @@
 					<ion-icon
 						(click)="toggleRow(i, $event);"
 						class="min-btn clickable"
-						[name]="i._HasSubOrder? (!i._ShowSubOrder? 'chevron-forward-outline':'chevron-down-outline') : '' "
+						[name]="i._HasSubOrder? (!i._ShowSubItem? 'chevron-forward-outline':'chevron-down-outline') : '' "
 					></ion-icon>
 					<a (click)="nav('/sale-order/'+i.Id,'forward')" [routerLink]="['/sale-order/'+i.Id]" [title]="i.Id">{{i.Id}}</a>
 				</ng-template>
