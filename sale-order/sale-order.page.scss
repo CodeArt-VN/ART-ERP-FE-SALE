@@ -158,3 +158,13 @@
 		}
 	}
 }
+
+::ng-deep {
+	datatable-body-cell.cell.col-code.col-vendorCode {
+		max-width: 200px;
+	}
+
+	datatable-header-cell.cell.col-code.col-vendorCode {
+		max-width: 200px;
+	}
+}
