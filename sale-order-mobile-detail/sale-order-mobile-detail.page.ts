@@ -368,7 +368,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 					Take: 20,
 					Skip: 0,
 					SkipMCP: true,
-					Term: 'BP:' + this.item.IDContact,
+					Keyword: this.item.IDContact,
 				})
 				.subscribe((data: any) => {
 					this.contactListSelected.push(this.item._Customer);
@@ -483,7 +483,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 							Take: 20,
 							Skip: 0,
 							SkipMCP: term ? false : true,
-							Term: term ? term : 'BP:' + this.item.IDContact,
+							Keyword: term ? term : this.item.IDContact,
 						})
 						.pipe(
 							catchError(() => of([])), // empty list on error
@@ -512,7 +512,7 @@ export class SaleOrderMobileDetailPage extends PageBase {
 							IDSO: this.item.Id,
 							Take: 20,
 							Skip: 0,
-							Term: term,
+							Keyword: term,
 						})
 						.pipe(
 							catchError(() => of([])), // empty list on error

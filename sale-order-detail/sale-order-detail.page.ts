@@ -402,7 +402,7 @@ export class SaleOrderDetailPage extends PageBase {
 					Take: 20,
 					Skip: 0,
 					SkipMCP: true,
-					Term: 'BP:' + this.item.IDContact,
+					Keyword:  this.item.IDContact,
 				})
 				.subscribe((data: any) => {
 					this.contactListSelected.push(this.item._Customer);
