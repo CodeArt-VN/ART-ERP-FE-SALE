@@ -248,9 +248,11 @@ export class CloseOrderPage extends PageBase {
 			// ModifiedDate
 		});
 		groups.push(group);
-		group.valueChanges.subscribe((value) => {
-			this.calcSubTotal();
-		});
+		this.subscriptions.push(
+			group.valueChanges.subscribe((value) => {
+				this.calcSubTotal();
+			})
+		);
 		IDItemDataSource.initSearch();
 	}
 
