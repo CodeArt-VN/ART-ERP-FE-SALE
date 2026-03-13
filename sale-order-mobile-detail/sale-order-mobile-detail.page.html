@@ -138,7 +138,7 @@
 
 							<app-form-control
 								[field]="{id:'IDTaxInfo', label: 'Invoice required', type : 'select', dataSource: TaxCodeDataSource, bindLabel: '_label', bindValue: 'Id', form : formGroup, appendTo:'#ng-select-holder' }"
-								(change)="saveChange($event)"
+								(change)="saveChange()"
 							></app-form-control>
 
 							<app-form-control [field]="{id:'Name', label: 'Content', form : formGroup }" (change)="saveChange()"></app-form-control>

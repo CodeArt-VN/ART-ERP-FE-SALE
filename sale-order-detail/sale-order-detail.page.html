@@ -189,7 +189,7 @@
 						<div class="c-control">
 							<label class="c-label" for="ProductDimensions"
 								>{{'Volume' | translate}}
-								<ion-text color="primary" *ngIf="item.ProductDimensionsM">{{item.ProductDimensionsM | mask: 'separator.2':','}} m³</ion-text>
+								<ion-text color="primary" *ngIf="item.ProductDimensionsM">{{item.ProductDimensionsM}} m³</ion-text>
 								<span
 									*ngIf="!formGroup.controls.ProductDimensions.valid && !formGroup.controls.ProductDimensions.pending && (formGroup.controls.ProductDimensions.dirty || submitAttempt)"
 									ion-text

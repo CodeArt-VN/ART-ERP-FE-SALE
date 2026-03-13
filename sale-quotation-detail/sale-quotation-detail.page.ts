@@ -359,4 +359,13 @@ export class SaleQuotationDetailPage extends PageBase {
 				});
 		});
 	}
+
+	//TODO: Remove empty functions
+	changeVendor(_e?: any) {}
+	changeContentType(_e?: any) {}
+	changeRequiredDate(_e?: any) {}
+	changeDate(_e?: any) {}
+	IDItemChange(_e?: any, _g?: any) {}
+	IDUoMChange(_g?: any) {}
+	changeQuantity(_g?: any) {}
 }
