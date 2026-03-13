@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<app-toolbar [page]="this">
 		<ion-button
 			tollbarSelected
@@ -198,7 +198,7 @@
 	</section>
 </ion-header>
 
-<ion-content appScrollbarTheme class="header-table">
+<ion-content [fullscreen]="true" appScrollbarTheme class="header-table">
 	<app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 	<ion-fab
 		*ngIf="pageConfig.isShowFeature"

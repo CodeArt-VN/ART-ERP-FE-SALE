@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<ion-toolbar>
 		<ion-title>Chats</ion-title>
 	</ion-toolbar>
@@ -6,7 +6,7 @@
 		<ion-searchbar></ion-searchbar>
 	</ion-toolbar>
 </ion-header>
-<ion-content appScrollbarTheme>
+<ion-content [fullscreen]="true" appScrollbarTheme>
 	<ng-container *ngFor="let i of items; let j = index;">
 		<ion-item-divider *ngIf="myHeaderFn(i, j, items); let header"> {{ header }} </ion-item-divider>
 		<ion-item lines="none">

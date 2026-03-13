@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<app-toolbar [page]="this">
 		<ion-button (click)="closeOrder()" title="Chốt tiệc" *ngIf="pageConfig.canCloseOrder && id">
 			<ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
@@ -6,7 +6,7 @@
 	</app-toolbar>
 </ion-header>
 
-<ion-content appScrollbarTheme class="ion-padding">
+<ion-content [fullscreen]="true" appScrollbarTheme class="ion-padding">
 	<div id="order-detail-page" style="position: absolute"></div>
 	<div class="main-view" *ngIf="item && pageConfig.showSpinner==false">
 		<ion-grid fixed>

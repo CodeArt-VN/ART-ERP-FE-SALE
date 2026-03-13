@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<app-list-toolbar
 		pageTitle="{{'Debt of Saleman' | translate}}"
 		[pageConfig]="pageConfig"
@@ -111,7 +111,7 @@
 	</section>
 </ion-header>
 
-<ion-content appScrollbarTheme class="header-table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
+<ion-content [fullscreen]="true" appScrollbarTheme class="header-table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
 	<app-page-message [itemsLength]="items.length" [showSpinner]="pageConfig.showSpinner"></app-page-message>
 	<ion-fab *ngIf="pageConfig.isShowFeature" [ngClass]="{withSearch: pageConfig.isShowSearch}" class="feature" vertical="top" horizontal="end" slot="fixed">
 		<div class="ion-padding ion-margin"></div>

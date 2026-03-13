@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<app-toolbar [page]="this">
 		<ion-button
 			tollbarSelected
@@ -11,7 +11,7 @@
 	</app-toolbar>
 </ion-header>
 
-<ion-content appScrollbarTheme class="scrollx">
+<ion-content [fullscreen]="true" appScrollbarTheme class="scrollx">
 	<ion-fab
 		*ngIf="pageConfig.isShowFeature"
 		style="height: 45px; z-index: 100"

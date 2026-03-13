@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [translucent]="true">
 	<ion-toolbar>
 		<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
 			<ion-segment-button value="s1">
@@ -27,7 +27,7 @@
 		</ion-buttons>
 	</ion-toolbar>
 </ion-header>
-<ion-content appScrollbarTheme class="ion-padding">
+<ion-content appScrollbarTheme class="ion-padding" [fullscreen]="true">
 	<div id="order-detail-page" style="position: absolute"></div>
 
 	<div class="main-view" *ngIf="segmentView == 's1'">
