@@ -1,18 +1,8 @@
 <ion-header [translucent]="true">
-	<!-- <app-toolbar
-  [page]="this"
-  [ShowSubmit]="ShowSubmit"
-  [ShowApprove]="ShowApprove"
-  [ShowDisapprove]="ShowDisapprove"
-  [ShowCancel]="ShowCancel"
-  [ShowDelete]="ShowDelete"
->
-  
-</app-toolbar> -->
-	<app-list-toolbar
+	<app-toolbar
+		[page]="this"
+		[pageTitle]="'Order' | translate"
 		[NoBorder]="pageConfig.isShowSearch"
-		selectedTitle="{{selectedItems.length}} đơn"
-		pageTitle="{{'Order' | translate}}"
 		[ShowArchive]="false"
 		[ShowExport]="false"
 		[ShowImport]="false"
@@ -20,24 +10,13 @@
 		[ShowFeature]="false"
 		[ShowRefresh]="false"
 		[ShowAdd]="false"
-		[ShowPopover]="true"
-		[pageConfig]="pageConfig"
-		[selectedItems]="selectedItems"
-		[query]="query"
-		(add)="add()"
-		(refresh)="refresh()"
-		(export)="export()"
-		(import)="import($event)"
-		(help)="help()"
-		(unselect)="unselect()"
-		(archiveItems)="archiveItems()"
-		(deleteItems)="delete()"
-		(changeBranch)="changeBranch($event)"
-		(mergeOrders)="mergeSaleOrders()"
-		(splitOrder)="splitSaleOrder()"
-		(submitOrdersForApproval)="submitOrdersForApproval()"
-		(presentPopover)="presentPopover($event)"
-	></app-list-toolbar>
+		[ShowSearch]="true"
+	>
+		<ion-button outline="true" color="primary" (click)="presentPopover($event)" title="{{ 'Open filter' | translate }}">
+			<ion-icon name="calendar-outline"></ion-icon>
+			<ion-label color="medium">{{ query.OrderDate }}</ion-label>
+		</ion-button>
+	</app-toolbar>
 
 	<ion-toolbar *ngIf="pageConfig.isShowSearch" class="no-padding">
 		<ion-buttons slot="primary">

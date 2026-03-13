@@ -1,19 +1,5 @@
 <ion-header [translucent]="true">
-	<app-list-toolbar
-		pageTitle="{{'Debts to be collected' | translate}}"
-		[pageConfig]="pageConfig"
-		[selectedItems]="selectedItems"
-		[query]="query"
-		(add)="add()"
-		(refresh)="refresh()"
-		(export)="export()"
-		(import)="import($event)"
-		(help)="help()"
-		(unselect)="unselect()"
-		(archiveItems)="archiveItems()"
-		(deleteItems)="delete()"
-		(changeBranch)="changeBranch($event)"
-	></app-list-toolbar>
+	<app-toolbar [page]="this" [pageTitle]="'Debts to be collected' | translate"></app-toolbar>
 
 	<section class="table" [ngClass]="{withFeature: pageConfig.isShowFeature}">
 		<header class="bold">

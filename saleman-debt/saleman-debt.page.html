@@ -1,19 +1,9 @@
 <ion-header [translucent]="true">
-	<app-list-toolbar
-		pageTitle="{{'Debt of Saleman' | translate}}"
-		[pageConfig]="pageConfig"
-		[selectedItems]="selectedItems"
-		[query]="query"
-		(refresh)="refresh()"
-		(export)="export()"
-		(import)="import($event)"
-		(help)="help()"
-		(unselect)="unselect()"
-		(archiveItems)="archiveItems()"
-		(deleteItems)="delete()"
-		(changeBranch)="changeBranch($event)"
-		(createReceipt)="createReceipt()"
-	></app-list-toolbar>
+	<app-toolbar [page]="this" [pageTitle]="'Debt of Saleman' | translate" [ShowAdd]="false">
+		<ion-button *ngIf="pageConfig.canCreateReceipt" (click)="createReceipt()" title="{{ 'Collection' | translate }}">
+			<ion-icon slot="icon-only" name="cash-outline"></ion-icon>
+		</ion-button>
+	</app-toolbar>
 
 	<section class="table" [ngClass]="{withFeature_: pageConfig.isShowFeature}">
 		<header class="bold">

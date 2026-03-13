@@ -216,6 +216,18 @@ export class SaleOrderMobilePage extends PageBase {
 		this.splitSaleOrder();
 	}
 
+	merge() {
+		this.mergeSaleOrders();
+	}
+
+	split() {
+		this.splitSaleOrder();
+	}
+
+	submitForApproval() {
+		this.submitOrdersForApproval();
+	}
+
 	async splitSaleOrder() {
 		let status = this.selectedItems[0].Status;
 		if (!(status == 'New' || status == 'Unapproved' || status == 'Submitted')) {
