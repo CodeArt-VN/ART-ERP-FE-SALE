@@ -210,7 +210,7 @@
 		slot="fixed"
 	>
 		<ion-toolbar color="primary">
-			<ion-segment scrollable="true" (ionChange)="segmentView = $event.detail.value;" [value]="segmentView">
+			<ion-segment scrollable="true" (ionChange)="segmentView = $any($event.detail.value)" [value]="segmentView">
 				<ion-segment-button value="s1">
 					<ion-label>{{'Driver allocation' | translate}}</ion-label>
 				</ion-segment-button>
