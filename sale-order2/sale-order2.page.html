@@ -32,14 +32,7 @@
 			</ion-segment>
 		</ion-toolbar>
 	</ion-fab>
-	<ion-fab
-		*ngIf="pageConfig.isShowFeature"
-		[ngClass]="{withSearch: pageConfig.isShowSearch}"
-		class="feature"
-		vertical="top"
-		horizontal="end"
-		slot="fixed"
-	>
+	<ion-fab *ngIf="pageConfig.isShowFeature" [ngClass]="{withSearch: pageConfig.isShowSearch}" class="feature" vertical="top" horizontal="end" slot="fixed">
 		<div class="ion-padding"></div>
 
 		<div *ngIf="segmentView=='s1'">
@@ -142,7 +135,7 @@
 		<div class="ion-padding ion-margin"></div>
 	</ion-fab>
 	<app-page-title class="ion-padding safe-max-width" [pageConfig]="pageConfig"></app-page-title>
-	
+
 	<div class="safe-max-width">
 		<app-data-table
 			class="box-shadow responsive"
@@ -169,8 +162,8 @@
 					<a (click)="nav('/sale-order/'+i.Id,'forward')" [routerLink]="['/sale-order/'+i.Id]" [title]="i.Id">{{i.Id}}</a>
 				</ng-template>
 			</datatable-column>
-			
-			<datatable-column class="col-date" format="yyyy-MM-dd" name="Order date" property="OrderDate" filterControlType="date"></datatable-column>
+
+			<datatable-column class="col-date" format="HH:mm dd/MM/yyyy" name="Order date" property="OrderDate" filterControlType="date"></datatable-column>
 			<datatable-column class="col-name flex-break" name="Customer name" property="_Customer">
 				<ng-template let-i="row" datatable-cell-template>
 					<div>
@@ -197,7 +190,6 @@
 				<ng-template let-i="row" datatable-cell-template>
 					<ng-container *ngFor="let invoice of i._Invoices; let isLast = last">
 						<span *ngIf="invoice.InvoiceNo">
-							
 							<a [href]="'https://tchd.ehoadon.vn/Lookup?InvoiceGUID='+invoice.InvoiceGUID+''" target="_blank" title="{{'Search e-invoice' | translate}}">
 								<i class="show-small-inline">{{'eHĐ:' | translate}} </i>
 								{{invoice.InvoiceForm}}{{invoice.InvoiceSerial}}-{{invoice.InvoiceNo}}
@@ -205,7 +197,6 @@
 						</span>
 						<span *ngIf="!isLast">, </span>
 					</ng-container>
-					
 				</ng-template>
 			</datatable-column>
 
@@ -221,9 +212,7 @@
 			<datatable-column class="col-number bold" format="1.0-0" name="Total" property="CalcTotalOriginal"></datatable-column>
 			<datatable-column class="col-status" name="Status" property="Status" filterControlType="ng-select" [filterDataSource]="statusList">
 				<ng-template let-i="row" datatable-cell-template>
-					<ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name">
-						{{i._Status?.Name}}
-					</ion-badge>
+					<ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name"> {{i._Status?.Name}} </ion-badge>
 				</ng-template>
 			</datatable-column>
 		</app-data-table>
