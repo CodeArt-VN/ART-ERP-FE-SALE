@@ -1,3 +1,9 @@
+ion-list {
+	background: transparent;
+	--ion-item-background: transparent;
+	--ion-item-background-activated: transparent;
+}
+
 ion-item-options {
 	top: 31px;
 	background: var(--ion-color-primary, #3880ff) !important;
