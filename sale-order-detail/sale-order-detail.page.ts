@@ -509,7 +509,7 @@ export class SaleOrderDetailPage extends PageBase {
 							Take: 20,
 							Skip: 0,
 							SkipMCP: term ? false : true,
-							Keywork: term,
+							Keyword: term,
 						})
 						.pipe(
 							catchError(() => of([])), // empty list on error
