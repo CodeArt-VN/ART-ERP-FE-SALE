@@ -62,7 +62,7 @@ export class SaleOrder2Page extends PageBase {
 
 		this.pageConfig.dividers = [
 			{
-				field: 'OrderDate',
+				fields: ['OrderDate'],
 				dividerFn: (record, recordIndex, records) => {
 					let a: any = recordIndex == 0 ? new Date('2000-01-01') : new Date(records[recordIndex - 1].OrderDate);
 					let b: any = new Date(record.OrderDate);
