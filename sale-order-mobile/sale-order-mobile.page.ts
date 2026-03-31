@@ -270,7 +270,7 @@ export class SaleOrderMobilePage extends PageBase {
 	}
 
 	submitOrdersForApproval() {
-		if (!this.pageConfig.canSubmitSalesmanOrdersForApproval) {
+		if (!this.pageConfig.canSubmit) {
 			return;
 		}
 		this.alertCtrl

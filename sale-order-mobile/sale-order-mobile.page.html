@@ -12,6 +12,13 @@
 		[ShowAdd]="false"
 		[ShowSearch]="true"
 	>
+	<ion-button
+			title="{{ 'Submit' | translate }}"
+			*ngIf="pageConfig.canSubmit && !query.IsDisabled"
+			(click)="submitForApproval()"
+		>
+			<ion-icon color="success" slot="icon-only" name="send-outline"></ion-icon>
+		</ion-button>
 		<ion-button outline="true" color="primary" (click)="presentPopover($event)" title="{{ 'Open filter' | translate }}">
 			<ion-icon name="calendar-outline"></ion-icon>
 			<ion-label color="medium">{{ query.OrderDate }}</ion-label>
