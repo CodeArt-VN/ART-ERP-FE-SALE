@@ -581,6 +581,7 @@ export class SaleOrderDetailPage extends PageBase {
 	resetLine(line) {
 		line._itemData = null;
 		line.IDUoM = null;
+		line.UoMPrice = null;
 		line.TaxRate = 0;
 		line.ProductWeight = 0;
 		line.ProductDimensions = 0;
