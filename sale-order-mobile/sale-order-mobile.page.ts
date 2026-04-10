@@ -47,7 +47,7 @@ export class SaleOrderMobilePage extends PageBase {
 	}
 
 	preLoadData(event) {
-		this.query.IDOwner = this.pageConfig.canViewAllData ? 'all' : this.env.user.StaffID;
+		this.query.IDOwner = this.env.user.StaffID;
 		this.query._saleman =
 			this.query.IDOwner == 'all'
 				? null
