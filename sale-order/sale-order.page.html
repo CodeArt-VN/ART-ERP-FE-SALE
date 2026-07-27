@@ -234,7 +234,7 @@
 		<div *ngIf="segmentView=='s1'">
 			<div class="ion-padding">
 				<div class="c-control">
-					<label class="c-label" for="DeliveryDate">{{'Ngày giao hàng' | translate}}</label>
+					<label class="c-label" for="DeliveryDate">{{'Delivery date' | translate}}</label>
 					<input class="c-input" (change)="loadShipmentList()" id="DeliveryDate" type="date" [(ngModel)]="shipmentQuery.DeliveryDate" />
 				</div>
 
@@ -284,7 +284,7 @@
 						>{{i.OrderCount}}<ion-text color="danger" *ngIf="i.DebtCount">+{{i.DebtCount}}</ion-text> đơn</ion-badge
 					>
 					<ion-button [disabled]="submitAttempt" color="primary" *ngIf="selectedItems.length" class="add" slot="end" (click)="addSOtoShipment(i)"
-						>+ {{selectedItems.length}} {{'đơn' | translate}}</ion-button
+						>+ {{selectedItems.length}} {{'Order' | translate}}</ion-button
 					>
 				</ion-item>
 			</ion-list>
