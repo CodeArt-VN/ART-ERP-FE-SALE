@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
 	<app-toolbar [page]="this">
-		<ion-button (click)="closeOrder()" title="Chốt tiệc" *ngIf="pageConfig.canCloseOrder && id">
+		<ion-button (click)="closeOrder()" title="Finalize banquet" *ngIf="pageConfig.canCloseOrder && id">
 			<ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
 		</ion-button>
 	</app-toolbar>
@@ -681,7 +681,7 @@
                                     <ion-col size-xs="12" size-sm="12" size-md="6" size-lg="6" size-xl="4">
 
                                         <div class="c-control">
-                                            <label class="c-label" [for]="'IDItem'+idx">{{'item' | translate}}
+                                            <label class="c-label" [for]="'IDItem'+idx">{{'Item' | translate}}
                                                 <span *ngIf="!line.controls.IDItem.valid && !line.controls.IDItem.pending && (line.controls.IDItem.dirty || submitAttempt)" ion-text color="danger">(*)</span>
                                             </label>
 
