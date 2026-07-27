@@ -78,11 +78,11 @@ export class SaleQuotationPage extends PageBase {
 		this.env
 			.showPrompt(
 				{
-					code: 'Bạn có chắc muốn gửi duyệt {{value}} báo giá đang chọn?',
+					code: 'Are you sure you want to submit the selected {{value}} quotation(s) for approval?',
 					value: this.selectedItems.length,
 				},
 				null,
-				{ code: 'Gửi duyệt {{value}} báo giá', value: this.selectedItems.length }
+				{ code: 'Submit {{value}} quotation(s) for approval', value: this.selectedItems.length }
 			)
 			.then((_) => {
 				this.submitAttempt = true;
@@ -115,8 +115,8 @@ export class SaleQuotationPage extends PageBase {
 		if (this.submitAttempt) return;
 
 		this.env
-			.showPrompt({ code: 'Bạn có chắc muốn DUYỆT {{value}} báo giá đang chọn?', value: this.selectedItems.length }, null, {
-				code: 'Duyệt {{value}} báo giá',
+			.showPrompt({ code: 'Are you sure you want to approve the selected {{value}} quotation(s)?', value: this.selectedItems.length }, null, {
+				code: 'Approve {{value}} quotation(s)',
 				value: this.selectedItems.length,
 			})
 			.then((_) => {
@@ -149,8 +149,8 @@ export class SaleQuotationPage extends PageBase {
 	disapprove() {
 		if (this.submitAttempt) return;
 		this.env
-			.showPrompt({ code: 'Bạn có chắc muốn không duyệt {{value}} báo giá đang chọn?', value: this.selectedItems.length }, null, {
-				code: 'Không phê duyệt {{value}} báo giá',
+			.showPrompt({ code: 'Are you sure you want to reject the selected {{value}} quotation(s)?', value: this.selectedItems.length }, null, {
+				code: 'Reject {{value}} quotation(s)',
 				value: this.selectedItems.length,
 			})
 			.then((_) => {

@@ -9,10 +9,10 @@
 			<ion-toolbar color="primary">
 				<ion-segment scrollable="true" (ionChange)="segmentChanged($event)" [value]="segmentView">
 					<ion-segment-button value="s1">
-						<ion-label>{{'Thông tin chung' | translate}}</ion-label>
+						<ion-label>{{'General information' | translate}}</ion-label>
 					</ion-segment-button>
 					<ion-segment-button value="s2">
-						<ion-label>{{'DS sản phẩm' | translate}}</ion-label>
+						<ion-label>{{'Product list' | translate}}</ion-label>
 					</ion-segment-button>
 					<!-- <ion-segment-button value="s3">
                         <ion-label>Xem theo SO</ion-label>
@@ -115,18 +115,18 @@
 							<header class="bold" style="padding-right: 0">
 								<div class="col-reorder cell" *ngIf="pageConfig.canEdit"></div>
 								<div class="col-id cell">#</div>
-								<div class="col-name cell">{{'Sản phẩm / dịch vụ' | translate}}</div>
-								<div class="col-code cell">{{'Đơn vị' | translate}}</div>
-								<div class="col-number cell" title="Số lượng đặt mua">{{'SL đặt' | translate}}</div>
-								<div class="col-number cell" title="Số lượng thực giao">{{'SL thực' | translate}}</div>
+								<div class="col-name cell">{{'Product/Service' | translate}}</div>
+								<div class="col-code cell">{{'Unit' | translate}}</div>
+								<div class="col-number cell" title="Số lượng đặt mua">{{'Order quantity' | translate}}</div>
+								<div class="col-number cell" title="Số lượng thực giao">{{'Actual quantity' | translate}}</div>
 								<div class="col-icon cell clickable" *ngIf="pageConfig.canEdit" (click)="toggleAllShippedQty()">
 									<ion-icon
 										[color]="item._IsShippedAll? 'danger': 'success'"
 										[name]="item._IsShippedAll? 'remove-circle-outline': 'checkmark-done-circle-outline' "
 									></ion-icon>
 								</div>
-								<div class="col-number cell">{{'Đơn giá' | translate}}</div>
-								<div class="col-money cell" title="Số lượng thực giao x Đơn giá">{{'SL x ĐG' | translate}}</div>
+								<div class="col-number cell">{{'Price' | translate}}</div>
+								<div class="col-money cell" title="Số lượng thực giao x Đơn giá">{{'Quantity & Price' | translate}}</div>
 								<div class="col-icon cell" *ngIf="pageConfig.canEdit"></div>
 							</header>
 							<ion-reorder-group (ionItemReorder)="doReorder($event, formGroup.get('OrderLines')['controls'])" [disabled]="!pageConfig.canEdit">
@@ -229,7 +229,7 @@
 								</div>
 
 								<div class="col-name cell">
-									<b (click)="addOrderLine({  })" *ngIf="pageConfig.canEdit">{{'Thêm SP/DV' | translate}}</b>
+									<b (click)="addOrderLine({  })" *ngIf="pageConfig.canEdit">{{'Add product/service' | translate}}</b>
 								</div>
 								<div class="col-code cell">
 									<div style="height: 35px"></div>
@@ -237,7 +237,7 @@
 								<div class="col-number cell disable"><b></b></div>
 								<div class="col-number cell disable"><b></b></div>
 								<div class="col-icon cell" *ngIf="pageConfig.canEdit"></div>
-								<div class="col-number cell"><b>{{'Tổng cộng' | translate}}:</b></div>
+								<div class="col-number cell"><b>{{'Total' | translate}}:</b></div>
 								<div class="col-money cell disable"><b>{{ item.subTotal | number: '1.0-0' }}</b></div>
 								<div class="col-icon cell disable" *ngIf="pageConfig.canEdit"></div>
 							</div>
@@ -245,10 +245,10 @@
 
 						<div class="c-control ion-text-right" style="padding-right: 30px">
 							<label class="c-label" for=""></label>
-							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="saveChange()">{{'Ghi nhận số lượng' | translate}}</ion-button>
-							<ion-button size="small" [disabled]="submitAttempt" (click)="openSONote()">{{'In bảng kê'| translate}}</ion-button>
+							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="saveChange()">{{'Take note the quantity' | translate}}</ion-button>
+							<ion-button size="small" [disabled]="submitAttempt" (click)="openSONote()">{{'Print the list'| translate}}</ion-button>
 							<ion-button size="small" *ngIf="pageConfig.canEdit" [disabled]="submitAttempt" (click)="closeOrder()"
-								>{{'Chốt tiệc & xuất hóa đơn' | translate}}</ion-button
+								>{{'Finalize banquet & issue invoice' | translate}}</ion-button
 							>
 						</div>
 					</div>

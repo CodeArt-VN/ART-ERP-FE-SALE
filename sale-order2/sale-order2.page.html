@@ -38,7 +38,7 @@
 		<div *ngIf="segmentView=='s1'">
 			<div class="ion-padding">
 				<div class="c-control">
-					<label class="c-label" for="DeliveryDate">{{'Ngày giao hàng' | translate}}</label>
+					<label class="c-label" for="DeliveryDate">{{'Delivery date' | translate}}</label>
 					<input class="c-input" (change)="loadShipmentList()" id="DeliveryDate" type="date" [(ngModel)]="shipmentQuery.DeliveryDate" />
 				</div>
 
@@ -88,7 +88,7 @@
 						>{{i.OrderCount}}<ion-text color="danger" *ngIf="i.DebtCount">+{{i.DebtCount}}</ion-text> đơn</ion-badge
 					>
 					<ion-button [disabled]="submitAttempt" color="primary" *ngIf="selectedItems.length" class="add" slot="end" (click)="addSOtoShipment(i)"
-						>+ {{selectedItems.length}} {{'đơn' | translate}}</ion-button
+						>+ {{selectedItems.length}} {{'Order' | translate}}</ion-button
 					>
 				</ion-item>
 			</ion-list>
@@ -191,7 +191,7 @@
 					<ng-container *ngFor="let invoice of i._Invoices; let isLast = last">
 						<span *ngIf="invoice.InvoiceNo">
 							<a [href]="'https://tchd.ehoadon.vn/Lookup?InvoiceGUID='+invoice.InvoiceGUID+''" target="_blank" title="{{'Search e-invoice' | translate}}">
-								<i class="show-small-inline">{{'eHĐ:' | translate}} </i>
+								<i class="show-small-inline">{{'einvoice:' | translate}} </i>
 								{{invoice.InvoiceForm}}{{invoice.InvoiceSerial}}-{{invoice.InvoiceNo}}
 							</a>
 						</span>

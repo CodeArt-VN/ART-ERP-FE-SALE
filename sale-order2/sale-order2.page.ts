@@ -364,7 +364,7 @@ export class SaleOrder2Page extends PageBase {
 						this.submitAttempt = false;
 					} else {
 						this.env.showMessage('Invoice created!', 'success');
-						//this.env.showTranslateMessage('Đã cập nhật hóa đơn điện tử thành công!', 'success');
+						//this.env.showTranslateMessage('Sucessfully updated the e-invoice', 'success');
 						this.submitAttempt = false;
 					}
 				})
