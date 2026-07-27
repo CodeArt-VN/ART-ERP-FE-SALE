@@ -299,7 +299,7 @@ export class CloseOrderPage extends PageBase {
 			group.controls.UoMPrice.markAsDirty();
 			this.saveChange();
 		} else {
-			this.env.showMessage('Sản phẩm chưa có giá bán, xin vui lòng liên hệ quản trị để được hỗ trợ.');
+			this.env.showMessage("The product doesn't have the selling price yet, please contact administrator for the support");
 		}
 	}
 
@@ -366,7 +366,7 @@ export class CloseOrderPage extends PageBase {
 
 	async closeOrder() {
 		this.env
-			.showPrompt('Sau khi chốt tiệc và xuất hóa đơn, bạn sẽ không chỉnh sửa được nữa. Bạn có xác nhận tiếp tục chốt tiệc?', this.item.Name, 'Chốt tiệc')
+			.showPrompt('After finalizing the party and issuing the invoice, you are not able to change. Do you confirm to continue finalizing the party?', this.item.Name, 'Finalize banquet')
 			.then((_) => {
 				this.isClosed = true;
 				this.saveChange();
@@ -378,7 +378,7 @@ export class CloseOrderPage extends PageBase {
 		var dirty: any = this.getDirtyValues(this.formGroup);
 		if (dirty?.OrderLines) {
 			this.env
-				.showPrompt('Bạn chưa lưu thay đổi, bạn có muốn lưu lại các thay đổi?', null, 'In bảng kê')
+				.showPrompt('You have unsaved changes. Do you want to save them?', null, 'Print the list')
 				.then((_) => {
 					this.saveChange().then((_) => {
 						this.nav('sale-order-note/' + this.id);
@@ -394,7 +394,7 @@ export class CloseOrderPage extends PageBase {
 
 	removeOrderLine(index) {
 		this.env
-			.showPrompt('Bạn có chắc muốn bỏ item phần này?', null, 'Xóa item')
+			.showPrompt('Are you sure you want to remove this item?', null, 'Delete item')
 			.then((_) => {
 				let groups = <FormArray>this.formGroup.controls.OrderLines;
 				groups.removeAt(index);
