@@ -78,11 +78,11 @@ export class SaleQuotationPage extends PageBase {
 		this.env
 			.showPrompt(
 				{
-					code: 'Are you sure you want to submit the selected {{value}} quotation(s) for approval?',
+					code: 'Are you sure you want to submit the selected {value} quotation(s) for approval?',
 					value: this.selectedItems.length,
 				},
 				null,
-				{ code: 'Submit {{value}} quotation(s) for approval', value: this.selectedItems.length }
+				{ code: 'Submit {value} quotation(s) for approval', value: this.selectedItems.length }
 			)
 			.then((_) => {
 				this.submitAttempt = true;
@@ -99,7 +99,7 @@ export class SaleQuotationPage extends PageBase {
 						this.submitAttempt = false;
 
 						if (savedItem > 0) {
-							this.env.showMessage('{{value}} quotations sent for approval', 'success', savedItem);
+							this.env.showMessage('{value} quotations sent for approval', 'success', savedItem);
 						} else {
 							this.env.showMessage('Please check again, quotations must have at least 1 item to be approved', 'warning');
 						}
@@ -115,8 +115,8 @@ export class SaleQuotationPage extends PageBase {
 		if (this.submitAttempt) return;
 
 		this.env
-			.showPrompt({ code: 'Are you sure you want to approve the selected {{value}} quotation(s)?', value: this.selectedItems.length }, null, {
-				code: 'Approve {{value}} quotation(s)',
+			.showPrompt({ code: 'Are you sure you want to approve the selected {value} quotation(s)?', value: this.selectedItems.length }, null, {
+				code: 'Approve {value} quotation(s)',
 				value: this.selectedItems.length,
 			})
 			.then((_) => {
@@ -134,7 +134,7 @@ export class SaleQuotationPage extends PageBase {
 						this.submitAttempt = false;
 
 						if (savedItem > 0) {
-							this.env.showMessage('{{value}} quotations approved', 'success', savedItem);
+							this.env.showMessage('{value} quotations approved', 'success', savedItem);
 						} else {
 							this.env.showMessage('Please check again, quotations must have at least 1 item to be approved', 'warning');
 						}
@@ -149,8 +149,8 @@ export class SaleQuotationPage extends PageBase {
 	disapprove() {
 		if (this.submitAttempt) return;
 		this.env
-			.showPrompt({ code: 'Are you sure you want to reject the selected {{value}} quotation(s)?', value: this.selectedItems.length }, null, {
-				code: 'Reject {{value}} quotation(s)',
+			.showPrompt({ code: 'Are you sure you want to reject the selected {value} quotation(s)?', value: this.selectedItems.length }, null, {
+				code: 'Reject {value} quotation(s)',
 				value: this.selectedItems.length,
 			})
 			.then((_) => {
@@ -178,8 +178,8 @@ export class SaleQuotationPage extends PageBase {
 	// cancel() {
 	// 	if (this.submitAttempt) return;
 	// 	this.env
-	// 		.showPrompt({ code: 'Bạn có chắc muốn HỦY {{value}} báo giá đang chọn?', value: this.selectedItems.length }, null, {
-	// 			code: 'Huỷ {{value}} báo giá',
+	// 		.showPrompt({ code: 'Bạn có chắc muốn HỦY {value} báo giá đang chọn?', value: this.selectedItems.length }, null, {
+	// 			code: 'Huỷ {value} báo giá',
 	// 			value: this.selectedItems.length,
 	// 		})
 	// 		.then((_) => {
