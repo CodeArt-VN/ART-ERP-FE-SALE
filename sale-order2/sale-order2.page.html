@@ -26,7 +26,7 @@
 				<ion-segment-button value="s1">
 					<ion-label>{{'Driver allocation' | translate}}</ion-label>
 				</ion-segment-button>
-				<ion-segment-button value="s2" *ngIf="pageConfig.canImportMasanSaleOrder || pageConfig.canImportNestleSaleOrder">
+				<ion-segment-button value="s2" *ngIf="canShowImportSaleOrders">
 					<ion-label>{{'Import orders' | translate}}</ion-label>
 				</ion-segment-button>
 			</ion-segment>
@@ -100,8 +100,8 @@
 			</div>
 		</div>
 
-		<div *ngIf="(pageConfig.canImportMasanSaleOrder || pageConfig.canImportNestleSaleOrder) && segmentView=='s2'">
-			<div *ngIf="pageConfig.canImportMasanSaleOrder">
+		<div *ngIf="canShowImportSaleOrders && segmentView=='s2'">
+			<div *ngIf="canShowImportMasan">
 				<ion-list-header lines="full">
 					<ion-label color="dark">{{'Import from Masan' | translate}}</ion-label>
 				</ion-list-header>
@@ -134,16 +134,16 @@
 				</div>
 			</div>
 
-			<div *ngIf="pageConfig.canImportNestleSaleOrder">
+			<div *ngIf="canShowImportNestle">
 				<ion-list-header lines="full">
 					<ion-label color="dark">{{'Import from Nestle' | translate}}</ion-label>
 				</ion-list-header>
 				<div class="ion-padding">
 					<div class="c-control">
-						<app-input-control
+						<app-form-control
 							[field]="{
 								id: 'IDBranch',
-								label: 'Branch',
+								label: 'Import to branch',
 								type: 'ng-select-branch',
 								dataSource: branchList,
 								bindLabel: 'Name',
@@ -152,7 +152,7 @@
 								clearable: false,
 								placeholder: 'Select unit..'
 							}"
-						></app-input-control>
+						></app-form-control>
 					</div>
 					<div class="c-control">
 						<label class="c-label" for="nestleOrderDateFrom">{{'From date' | translate}}</label>

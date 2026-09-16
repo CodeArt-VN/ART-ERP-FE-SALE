@@ -112,27 +112,23 @@ export class SaleOrder2Page extends PageBase {
 
 
 		Promise.all([
-			this.sysConfigService.getConfig(this.env.selectedBranch, [
-				'SOUsedApprovalModule',
-				'IsShowExpectedDeliveryDate',
-				'NestleImportSOWebhook',
-			]),
+			this.sysConfigService.getConfig(
+				this.env.selectedBranch,
+				['SOUsedApprovalModule', 'IsShowExpectedDeliveryDate', 'ImportSaleOrderFromMasan', 'ImportSaleOrderFromNestle', 'NestleImportSOWebhook'],
+				{},
+				true
+			),
 			this.env.getStatus('POSOrder')
 		]).then((values: any) => {
-			if (values[0]) {
-				this.pageConfig = {
-					...this.pageConfig,
-					...values[0],
-				};
-				this.nestleImportSOWebhook = values[0].NestleImportSOWebhook || '';
-			}
+			this.applyImportSaleOrderConfig(values[0]);
 			if (this.pageConfig.SOUsedApprovalModule) {
 				this.pageConfig.canApprove = false;
 			}
 			this.statusList = values[1];
 			this.branchList = this.env.branchList;
-			if (!this.nestleFormGroup.get('IDBranch')?.value) {
-				this.nestleFormGroup.get('IDBranch').setValue(this.env.selectedBranch);
+			this.nestleFormGroup.get('IDBranch').setValue(this.env.selectedBranch);
+			if (this.segmentView == 's2' && !this.canShowImportSaleOrders) {
+				this.segmentView = 's1';
 			}
 
 			super.preLoadData(event);
@@ -547,6 +543,32 @@ export class SaleOrder2Page extends PageBase {
 					this.env.showMessage('Import error, please check again', 'danger');
 				}
 			});
+	}
+
+	get canShowImportMasan() {
+		return !!this.pageConfig.canImportMasanSaleOrder && !!this.pageConfig.ImportSaleOrderFromMasan;
+	}
+
+	get canShowImportNestle() {
+		return !!this.pageConfig.canImportNestleSaleOrder && !!this.pageConfig.ImportSaleOrderFromNestle;
+	}
+
+	get canShowImportSaleOrders() {
+		return this.canShowImportMasan || this.canShowImportNestle;
+	}
+
+	private isConfigEnabled(value: any): boolean {
+		return value === true || value === 'true' || value === 1 || value === '1';
+	}
+
+	private applyImportSaleOrderConfig(cfg: any = {}) {
+		this.pageConfig = {
+			...this.pageConfig,
+			...cfg,
+			ImportSaleOrderFromMasan: this.isConfigEnabled(cfg?.ImportSaleOrderFromMasan),
+			ImportSaleOrderFromNestle: this.isConfigEnabled(cfg?.ImportSaleOrderFromNestle),
+		};
+		this.nestleImportSOWebhook = cfg?.NestleImportSOWebhook || '';
 	}
 
 	async nestleImport() {
