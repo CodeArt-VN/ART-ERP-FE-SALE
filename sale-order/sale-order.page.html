@@ -214,8 +214,8 @@
 				<ion-segment-button value="s1">
 					<ion-label>{{'Driver allocation' | translate}}</ion-label>
 				</ion-segment-button>
-				<ion-segment-button value="s2" *ngIf="pageConfig.canImportMasanSaleOrder">
-					<ion-label>{{'Import order' | translate}}</ion-label>
+				<ion-segment-button value="s2" *ngIf="pageConfig.canImportMasanSaleOrder || pageConfig.canImportNestleSaleOrder">
+					<ion-label>{{'Import orders' | translate}}</ion-label>
 				</ion-segment-button>
 			</ion-segment>
 		</ion-toolbar>
@@ -296,35 +296,74 @@
 			</div>
 		</div>
 
-		<div *ngIf="pageConfig.canImportMasanSaleOrder && segmentView=='s2'">
-			<!-- <ion-list-header lines="inset">
-				<ion-label color="dark">{{'order-import-title' | translate}}</ion-label>
-			</ion-list-header> -->
+		<div *ngIf="(pageConfig.canImportMasanSaleOrder || pageConfig.canImportNestleSaleOrder) && segmentView=='s2'">
+			<div *ngIf="pageConfig.canImportMasanSaleOrder">
+				<ion-list-header lines="full">
+					<ion-label color="dark">{{'Import from Masan' | translate}}</ion-label>
+				</ion-list-header>
+				<div class="ion-padding">
+					<div class="c-control">
+						<label class="c-label" for="featureDate">{{'Order created date' | translate}}</label>
+						<input class="c-input" [(ngModel)]="masanImportParam.featureDate" id="featureDate" type="date" />
+					</div>
 
-			<div class="ion-padding">
-				<div class="c-control">
-					<label class="c-label" for="featureDate">{{'Order created date' | translate}}</label>
-					<input class="c-input" [(ngModel)]="masanImportParam.featureDate" id="featureDate" type="date" />
-				</div>
+					<div class="c-control">
+						<label class="c-label" for="kho">{{'Warehouse' | translate}}</label>
+						<select id="kho" [(ngModel)]="masanImportParam.wareHouse" class="c-input c-dropdown">
+							<option value="KF1652T01">{{'long-thanh' | translate}}</option>
+							<option value="KF1652">{{'xuan-loc' | translate}}</option>
+						</select>
+					</div>
 
-				<div class="c-control">
-					<label class="c-label" for="kho">{{'Warehouse' | translate}}</label>
-					<select id="kho" [(ngModel)]="masanImportParam.wareHouse" class="c-input c-dropdown">
-						<option value="KF1652T01">{{'long-thanh' | translate}}</option>
-						<option value="KF1652">{{'xuan-loc' | translate}}</option>
-					</select>
-				</div>
+					<div class="c-control">
+						<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="masanImport()">
+							{{'Import' | translate}}
+						</ion-button>
+					</div>
 
-				<div class="c-control">
-					<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="masanImport()"> {{'Import Masan order' | translate}}</ion-button>
-					<!-- shape="round" -->
+					<div class="c-control">
+						<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="onClickImport()">
+							{{'Import file' | translate}}
+						</ion-button>
+						<input class="hide-all" #importfile2 type="file" accept=".xlsx" (change)="import2($event)" />
+					</div>
 				</div>
+			</div>
 
-				<div class="c-control">
-					<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="onClickImport()"> {{'Import file' | translate}}</ion-button>
-					<input class="hide-all" #importfile2 type="file" accept=".xlsx" (change)="import2($event)" />
+			<div *ngIf="pageConfig.canImportNestleSaleOrder">
+				<ion-list-header lines="full">
+					<ion-label color="dark">{{'Import from Nestle' | translate}}</ion-label>
+				</ion-list-header>
+				<div class="ion-padding">
+					<div class="c-control">
+						<app-input-control
+							[field]="{
+								id: 'IDBranch',
+								label: 'Branch',
+								type: 'ng-select-branch',
+								dataSource: branchList,
+								bindLabel: 'Name',
+								bindValue: 'Id',
+								form: nestleFormGroup,
+								clearable: false,
+								placeholder: 'Select unit..'
+							}"
+						></app-input-control>
+					</div>
+					<div class="c-control">
+						<label class="c-label" for="nestleOrderDateFrom">{{'From date' | translate}}</label>
+						<input class="c-input" [(ngModel)]="nestleImportParam.orderDateFrom" id="nestleOrderDateFrom" type="date" />
+					</div>
+					<div class="c-control">
+						<label class="c-label" for="nestleOrderDateTo">{{'To date' | translate}}</label>
+						<input class="c-input" [(ngModel)]="nestleImportParam.orderDateTo" id="nestleOrderDateTo" type="date" />
+					</div>
+					<div class="c-control">
+						<ion-button [disabled]="submitAttempt" color="primary" expand="block" (click)="nestleImport()">
+							{{'Import' | translate}}
+						</ion-button>
+					</div>
 				</div>
-				<div class="col-control"></div>
 			</div>
 		</div>
 

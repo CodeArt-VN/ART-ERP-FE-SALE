@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AlertController, LoadingController, ModalController, NavController, PopoverController } from '@ionic/angular';
 import { PageBase } from 'src/app/page-base';
 import { EnvService } from 'src/app/services/core/env.service';
@@ -38,6 +39,12 @@ export class SaleOrder2Page extends PageBase {
 		featureDate: lib.dateFormat(new Date(), 'yyyy-mm-dd'),
 		wareHouse: 'KF1652T01',
 	};
+	nestleImportSOWebhook = '';
+	nestleImportParam: any = {
+		orderDateFrom: lib.dateFormat(new Date(), 'yyyy-mm-dd'),
+		orderDateTo: lib.dateFormat(new Date(), 'yyyy-mm-dd'),
+	};
+	nestleFormGroup: FormGroup;
 
 	constructor(
 		public pageProvider: SALE_OrderProvider,
@@ -51,7 +58,8 @@ export class SaleOrder2Page extends PageBase {
 		public alertCtrl: AlertController,
 		public loadingController: LoadingController,
 		public env: EnvService,
-		public navCtrl: NavController
+		public navCtrl: NavController,
+		public formBuilder: FormBuilder
 	) {
 		super();
 		this.pageConfig.ShowFeature = true;
@@ -59,6 +67,10 @@ export class SaleOrder2Page extends PageBase {
 		let today = new Date();
 		today.setDate(today.getDate() + 1);
 		this.shipmentQuery.DeliveryDate = lib.dateFormat(today, 'yyyy-mm-dd');
+		this.branchList = this.env.branchList;
+		this.nestleFormGroup = this.formBuilder.group({
+			IDBranch: [this.env.selectedBranch],
+		});
 
 		this.pageConfig.dividers = [
 			{
@@ -100,19 +112,28 @@ export class SaleOrder2Page extends PageBase {
 
 
 		Promise.all([
-			this.sysConfigService.getConfig(this.env.selectedBranch, ['SOUsedApprovalModule', 'IsShowExpectedDeliveryDate']),
+			this.sysConfigService.getConfig(this.env.selectedBranch, [
+				'SOUsedApprovalModule',
+				'IsShowExpectedDeliveryDate',
+				'NestleImportSOWebhook',
+			]),
 			this.env.getStatus('POSOrder')
 		]).then((values: any) => {
-			if(values[0]){
+			if (values[0]) {
 				this.pageConfig = {
 					...this.pageConfig,
-					...values[0]
+					...values[0],
 				};
+				this.nestleImportSOWebhook = values[0].NestleImportSOWebhook || '';
 			}
 			if (this.pageConfig.SOUsedApprovalModule) {
 				this.pageConfig.canApprove = false;
 			}
 			this.statusList = values[1];
+			this.branchList = this.env.branchList;
+			if (!this.nestleFormGroup.get('IDBranch')?.value) {
+				this.nestleFormGroup.get('IDBranch').setValue(this.env.selectedBranch);
+			}
 
 			super.preLoadData(event);
 		});
@@ -526,6 +547,56 @@ export class SaleOrder2Page extends PageBase {
 					this.env.showMessage('Import error, please check again', 'danger');
 				}
 			});
+	}
+
+	async nestleImport() {
+		if (this.submitAttempt) {
+			return;
+		}
+		if (!this.nestleImportSOWebhook) {
+			this.env.showMessage('Nestle import webhook is not configured', 'warning');
+			return;
+		}
+		if (!this.nestleFormGroup.get('IDBranch')?.value) {
+			this.env.showMessage('Please select a branch', 'warning');
+			return;
+		}
+		if (!this.nestleImportParam.orderDateFrom || !this.nestleImportParam.orderDateTo) {
+			this.env.showMessage('From date is not valid!', 'warning');
+			return;
+		}
+		if (this.nestleImportParam.orderDateFrom > this.nestleImportParam.orderDateTo) {
+			this.env.showMessage('From date must be earlier than or equal to the To date!', 'warning');
+			return;
+		}
+
+		this.submitAttempt = true;
+		try {
+			const resp = await fetch(this.nestleImportSOWebhook, {
+				method: 'POST',
+				mode: 'cors',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					orderDateFrom: this.nestleImportParam.orderDateFrom,
+					orderDateTo: this.nestleImportParam.orderDateTo,
+					IDBranch: this.nestleFormGroup.get('IDBranch').value,
+				}),
+			});
+			if (!resp.ok) {
+				throw new Error(`Webhook failed with status ${resp.status}`);
+			}
+			this.env.showMessage(
+				'This process may take a few minutes. Please wait for the email notification when it is completed.',
+				'success',
+				null,
+				0,
+				true
+			);
+		} catch (err) {
+			this.env.showMessage('Import error, please check again', 'danger');
+		} finally {
+			this.submitAttempt = false;
+		}
 	}
 
 	@ViewChild('importfile2') importfile: any;
