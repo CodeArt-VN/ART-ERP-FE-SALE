@@ -43,6 +43,7 @@ export class SaleOrderMobilePage extends PageBase {
 		public location: Location
 	) {
 		super();
+		this.pageConfig.listSyncFetchById = true;
 		// this.pageConfig.isShowSearch = true;
 	}
 
@@ -68,21 +69,36 @@ export class SaleOrderMobilePage extends PageBase {
 	}
 
 	loadData(event) {
-		this.pageProvider.apiPath.getList.url = function () {
-			return ApiSetting.apiDomain('SALE/Order/MobileList');
-		};
+		this.useMobileListApi();
 		super.loadData(event);
 	}
 
-	loadedData(event) {
-		this.items.forEach((i) => {
-			i.OrderTimeText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'hh:MM') : '';
-			i.OrderDateText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'dd/mm/yy') : '';
+	useMobileListApi() {
+		this.pageProvider.apiPath.getList.url = function () {
+			return ApiSetting.apiDomain('SALE/Order/MobileList');
+		};
+	}
 
-			i.OriginalTotalText = lib.currencyFormat(i.OriginalTotalAfterTax);
-			i._Status = this.statusList.find((s) => s.Code == i.Status);
-		});
+	enrichListItem(row: any) {
+		if (!row) {
+			return row;
+		}
+		const i = { ...row };
+		i.OrderTimeText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'hh:MM') : '';
+		i.OrderDateText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'dd/mm/yy') : '';
+		i.OriginalTotalText = lib.currencyFormat(i.OriginalTotalAfterTax);
+		i._Status = this.statusList?.find((s) => s.Code == i.Status);
+		return i;
+	}
+
+	loadedData(event) {
+		this.items = (this.items || []).map((i) => this.enrichListItem(i));
 		super.loadedData(event);
+	}
+
+	fetchAndUpsertListItem(id: any): Promise<any | null> {
+		this.useMobileListApi();
+		return super.fetchAndUpsertListItem(id);
 	}
 
 	changeSelection(i, e = null) {
