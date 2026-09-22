@@ -88,4 +88,21 @@ describe('SaleOrderPage', () => {
 		expect(env.showMessage).toHaveBeenCalledWith('Import error, please check again', 'danger');
 		expect(component.submitAttempt).toBeFalse();
 	});
+
+	it('enrichListItem maps status and date texts for list rows', () => {
+		component.statusList = [{ Code: 'New', Name: 'New' }];
+		const row = component.enrichListItem({
+			Id: 7,
+			OrderDate: '2026-09-22T10:15:00',
+			ExpectedDeliveryDate: '2026-09-23T08:00:00',
+			Status: 'New',
+			OriginalTotalAfterTax: 1000,
+			TotalAfterTax: 1000,
+		});
+
+		expect(row.OrderDateText).toBeTruthy();
+		expect(row.Query).toBe('2026-09-22');
+		expect(row.QueryExpectedDeliveryDate).toBe('2026-09-23');
+		expect(row._Status).toEqual({ Code: 'New', Name: 'New' });
+	});
 });

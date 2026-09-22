@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
 	<app-toolbar [page]="this">
+		<ion-button (click)="importClick()" *ngIf="pageConfig.canEdit && item?.Id" title="{{'Import product' | translate}}">
+			<ion-icon slot="icon-only" name="cloud-upload-outline"></ion-icon>
+		</ion-button>
 		<ion-button (click)="closeOrder()" title="Finalize banquet" *ngIf="pageConfig.canCloseOrder && id">
 			<ion-icon slot="icon-only" name="bag-check-outline"></ion-icon>
 		</ion-button>
@@ -1013,4 +1016,5 @@
 	</div>
 
 	<app-page-message [itemsLength]="item? 1: 0" [showSpinner]="pageConfig.showSpinner"></app-page-message>
+	<input class="hide-all" #importfile type="file" accept=".xlsx" (change)="uploadOrderLine($event)" />
 </ion-content>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { NavController, ModalController, LoadingController, AlertController, PopoverController } from '@ionic/angular';
 import { PageBase } from 'src/app/page-base';
 import { ActivatedRoute } from '@angular/router';
@@ -30,6 +30,7 @@ import { EInvoiceService } from 'src/app/services/custom/einvoice.service';
 	standalone: false,
 })
 export class SaleOrderDetailPage extends PageBase {
+	@ViewChild('importfile') importfile: any;
 	//m3Mask = ['PPP-PPP', this.pattern];
 	statusList = [];
 	typeList = [];
@@ -68,6 +69,23 @@ export class SaleOrderDetailPage extends PageBase {
 		this.item = {};
 		this.pageConfig.isDetailPage = true;
 		this.id = this.route.snapshot.paramMap.get('id');
+		Object.assign(pageProvider, {
+			importDetail(fileToUpload: File, id) {
+				const formData: FormData = new FormData();
+				formData.append('fileKey', fileToUpload, fileToUpload.name);
+				return new Promise((resolve, reject) => {
+					this.commonService
+						.connect('UPLOAD', ApiSetting.apiDomain('SALE/Order/ImportDetailFile/' + id), formData)
+						.toPromise()
+						.then((data) => {
+							resolve(data);
+						})
+						.catch((err) => {
+							reject(err);
+						});
+				});
+			},
+		});
 		this.formGroup = formBuilder.group({
 			Id: new FormControl({ value: '', disabled: true }),
 			RefID: new FormControl({ value: '', disabled: true }),
@@ -994,5 +1012,66 @@ export class SaleOrderDetailPage extends PageBase {
 
 	closeOrder() {
 		this.nav('sale-order/close-order/' + this.item.Id);
+	}
+
+	importClick() {
+		this.importfile.nativeElement.value = '';
+		this.importfile.nativeElement.click();
+	}
+
+	async uploadOrderLine(event) {
+		if (event.target.files.length == 0) return;
+
+		const loading = await this.loadingController.create({
+			cssClass: 'my-custom-class',
+			message: 'Please wait for a few moments',
+		});
+		await loading.present().then(() => {
+			this.pageProvider['importDetail'](event.target.files[0], this.id)
+				.then((resp: any) => {
+					this.refresh();
+					if (loading) loading.dismiss();
+
+					if (resp.ErrorList && resp.ErrorList.length) {
+						let message = '';
+						for (let i = 0; i < resp.ErrorList.length && i <= 5; i++)
+							if (i == 5) message += '<br> Còn nữa...';
+							else {
+								const e = resp.ErrorList[i];
+								message += '<br> ' + e.Id + '. Tại dòng ' + e.Line + ': ' + e.Message;
+							}
+
+						this.alertCtrl
+							.create({
+								header: 'Data import error',
+								subHeader: 'Do you want to review the items with errors?',
+								message: 'Có ' + resp.ErrorList.length + ' lỗi khi import:' + message,
+								cssClass: 'alert-text-left',
+								buttons: [
+									{ text: 'Không', role: 'cancel', handler: () => {} },
+									{
+										text: 'Có',
+										cssClass: 'success-btn',
+										handler: () => {
+											this.downloadURLContent(resp.FileUrl);
+										},
+									},
+								],
+							})
+							.then((alert) => {
+								alert.present();
+							});
+					} else {
+						this.env.showMessage('Import completed!', 'success');
+						this.env.publishEvent({ Code: this.pageConfig.pageName });
+					}
+				})
+				.catch((err) => {
+					if (err.statusText == 'Conflict') {
+						this.downloadURLContent(err._body);
+					}
+					if (loading) loading.dismiss();
+				});
+		});
 	}
 }

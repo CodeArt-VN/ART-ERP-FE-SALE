@@ -62,6 +62,7 @@ export class SaleOrderPage extends PageBase {
 	) {
 		super();
 		this.pageConfig.ShowFeature = true;
+		this.pageConfig.listSyncFetchById = true;
 		this.pageConfig.IsRequiredDateRangeToExport = true;
 		let today = new Date();
 		today.setDate(today.getDate() + 1);
@@ -118,20 +119,27 @@ export class SaleOrderPage extends PageBase {
 		this.loadShipmentList();
 	}
 
+	enrichListItem(row: any) {
+		if (!row) {
+			return row;
+		}
+		const i = { ...row };
+		i.OrderTimeText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'hh:MM') : '';
+		i.OrderDateText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'dd/mm/yy') : '';
+		i.Query = i.OrderDate ? lib.dateFormat(i.OrderDate, 'yyyy-mm-dd') : '';
+
+		i.ExpectedDeliveryTimeText = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'hh:MM') : '';
+		i.ExpectedDeliveryDateText = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'dd/mm/yy') : '';
+		i.QueryExpectedDeliveryDate = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'yyyy-mm-dd') : '';
+
+		i.OriginalTotalAfterTaxText = lib.currencyFormat(i.OriginalTotalAfterTax);
+		i.TotalAfterTaxText = lib.currencyFormat(i.TotalAfterTax);
+		i._Status = this.statusList?.find((s) => s.Code == i.Status);
+		return i;
+	}
+
 	loadedData(event) {
-		this.items.forEach((i) => {
-			i.OrderTimeText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'hh:MM') : '';
-			i.OrderDateText = i.OrderDate ? lib.dateFormat(i.OrderDate, 'dd/mm/yy') : '';
-			i.Query = i.OrderDate ? lib.dateFormat(i.OrderDate, 'yyyy-mm-dd') : '';
-
-			i.ExpectedDeliveryTimeText = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'hh:MM') : '';
-			i.ExpectedDeliveryDateText = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'dd/mm/yy') : '';
-			i.QueryExpectedDeliveryDate = i.ExpectedDeliveryDate ? lib.dateFormat(i.ExpectedDeliveryDate, 'yyyy-mm-dd') : '';
-
-			i.OriginalTotalAfterTaxText = lib.currencyFormat(i.OriginalTotalAfterTax);
-			i.TotalAfterTaxText = lib.currencyFormat(i.TotalAfterTax);
-			i._Status = this.statusList.find((s) => s.Code == i.Status);
-		});
+		this.items = (this.items || []).map((i) => this.enrichListItem(i));
 		super.loadedData(event);
 
 		this.pageConfig.canSubmit = this.pageConfig.canSubmitOrdersForApproval || this.pageConfig.canSubmitSalesmanOrdersForApproval;
