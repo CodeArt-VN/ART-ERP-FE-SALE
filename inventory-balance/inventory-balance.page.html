@@ -17,54 +17,40 @@
 	>
 		<datatable-column class="col-id" name="ID item" property="ItemId">
 			<ng-template let-i="row" datatable-cell-template>
-				<a [routerLink]="['/item/'+i?.ItemId]">{{i?.ItemId}}</a>
-				<small label class="hide-desktop">{{i?.ItemCode}}</small>
+				<a [routerLink]="['/item/' + i?.ItemId]">{{ i?.ItemId }}</a>
+				<small label class="hide-desktop">{{ i?.ItemCode }}</small>
 			</ng-template>
 		</datatable-column>
 
 		<datatable-column class="col-name" name="Item name" property="ItemName">
 			<ng-template let-i="row" datatable-cell-template>
-				<a style="color: var(--ion-color-dark)" [routerLink]="['/item/'+i?.ItemId]"
-					><span [ngClass]="{'bold': (i.UoMs?.length ?? 0) > 0}">{{i.ItemName}}</span>
-					<p class="ion-no-margin hideSmall" *ngIf="isShowBranch">{{i?.BranchName}}</p>
+				<a style="color: var(--ion-color-dark)" [routerLink]="['/item/' + i?.ItemId]">
+					<span class="bold">{{ i.ItemName }}</span>
 				</a>
 			</ng-template>
 		</datatable-column>
 
-		<datatable-column class="col-name hide-desktop" name="Warehouse" property="IDBranch">
-			<ng-template let-i="row" datatable-cell-template> {{i?.BranchName}} </ng-template>
+		<datatable-column class="col-stock" name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
+			<ng-template let-i="row" datatable-cell-template>
+				<div class="stock-list">
+					<div class="stock-line" *ngFor="let w of i.Warehouses" [class.is-negative]="w.CloseQuantity < 0">
+						<span class="stock-wh">{{ w.BranchName }}</span>
+						<span class="stock-sep">&nbsp;</span>
+						<span class="stock-qty">
+							<app-format-quantity *ngIf="w.UoMs?.length" [quantity]="w.CloseQuantity" [splitQuantityList]="w.UoMs"></app-format-quantity>
+							<span *ngIf="!w.UoMs?.length">{{ 'Out of stocks' | translate }}</span>
+						</span>
+					</div>
+				</div>
+			</ng-template>
 		</datatable-column>
 
-		<datatable-column class="col-name" name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
+		<datatable-column class="col-price" name="Price" property="ItemId" [canFilter]="false" [canSort]="false">
 			<ng-template let-i="row" datatable-cell-template>
-				<ng-container *ngFor="let uom of i.UoMs; let j = index">
-					<app-format-quantity [quantity]="i.CloseQuantity" [splitQuantityList]="i.UoMs"></app-format-quantity>
-					<!-- <span class="hide-desktop" *ngIf="j==0">{{'Inventory'|translate}}:&nbsp;</span>
-					<span *ngIf="j != 0">&nbsp;+&nbsp;</span> <span>{{uom?.Quantity | number}} {{uom?.UoMName}} </span> -->
-					<!-- <span class="hideSmall">{{i.UoM?.Name}}</span> -->
-				</ng-container>
-				<span *ngIf="i.UoMs.length==0">{{'Out of stocks'| translate}}</span>
+				<div class="price-list" *ngIf="i.Prices?.length">
+					<div *ngFor="let uom of i.Prices"><strong>{{ uom.Price | number }}</strong><small *ngIf="uom.UoMName">&nbsp;/{{ uom.UoMName }}</small></div>
+				</div>
 			</ng-template>
 		</datatable-column>
-		<datatable-column class="col-name" name="Price" property="ItemId" [canFilter]="false" [canSort]="false">
-			<ng-template let-i="row" datatable-cell-template>
-				<ng-container *ngFor="let uom of i.UoMs;let j = index">
-					<div *ngIf="uom.Price != null" class="smallDanger" [ngStyle]="{'font-weight':uom.Quantity >0? 'bold':''}">
-						<span *ngIf="j != 0 && i.UoMs[j-1].Price">&nbsp;-&nbsp;</span>
-						<span>{{uom.Price | number}}<small label *ngIf="uom.UoMName">/{{uom.UoMName}}</small></span>
-					</div>
-					<!-- <span class="hideSmall">{{uom.Price | number}}</span> -->
-				</ng-container>
-			</ng-template>
-		</datatable-column>
-		<!-- 
-    <datatable-column class="col-name" name="Warehouse" property="WarehouseName">
-		  <ng-template let-i="row" datatable-cell-template>
-			{{i.WarehouseName}}
-			<small class="address" *ngIf="i.WarehouseCode">
-			  <ion-text color="dark">{{i.WarehouseCode}}</ion-text>
-			</small>
-		  </ng-template>
-		</datatable-column> -->
 	</app-data-table>
 </ion-content>

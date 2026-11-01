@@ -1,6 +1,69 @@
-.smallDanger {
-	font-weight: 400 !important;
+.stock-list,
+.price-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	width: 100%;
+	min-width: 0;
 }
+
+.stock-line {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	min-width: 0;
+}
+
+.stock-sep {
+	display: none;
+}
+
+.stock-wh {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--ion-color-medium);
+}
+
+.stock-qty {
+	flex: 0 0 auto;
+	text-align: right;
+	white-space: nowrap;
+}
+
+:host ::ng-deep .stock-line.is-negative .stock-wh,
+:host ::ng-deep .stock-line.is-negative .stock-sep,
+:host ::ng-deep .stock-line.is-negative app-format-quantity ion-text,
+:host ::ng-deep .stock-line.is-negative app-format-quantity strong,
+:host ::ng-deep .stock-line.is-negative app-format-quantity small {
+	color: var(--ion-color-danger);
+}
+
+:host ::ng-deep app-data-table .row .col-name {
+	flex: 1 1 auto;
+	min-width: 180px;
+}
+
+:host ::ng-deep app-data-table .row .col-stock {
+	flex: 0 1 340px;
+	width: 340px;
+	min-width: 220px;
+	max-width: 380px;
+	align-items: flex-start;
+}
+
+:host ::ng-deep app-data-table .row .col-price {
+	flex: 0 0 196px;
+	width: 196px;
+	min-width: 168px;
+	max-width: 220px;
+	justify-content: flex-end;
+	text-align: right;
+}
+
 :host ::ng-deep {
 	.hide-desktop {
 		display: none !important;
@@ -11,19 +74,29 @@
 	@media screen and (max-width: 1164px) {
 		app-data-table.responsive .row,
 		.table.responsive .row {
-			padding: 16px 100px 16px 16px;
+			padding: 16px;
 		}
-		.smallDanger.bold {
-			font-weight: bold !important;
-		}
-		.hideSmall {
-			display: none !important;
-		}
+
 		.hide-desktop {
 			display: flex !important;
 		}
-		.smallDanger {
-			color: var(--ion-color-danger) !important;
+
+		.stock-line {
+			display: block;
+			text-align: left;
+		}
+
+		.stock-sep {
+			display: inline;
+		}
+
+		.stock-wh,
+		.stock-qty {
+			display: inline;
+			flex: none;
+			overflow: visible;
+			text-align: left;
+			white-space: normal;
 		}
 
 		app-data-table.responsive .row .col-id,
@@ -33,20 +106,32 @@
 
 		app-data-table.responsive .row .col-name,
 		.table.responsive .row .col-name {
+			order: 1;
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		app-data-table.responsive .row .col-price,
+		.table.responsive .row .col-price {
 			order: 2;
+			flex: 1 1 100%;
+			width: 100%;
+			min-width: 100%;
+			max-width: 100%;
+			position: static;
+			justify-content: flex-start;
+			text-align: left;
+			color: var(--ion-color-dark);
 		}
-		app-data-table.responsive .row .col-number,
-		.table.responsive .row .col-number {
+
+		app-data-table.responsive .row .col-stock,
+		.table.responsive .row .col-stock {
 			order: 3;
-			position: unset;
-			margin-top: unset;
-			color: var(--ion-color-danger) !important;
-			font-size: 110%;
-		}
-		app-data-table.responsive .row .col-code,
-		.table.responsive .row .col-code {
-			color: var(--ion-color-danger);
-			font-weight: bold;
+			flex: 1 1 100%;
+			width: 100%;
+			min-width: 100%;
+			max-width: 100%;
+			position: static;
 		}
 	}
 }

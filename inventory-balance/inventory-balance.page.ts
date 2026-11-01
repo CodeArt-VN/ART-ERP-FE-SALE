@@ -16,8 +16,6 @@ import { ActivatedRoute, Route } from '@angular/router';
 	standalone: false,
 })
 export class InventoryBalancePage extends PageBase {
-	branchList = [];
-	isShowBranch = false;
 	constructor(
 		//public pageProvider: SALE_OrderProvider,
 		public commonService: CommonService,
@@ -36,70 +34,41 @@ export class InventoryBalancePage extends PageBase {
 	}
 
 	loadData(event) {
-		if (event == 'search') {
-			this.commonService
-				.connect('GET', 'SALE/Forecast/Balance', this.query)
-				.toPromise()
-				.then((result: any) => {
-					if (result.length == 0) {
-						this.pageConfig.isEndOfData = true;
-					}
-					this.items = result;
-					this.loadedData(null);
-				});
-		} else {
-			this.query.Skip = this.items.length;
-			this.commonService
-				.connect('GET', 'SALE/Forecast/Balance', this.query)
-				.toPromise()
-				.then((result: any) => {
-					if (result.length == 0) {
-						this.pageConfig.isEndOfData = true;
-					}
-					if (result.length > 0) {
-						let firstRow = result[0];
-
-						//Fix dupplicate rows
-						if (this.items.findIndex((d) => d.Id == firstRow.Id) == -1) {
-							this.items = [...this.items, ...result];
-						}
-					}
-					this.loadedData(event);
-				})
-				.catch((err) => {
-					if (err.message != null) {
-						this.env.showMessage(err.message, 'danger');
-					} else {
-						this.env.showMessage('Cannot extract data', 'danger');
-					}
-
-					this.loadedData(event);
-				});
-			// super.loadData(event);
-		}
+		delete this.query.IDBranch;
+		this.query.Skip = event == 'search' ? 0 : this.items.length;
+		this.commonService
+			.connect('GET', 'SALE/Inventory/Balance', this.query)
+			.toPromise()
+			.then((result: any) => {
+				const rows = result || [];
+				if (this.query.Skip == 0) {
+					this.items = rows;
+				} else if (rows.length > 0) {
+					const seen = new Set(this.items.map((d) => d.ItemId));
+					const fresh = rows.filter((row) => !seen.has(row.ItemId));
+					if (fresh.length > 0) this.items = [...this.items, ...fresh];
+				}
+				this.markEndOfDataIfLastPage(rows.length);
+				this.loadedData(event);
+			})
+			.catch((err) => {
+				this.items = [];
+				if (err.message != null) {
+					this.env.showMessage(err.message, 'danger');
+				} else {
+					this.env.showMessage('Cannot extract data', 'danger');
+				}
+				this.loadedData(event);
+			});
 	}
 	loadedData(event) {
 		super.loadedData(event);
 		this.items.forEach((i) => {
-			let branch = this.env.branchList.find((d) => d.Id == i.IDBranch);
-			if (branch) i.BranchName = branch.Name;
+			(i.Warehouses || []).forEach((warehouse) => {
+				if (warehouse.BranchName) return;
+				const branch = this.env.branchList.find((d) => d.Id == warehouse.IDBranch);
+				if (branch) warehouse.BranchName = branch.Name;
+			});
 		});
-		this.isShowBranch = false;
-		let selectedBranch = this.env.branchList.find((d) => d.Id == this.env.selectedBranch);
-		if (selectedBranch.Type == 'Warehouse') return;
-		else {
-			if (this.countWarehouse(0, this.env.selectedBranch) > 1) this.isShowBranch = true;
-		}
-	}
-	countWarehouse(numberWhs, IDBranch) {
-		let currentBranch = this.env.branchList.find((d) => d.Id == IDBranch);
-		if (currentBranch.Type == 'Warehouse') {
-			numberWhs += 1;
-		}
-		let childs = this.env.branchList.filter((d) => d.IDParent == currentBranch.Id);
-		for (let c of childs) {
-			numberWhs += this.countWarehouse(numberWhs, c.Id);
-		}
-		return numberWhs;
 	}
 }
