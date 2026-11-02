@@ -40,7 +40,8 @@ export class InventoryBalancePage extends PageBase {
 			.connect('GET', 'SALE/Inventory/Balance', this.query)
 			.toPromise()
 			.then((result: any) => {
-				const rows = result || [];
+				const payload = result || {};
+				const rows = Array.isArray(result) ? result : payload.Items || [];
 				if (this.query.Skip == 0) {
 					this.items = rows;
 				} else if (rows.length > 0) {
