@@ -34,12 +34,40 @@
 	white-space: nowrap;
 }
 
-:host ::ng-deep .stock-line.is-negative .stock-wh,
-:host ::ng-deep .stock-line.is-negative .stock-sep,
-:host ::ng-deep .stock-line.is-negative app-format-quantity ion-text,
-:host ::ng-deep .stock-line.is-negative app-format-quantity strong,
-:host ::ng-deep .stock-line.is-negative app-format-quantity small {
-	color: var(--ion-color-danger);
+.stock-filter {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 30px;
+	margin: 0;
+	padding: 0 10px;
+	border: 1px solid var(--menu-right-border-color);
+	border-radius: 3px;
+	background: transparent;
+	color: var(--ion-color-medium);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+	cursor: pointer;
+
+	ion-icon {
+		flex: 0 0 16px;
+		width: 16px;
+		height: 16px;
+		margin: 0;
+		font-size: 16px;
+	}
+
+	&.is-on {
+		color: var(--ion-color-success);
+		border-color: var(--ion-color-success);
+	}
+}
+
+:host ::ng-deep app-data-table .row.header.filter .col-stock {
+	align-items: center;
+	justify-content: flex-start;
 }
 
 :host ::ng-deep app-data-table .row .col-name {

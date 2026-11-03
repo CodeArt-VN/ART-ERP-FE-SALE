@@ -17,28 +17,34 @@
 	>
 		<datatable-column class="col-id" name="ID item" property="ItemId">
 			<ng-template let-i="row" datatable-cell-template>
-				<a [routerLink]="['/item/' + i?.ItemId]">{{ i?.ItemId }}</a>
+				<a class="clickable" [routerLink]="['/item/' + i?.ItemId]"><span class="hide-small">#</span>{{ i?.ItemId }}</a>
 				<small label class="hide-desktop">{{ i?.ItemCode }}</small>
 			</ng-template>
 		</datatable-column>
 
 		<datatable-column class="col-name" name="Item name" property="ItemName">
 			<ng-template let-i="row" datatable-cell-template>
-				<a style="color: var(--ion-color-dark)" [routerLink]="['/item/' + i?.ItemId]">
-					<span class="bold">{{ i.ItemName }}</span>
-				</a>
+				<span [title]="i.ItemName">
+					<b class="hide-small">{{ i.ItemCode }}&nbsp;</b>{{ i.ItemName }}
+				</span>
 			</ng-template>
 		</datatable-column>
 
-		<datatable-column class="col-stock" name="Quantity" property="ItemId" [canFilter]="false" [canSort]="false">
+		<datatable-column class="col-stock" name="Quantity" property="inStockOnly" [canSort]="false">
+			<ng-template datatable-filter-template>
+				<button type="button" class="stock-filter" [class.is-on]="query.inStockOnly" (click)="toggleInStock()">
+					<ion-icon [name]="query.inStockOnly ? 'cube' : 'cube-outline'"></ion-icon>
+					<span>{{ 'In stock only' | translate }}</span>
+				</button>
+			</ng-template>
 			<ng-template let-i="row" datatable-cell-template>
 				<div class="stock-list">
-					<div class="stock-line" *ngFor="let w of i.Warehouses" [class.is-negative]="w.CloseQuantity < 0">
+					<div class="stock-line" *ngFor="let w of i.Warehouses">
 						<span class="stock-wh">{{ w.BranchName }}</span>
 						<span class="stock-sep">&nbsp;</span>
 						<span class="stock-qty">
-							<app-format-quantity *ngIf="w.UoMs?.length" [quantity]="w.CloseQuantity" [splitQuantityList]="w.UoMs"></app-format-quantity>
-							<span *ngIf="!w.UoMs?.length">{{ 'Out of stocks' | translate }}</span>
+							<app-format-quantity *ngIf="!isOutOfStock(w.CloseQuantity) && w.UoMs?.length" [quantity]="w.CloseQuantity" [splitQuantityList]="w.UoMs"></app-format-quantity>
+							<span class="danger" *ngIf="isOutOfStock(w.CloseQuantity) || !w.UoMs?.length">{{ 'Out of stocks' | translate }}</span>
 						</span>
 					</div>
 				</div>

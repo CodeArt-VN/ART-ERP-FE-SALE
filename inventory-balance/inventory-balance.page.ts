@@ -1,13 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
-import { NavController, ModalController, AlertController, LoadingController, PopoverController } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { ModalController, NavController, PopoverController } from '@ionic/angular';
 import { EnvService } from 'src/app/services/core/env.service';
 import { PageBase } from 'src/app/page-base';
-import { SALE_OrderProvider } from 'src/app/services/static/services.service';
-import { Location } from '@angular/common';
-import { ApiSetting } from 'src/app/services/static/api-setting';
-import { lib } from 'src/app/services/static/global-functions';
 import { CommonService } from 'src/app/services/core/common.service';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { applyWarehouseNames, balanceRequestQuery, hasInStock, isOutOfStock, showsSearchSpinner, warehouseCatalogId, withDefaultInStock } from './inventory-balance.util';
 
 @Component({
 	selector: 'app-inventory-balance',
@@ -16,32 +13,59 @@ import { ActivatedRoute, Route } from '@angular/router';
 	standalone: false,
 })
 export class InventoryBalancePage extends PageBase {
+	isOutOfStock = isOutOfStock;
+	warehouseCatalog: any[] = [];
+
 	constructor(
-		//public pageProvider: SALE_OrderProvider,
 		public commonService: CommonService,
 		public modalController: ModalController,
 		public popoverCtrl: PopoverController,
-		public alertCtrl: AlertController,
 		public route: ActivatedRoute,
-		public loadingController: LoadingController,
 		public env: EnvService,
-		public navCtrl: NavController,
-		public location: Location
+		public navCtrl: NavController
 	) {
 		super();
-		// this.pageConfig.isShowFeature = true;
-		// this.pageConfig.isShowSearch = true;
+		this.pageConfig.isShowSearch = true;
+		this.query = withDefaultInStock(this.query);
+	}
+
+	preLoadData(event = null) {
+		this.query = withDefaultInStock(this.query);
+		super.preLoadData(event);
+	}
+
+	toggleInStock() {
+		this.pageConfig.isEndOfData = false;
+		this.query = {
+			...this.query,
+			inStockOnly: this.query?.inStockOnly ? null : true,
+		};
+		this.loadData('search');
 	}
 
 	loadData(event) {
+		if (showsSearchSpinner(event)) this.pageConfig.showSpinner = true;
 		delete this.query.IDBranch;
-		this.query.Skip = event == 'search' ? 0 : this.items.length;
+		this.query = {
+			...this.query,
+			Skip: event == 'search' ? 0 : this.items.length,
+		};
 		this.commonService
-			.connect('GET', 'SALE/Inventory/Balance', this.query)
+			.connect('GET', 'SALE/Inventory/Balance', balanceRequestQuery(this.query))
 			.toPromise()
 			.then((result: any) => {
-				const payload = result || {};
-				const rows = Array.isArray(result) ? result : payload.Items || [];
+				const payload = result && !Array.isArray(result) ? result : { Items: result || [] };
+				const incoming = Array.isArray(payload.Warehouses) ? payload.Warehouses : [];
+				if (this.query.Skip == 0) {
+					this.warehouseCatalog = incoming;
+				} else {
+					const seen = new Set(this.warehouseCatalog.map((warehouse) => warehouseCatalogId(warehouse)));
+					incoming.forEach((warehouse) => {
+						if (!seen.has(warehouseCatalogId(warehouse))) this.warehouseCatalog.push(warehouse);
+					});
+				}
+				let rows = applyWarehouseNames(payload.Items || [], this.warehouseCatalog);
+				if (this.query.inStockOnly) rows = rows.filter((row) => hasInStock(row));
 				if (this.query.Skip == 0) {
 					this.items = rows;
 				} else if (rows.length > 0) {
