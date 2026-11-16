@@ -1,0 +1,126 @@
+<ion-header #catalogHeader [translucent]="true" collapse="fade">
+	<ion-toolbar class="catalog-toolbar">
+		<div class="catalog-header">
+			<button type="button" class="catalog-title pick-again" title="{{ 'Pick again' | translate }}" (click)="pickAgain()">
+				<span>{{ customerName }}</span>
+				<ion-icon name="swap-horizontal-outline"></ion-icon>
+			</button>
+			<ion-button
+				fill="clear"
+				title="{{ 'Refresh' | translate }}"
+				[disabled]="refreshing"
+				(click)="refreshCatalog()"
+			>
+				<ion-icon slot="icon-only" name="refresh-outline" [class.spin]="refreshing"></ion-icon>
+			</ion-button>
+			<ion-button fill="clear" class="cart-btn" title="{{ 'Cart' | translate }}" (click)="openCart()">
+				<ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+				<span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+			</ion-button>
+		</div>
+	</ion-toolbar>
+	<ion-toolbar class="catalog-search-toolbar">
+		<ion-searchbar
+			[(ngModel)]="productSearch"
+			placeholder="{{ 'Search product' | translate }}"
+			debounce="0"
+			[animated]="true"
+			(ionInput)="onSearchInput($event)"
+			(ionClear)="onSearchClear()"
+		></ion-searchbar>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" appScrollbarTheme (ionScroll)="onContentScroll()" [scrollEvents]="true">
+	<div class="catalog-layout">
+		<aside class="catalog-rail" #rail>
+			<button
+				type="button"
+				class="rail-item"
+				*ngFor="let c of visibleCategories; trackBy: trackByCat"
+				[attr.data-rail-id]="c.Id"
+				[class.active]="c.Id === activeL1Id"
+				(click)="selectL1(c)"
+			>
+				<ion-icon [name]="c.Icon" [color]="c.Id === activeL1Id ? 'primary' : c.Color"></ion-icon>
+				<span>{{ c.Name }}</span>
+			</button>
+		</aside>
+
+		<div class="catalog-main" #catalogMain>
+			<app-virtual-viewport
+				#vp="virtualViewport"
+				mode="page"
+				class="page-mode"
+				[items]="rows"
+				idKey="TrackId"
+				[defaultItemSize]="showItemImage ? 280 : 180"
+				scrollAlign="start"
+				[scrollInsetTop]="scrollInsetTop"
+				[endSpacerPx]="endSpacerPx"
+				[scrollDurationMs]="300"
+				[scrollToId]="scrollToRowId"
+				[scrollToTick]="scrollTick"
+				(scrollProgress)="onContentScroll()"
+			>
+				<div
+					class="virt-row"
+					*ngFor="let row of vp.renderedItems; trackBy: trackByRow"
+					[attr.data-row-anchor]="row.Kind === 'section' ? 1 : null"
+					[attr.data-l1]="row.Kind === 'section' ? row.L1Id : null"
+					[virtualItemMeasure]="row.TrackId"
+					[measureGeneration]="vp.measureGeneration"
+					(heightMeasured)="vp.onItemMeasured(row.TrackId, $event)"
+				>
+					<div
+						*ngIf="row.Kind === 'end-spacer'"
+						class="catalog-end-spacer"
+						[style.height.px]="row.SpacerPx || endSpacerPx"
+						aria-hidden="true"
+					></div>
+
+					<h3 *ngIf="row.Kind === 'section'" class="section-title">
+						{{ row.Title }}
+					</h3>
+
+					<!-- Item card layout aligned with POS order-detail (image / noImage). -->
+					<div class="product-grid" *ngIf="row.Kind === 'products'" [class.noImage]="!showItemImage">
+						<div class="table-item" *ngFor="let p of row.Products; trackBy: trackByProduct">
+							<div class="card" [class.noImage]="!showItemImage">
+								<div
+									*ngIf="showItemImage"
+									class="item-image"
+									[style.background]="p.ImageColor || 'var(--ion-color-light)'"
+								></div>
+								<span class="table-name">{{ p.Name }}</span>
+								<div class="stock-list" *ngIf="p.Stock?.length">
+									<div class="stock-line" *ngFor="let s of p.Stock" [title]="s.WarehouseName + ': ' + formatStock(s)">
+										<span class="wh">{{ s.WarehouseName }}</span>
+										<span class="qty">{{ formatStock(s) }}</span>
+									</div>
+								</div>
+								<span class="price">
+									<span class="price-list">
+										{{ formatPrice(p.Price) }}
+										<span class="uom"> /{{ p.UoM }}</span>
+									</span>
+									<ion-button
+										class="add-to-cart-btn"
+										size="small"
+										[title]="qtyOf(p) > 0 ? '' + qtyOf(p) : '+'"
+										(click)="plus(p)"
+									>
+										<ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+									</ion-button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</app-virtual-viewport>
+			<div class="empty-hint" *ngIf="!rows.length">
+				{{ 'No products found' | translate }}
+			</div>
+		</div>
+	</div>
+</ion-content>

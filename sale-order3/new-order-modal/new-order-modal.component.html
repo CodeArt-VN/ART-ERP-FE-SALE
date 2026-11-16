@@ -1,0 +1,89 @@
+<ion-header [translucent]="true" collapse="fade">
+	<ion-toolbar class="customer-picker-toolbar">
+		<div class="customer-picker-search">
+			<ion-button fill="clear" title="{{ 'Close' | translate }}" (click)="close()">
+				<ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+			</ion-button>
+			<ion-searchbar
+				[(ngModel)]="outletSearch"
+				placeholder="{{ 'Search customer' | translate }}"
+				debounce="0"
+				[animated]="true"
+				(ionInput)="onSearchInput($event)"
+			></ion-searchbar>
+		</div>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" appScrollbarTheme>
+	<div class="loading-wrap" *ngIf="showSpinner">
+		<ion-spinner name="crescent"></ion-spinner>
+	</div>
+
+	<ng-container *ngIf="!showSpinner">
+		<h3 class="section-title ion-padding-horizontal" *ngIf="mcpOutlets.length">{{ listSectionKey | translate }}</h3>
+
+		<ion-list *ngIf="mcpOutlets.length" lines="full">
+			<app-virtual-viewport
+				#vp="virtualViewport"
+				mode="page"
+				class="page-mode"
+				[items]="mcpOutlets"
+				idKey="TrackId"
+				[defaultItemSize]="88"
+			>
+				<ion-item
+					button
+					detail="true"
+					*ngFor="let o of vp.renderedItems; trackBy: trackByCustomer"
+					[color]="isSelected(o) ? 'primary' : ''"
+					(click)="pickOutlet(o)"
+					[virtualItemMeasure]="o.TrackId"
+					[measureGeneration]="vp.measureGeneration"
+					(heightMeasured)="vp.onItemMeasured(o.TrackId, $event)"
+				>
+					<ion-icon
+						slot="start"
+						[color]="customerTypeIcon(o).color"
+						[name]="customerTypeIcon(o).name"
+					></ion-icon>
+					<ion-label>
+						<h2 class="customer-name">{{ o.Name }}</h2>
+						<p>{{ o.Address }}</p>
+						<p *ngIf="o.Phone">{{ o.Phone }}</p>
+						<div class="mcp-days" *ngIf="o.McpDays?.length">
+							<ion-badge color="medium" *ngFor="let d of o.McpDays">{{ d | translate }}</ion-badge>
+						</div>
+					</ion-label>
+					<div slot="end" class="outlet-end">
+						<small *ngIf="o.DistanceM != null">{{ formatDistanceM(o.DistanceM) }}</small>
+					</div>
+				</ion-item>
+			</app-virtual-viewport>
+		</ion-list>
+
+		<div class="empty-hint" *ngIf="loadError">
+			{{ 'Cannot connect to server.' | translate }}
+		</div>
+		<div class="empty-hint" *ngIf="!loadError && !mcpOutlets.length">
+			{{ 'No customers found' | translate }}
+		</div>
+	</ng-container>
+</ion-content>
+
+<ion-footer [translucent]="true" collapse="fade">
+	<ion-toolbar>
+		<div slot="start">
+			<ion-button fill="clear" (click)="reload()" [disabled]="showSpinner">
+				<ion-icon slot="start" name="refresh-outline" [class.spin]="showSpinner"></ion-icon>
+				{{ 'Reload' | translate }}
+			</ion-button>
+		</div>
+		<div slot="end">
+			<ion-button fill="clear" disabled>
+				<ion-icon slot="start" name="qr-code-outline"></ion-icon>
+				{{ 'Scan QR' | translate }}
+			</ion-button>
+		</div>
+	</ion-toolbar>
+</ion-footer>

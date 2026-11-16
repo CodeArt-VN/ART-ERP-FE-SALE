@@ -1,0 +1,369 @@
+<ion-header [translucent]="true" collapse="fade">
+	<ion-toolbar>
+		<ion-title>{{ 'Cart' | translate }}</ion-title>
+		<ion-buttons slot="end">
+			<ion-button fill="clear" title="{{ 'Close' | translate }}" (click)="closeModal()">
+				<ion-icon slot="icon-only" name="close-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" appScrollbarTheme class="ion-padding">
+	<ion-list class="cart-customer" lines="none" *ngIf="customer">
+		<ion-item button detail="false" title="{{ 'Pick again' | translate }}" (click)="pickAgain()">
+			<ion-icon
+				slot="start"
+				[color]="customerTypeIcon(customer).color"
+				[name]="customerTypeIcon(customer).name"
+			></ion-icon>
+			<ion-label>
+				<h2 class="customer-name">{{ customer.Name }}</h2>
+				<p *ngIf="customer.Address">{{ customer.Address }}</p>
+				<p *ngIf="customer.Phone">{{ customer.Phone }}</p>
+				<div class="mcp-days" *ngIf="customer.McpDays?.length">
+					<ion-badge color="medium" *ngFor="let d of customer.McpDays">{{ d | translate }}</ion-badge>
+				</div>
+			</ion-label>
+			<div slot="end" class="outlet-end">
+				<small *ngIf="customer.DistanceM != null">{{ formatDistanceM(customer.DistanceM) }}</small>
+				<ion-icon name="swap-horizontal-outline" color="primary"></ion-icon>
+			</div>
+		</ion-item>
+		<ion-item>
+			<ion-button
+				size="small"
+				[fill]="meta.IsInvoiceRequired ? 'solid' : 'outline'"
+				(click)="openInvoiceRequired(); $event.stopPropagation()"
+			>
+				{{ 'Issue invoice' | translate }}
+				<span class="invoice-name" *ngIf="meta.InvoiceLabel">{{ meta.InvoiceLabel | translate }}</span>
+			</ion-button>
+		</ion-item>
+	</ion-list>
+
+	<!-- Keep −/+ row; advanced fields expand under each line -->
+	<div class="cart-lines" *ngIf="cartCount > 0">
+		<div class="cart-line" *ngFor="let line of cart; let i = index; trackBy: trackByLine" [class.expanded]="isLineExpanded(line)">
+			<ion-item button detail="false" (click)="toggleLineAdvanced(line)">
+				<ion-label>
+					<h2 class="line-title">
+						<span class="line-no">{{ i + 1 }}</span>
+						<span class="line-name">{{ line.Name }}</span>
+					</h2>
+					<p class="line-price">
+						<ng-container *ngIf="hasAdjustedUnitPrice(line); else plainUnitPrice">
+							<span class="price-old">{{ formatVnd(listUnitPrice(line)) }}</span>
+							<strong class="price-new">{{ formatVnd(line.SalesmanPrice) }}</strong>
+						</ng-container>
+						<ng-template #plainUnitPrice>
+							{{ formatVnd(listUnitPrice(line)) }}
+						</ng-template>
+						<span class="price-uom"> / {{ line.UoM }}</span>
+					</p>
+				</ion-label>
+				<div class="line-actions" slot="end" (click)="$event.stopPropagation()">
+					<div class="qty-stepper">
+						<button type="button" class="qty-btn" (click)="changeLineQty(line, -1)" aria-label="-">
+							<ion-icon name="remove-outline"></ion-icon>
+						</button>
+						<input
+							class="qty"
+							type="tel"
+							inputmode="numeric"
+							[ngModel]="line.Qty"
+							(ngModelChange)="onQtyChange(line, $event)"
+							(blur)="onQtyBlur(line, $any($event.target).value)"
+							(focus)="$any($event.target).select()"
+							(click)="$event.stopPropagation()"
+							aria-label="{{ 'Quantity' | translate }}"
+						/>
+						<button type="button" class="qty-btn" (click)="changeLineQty(line, 1)" aria-label="+">
+							<ion-icon name="add-outline"></ion-icon>
+						</button>
+					</div>
+					<button
+						type="button"
+						class="line-remove"
+						title="{{ 'Remove' | translate }}"
+						aria-label="{{ 'Remove' | translate }}"
+						(click)="removeLine(line)"
+					>
+						<ion-icon name="trash-outline"></ion-icon>
+					</button>
+				</div>
+			</ion-item>
+
+			<div class="line-advanced" *ngIf="isLineExpanded(line)" (click)="$event.stopPropagation()">
+				<div class="full-fields">
+					<label class="field">
+						<span>{{ 'Unit' | translate }}</span>
+						<select
+							class="field-control"
+							[ngModel]="line.IDUoM"
+							(ngModelChange)="onUoMChange(line, $event)"
+						>
+							<option *ngFor="let u of line.UoMs" [ngValue]="u.Id">{{ u.Name }}</option>
+						</select>
+					</label>
+
+					<label class="field" *ngIf="!line.IsPromotionItem">
+						<span>{{ 'Unit price' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.UoMPrice"
+							(ngModelChange)="onLinePatch(line, { UoMPrice: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+
+					<label class="field" *ngIf="!line.IsPromotionItem">
+						<span>{{ 'Vendor discount' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.OriginalDiscount1"
+							(ngModelChange)="onLinePatch(line, { OriginalDiscount1: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+
+					<label class="field" *ngIf="!line.IsPromotionItem">
+						<span>{{ 'Distributor discount' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.OriginalDiscount2"
+							(ngModelChange)="onLinePatch(line, { OriginalDiscount2: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+
+					<div class="field promo-field">
+						<ion-button
+							size="small"
+							color="danger"
+							[fill]="line.IsPromotionItem ? 'solid' : 'outline'"
+							(click)="togglePromotion(line)"
+						>
+							{{ 'Promotion product' | translate }}
+						</ion-button>
+						<input
+							class="field-control"
+							disabled
+							[ngModel]="line.OriginalTotalAfterDiscount"
+						/>
+					</div>
+
+					<label class="field" *ngIf="!line.IsPromotionItem">
+						<span>{{ 'Discount from saleman' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.OriginalDiscountFromSalesman"
+							(ngModelChange)="onLinePatch(line, { OriginalDiscountFromSalesman: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+
+					<label class="field">
+						<span>{{ 'Unit price after salesman discount' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.SalesmanPrice"
+							(ngModelChange)="onLinePatch(line, { SalesmanPrice: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+
+					<label class="field">
+						<span>{{ 'Payables from customer' | translate }}</span>
+						<input
+							class="field-control"
+							type="tel"
+							inputmode="decimal"
+							[ngModel]="line.OriginalTotalAfterDiscountFromSalesman"
+							(ngModelChange)="onLinePatch(line, { OriginalTotalAfterDiscountFromSalesman: +$event || 0 })"
+							(focus)="$any($event.target).select()"
+						/>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="empty-cart" *ngIf="cartCount === 0">{{ 'Cart is empty' | translate }}</div>
+
+	<div class="cart-line-actions" *ngIf="customer">
+		<ion-button
+			fill="clear"
+			size="small"
+			class="add-products-link"
+			(click)="addProducts()"
+		>
+			<ion-icon slot="start" name="add-circle-outline"></ion-icon>
+			{{ 'Add product' | translate }}
+		</ion-button>
+		<ion-button
+			*ngIf="cartCount > 0"
+			fill="outline"
+			size="small"
+			color="danger"
+			class="clear-cart-btn"
+			(click)="clearCart()"
+		>
+			<ion-icon slot="start" name="trash-outline"></ion-icon>
+			{{ 'Delete all' | translate }}
+		</ion-button>
+	</div>
+
+	<div class="order-meta" *ngIf="customer">
+		<label class="c-label">{{ 'Content' | translate }}</label>
+		<input
+			class="c-input"
+			type="text"
+			[(ngModel)]="meta.Name"
+			(ngModelChange)="onMetaChange()"
+		/>
+
+		<label class="c-label">{{ 'Remark' | translate }}</label>
+		<textarea
+			class="c-input remark"
+			rows="3"
+			[(ngModel)]="meta.Remark"
+			(ngModelChange)="onMetaChange()"
+		></textarea>
+
+		<div class="order-flags">
+			<ion-button
+				size="small"
+				[fill]="meta.IsSampleOrder ? 'solid' : 'outline'"
+				(click)="toggleFlag('IsSampleOrder')"
+			>
+				{{ 'Sample' | translate }}
+			</ion-button>
+			<ion-button
+				size="small"
+				[fill]="meta.IsUrgentOrders ? 'solid' : 'outline'"
+				(click)="toggleFlag('IsUrgentOrders')"
+			>
+				{{ 'Urgent order' | translate }}
+			</ion-button>
+			<ion-button
+				size="small"
+				[fill]="meta.IsWholeSale ? 'solid' : 'outline'"
+				(click)="toggleFlag('IsWholeSale')"
+			>
+				{{ 'Wholesale customer' | translate }}
+			</ion-button>
+			<ion-button
+				size="small"
+				color="blue"
+				[fill]="meta.IsShipBySaleMan ? 'solid' : 'outline'"
+				(click)="toggleFlag('IsShipBySaleMan')"
+			>
+				{{ 'Coverage' | translate }}
+			</ion-button>
+		</div>
+	</div>
+</ion-content>
+
+<ion-footer class="cart-modal-footer">
+	<div class="cart-footer-stack">
+		<div class="discount-detail" *ngIf="showDiscountDetail && cartCount > 0">
+			<div class="discount-detail-head">
+				<span>{{ 'Order summary' | translate }}</span>
+				<ion-button fill="clear" size="small" (click)="toggleDiscountDetail()">
+					<ion-icon slot="icon-only" name="close"></ion-icon>
+				</ion-button>
+			</div>
+			<div class="discount-row" *ngIf="summary.beforeDiscount !== summary.total">
+				<span>{{ 'Total before discount' | translate }}</span>
+				<strong>{{ formatVnd(summary.beforeDiscount) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.vendorDiscount > 0">
+				<span>{{ 'Vendor discount' | translate }}</span>
+				<strong class="discount">-{{ formatVnd(summary.vendorDiscount) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.distributorDiscount > 0">
+				<span>{{ 'Distributor discount' | translate }}</span>
+				<strong class="discount">-{{ formatVnd(summary.distributorDiscount) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.afterDiscount !== summary.beforeDiscount">
+				<span>{{ 'Total after discount' | translate }}</span>
+				<strong>{{ formatVnd(summary.afterDiscount) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.vat > 0">
+				<span>{{ 'VAT ({{value}}%)' | translate: { value: summary.taxRatePercent } }}</span>
+				<strong>{{ formatVnd(summary.vat) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.vat > 0">
+				<span>{{ 'Total amount after tax' | translate }}</span>
+				<strong>{{ formatVnd(summary.totalAfterTax) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.priceCompensation > 0">
+				<span>{{ 'Discount from saleman' | translate }}</span>
+				<strong class="discount">-{{ formatVnd(summary.priceCompensation) }}</strong>
+			</div>
+			<div class="discount-row total">
+				<span>{{ 'Total amount' | translate }}</span>
+				<strong>{{ formatVnd(summary.total) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.received > 0">
+				<span>{{ 'Amount already paid' | translate }}</span>
+				<strong class="discount">-{{ formatVnd(summary.received) }}</strong>
+			</div>
+			<div class="discount-row" *ngIf="summary.amountDue !== summary.total">
+				<span>{{ 'Total amount due' | translate }}</span>
+				<strong>{{ formatVnd(summary.amountDue) }}</strong>
+			</div>
+			<p class="discount-note">{{ 'Final payment amount' | translate }}</p>
+		</div>
+		<ion-toolbar>
+			<div class="cart-footer">
+				<ion-button
+					*ngIf="cartCount > 0"
+					fill="outline"
+					size="small"
+					class="advanced-toggle"
+					[color]="allLinesExpanded ? 'primary' : 'medium'"
+					(click)="toggleFullControls()"
+				>
+					{{ (allLinesExpanded ? 'Simple' : 'Advanced') | translate }}
+				</ion-button>
+				<div class="cart-footer-end">
+					<button
+						type="button"
+						class="cart-summary"
+						*ngIf="cartCount > 0"
+						(click)="toggleDiscountDetail()"
+					>
+						<span class="sum-line">
+							{{ 'Total' | translate }}:
+							<strong>{{ formatVnd(cartSum) }}</strong>
+							<ion-icon [name]="showDiscountDetail ? 'chevron-down' : 'chevron-up'"></ion-icon>
+						</span>
+						<small class="save-line" *ngIf="discountTotal > 0">
+							{{ 'Savings' | translate }} {{ formatVnd(discountTotal) }}
+						</small>
+					</button>
+					<ion-button
+						[strong]="true"
+						color="success"
+						[disabled]="cartCount === 0"
+						(click)="confirmOrder()"
+					>
+						{{ 'Place order' | translate }}
+					</ion-button>
+				</div>
+			</div>
+		</ion-toolbar>
+	</div>
+</ion-footer>

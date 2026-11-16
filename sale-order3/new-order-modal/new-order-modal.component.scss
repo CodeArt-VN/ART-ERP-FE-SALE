@@ -1,0 +1,100 @@
+.section-title {
+	margin: 12px 0 8px;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--ion-color-medium-shade);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+ion-list {
+	background: transparent;
+	padding: 0;
+}
+
+.customer-name {
+	font-weight: 700;
+}
+
+.mcp-days {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 6px;
+	ion-badge {
+		font-weight: 600;
+		text-transform: none;
+	}
+}
+
+.outlet-end {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+	small {
+		/* Follow ion-item contrast (primary selected → contrast; default → medium). */
+		color: inherit;
+		opacity: 0.85;
+	}
+}
+
+.empty-hint {
+	text-align: center;
+	padding: 24px 12px;
+	color: var(--ion-color-medium);
+	font-size: 14px;
+}
+
+.loading-wrap {
+	display: flex;
+	justify-content: center;
+	padding: 16px 0 8px;
+}
+
+/* Back left + search fills remaining width (toolbar slot alone leaves a large end gap). */
+ion-toolbar.customer-picker-toolbar {
+	--padding-start: 0;
+	--padding-end: 0;
+	--padding-top: 4px;
+	--padding-bottom: 4px;
+	--min-height: 48px;
+}
+
+.customer-picker-search {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	margin-top: 12px;
+	padding-inline-end: 8px;
+
+	> ion-button {
+		margin: 0;
+		flex-shrink: 0;
+		height: 44px;
+		ion-icon {
+			font-size: 28px;
+		}
+	}
+
+	ion-searchbar {
+		flex: 1 1 auto;
+		width: auto;
+		min-width: 0;
+		padding-inline-start: 0;
+		padding-inline-end: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		min-height: 44px;
+	}
+}
+
+@keyframes so3-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+ion-icon.spin {
+	animation: so3-spin 0.8s linear infinite;
+}

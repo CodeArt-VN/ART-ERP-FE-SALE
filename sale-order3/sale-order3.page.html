@@ -1,0 +1,184 @@
+<ion-header [translucent]="true">
+	<app-toolbar [page]="this">
+		<ion-button startTitle *ngIf="view !== 'list'" (click)="goBackView()" title="{{ 'Back' | translate }}">
+			<ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+		</ion-button>
+		<!-- Always-visible like sale-order-mobile (projected content; toolbar built-in needs selection). -->
+		<ion-button
+			*ngIf="view === 'list' && pageConfig.canSubmit && !query.IsDisabled"
+			title="{{ 'Submit' | translate }}"
+			(click)="submitForApproval()"
+		>
+			<ion-icon color="success" slot="icon-only" name="send-outline"></ion-icon>
+		</ion-button>
+		<ion-button
+			*ngIf="view === 'list' && cartCount > 0"
+			class="so3-list-cart-btn"
+			title="{{ 'Cart' | translate }}"
+			(click)="openCart()"
+		>
+			<ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+			<span class="so3-list-cart-badge">{{ cartCount }}</span>
+		</ion-button>
+	</app-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" appScrollbarTheme class="sale-order3 scrollx">
+	<!-- ========== S1 LIST ========== -->
+	<div *ngIf="view === 'list'" class="view-list">
+		<app-page-title class="ion-padding safe-max-width" [pageConfig]="pageConfig"></app-page-title>
+		<div class="safe-max-width">
+			<app-data-table
+				class="box-shadow responsive padding-number-right"
+				[rows]="items"
+				[trackBy]="'Id'"
+				[(selectedRows)]="selectedItems"
+				[showSpinner]="pageConfig.showSpinner"
+				[showFilter]="pageConfig.isShowSearch"
+				[(query)]="query"
+				(dataInfinite)="loadData($event)"
+				(filter)="onDatatableFilter($event)"
+				(activate)="changeSelection($event)"
+				(sort)="onSort($event)"
+				(selectedRowsChange)="showCommandBySelectedRows($event)"
+			>
+				<datatable-column [checkbox]="true"></datatable-column>
+				<datatable-column class="col-id" name="#" property="Id">
+					<ng-template let-i="row" datatable-cell-template>
+						<a *ngIf="i.Id > 0" [routerLink]="['/sale-order/' + i.Id]" (click)="nav('sale-order/' + i.Id, 'forward')">{{ i.Id }}</a>
+						<span *ngIf="!(i.Id > 0)" title="Mock (chưa lưu)">{{ i.Id }}</span>
+					</ng-template>
+				</datatable-column>
+				<datatable-column class="col-date" name="Order date" property="OrderDate" filterControlType="time-frame">
+					<ng-template let-i="row" datatable-cell-template>
+						{{ i.OrderDateText }}
+						<small *ngIf="i.OrderTimeText && i.OrderTimeText != '00:00'">{{ i.OrderTimeText }}</small>
+					</ng-template>
+				</datatable-column>
+				<!-- property CustomerName / Saleman = BE getCustom query keys (not dotted path) -->
+				<datatable-column class="col-name flex-break" name="Customer" property="CustomerName" filterControlType="text">
+					<ng-template let-i="row" datatable-cell-template>
+						<div>
+							<span class="bold">{{ customerName(i) }}</span>
+							<small *ngIf="i.IDContact"> #{{ i.IDContact }}</small>
+							<div *ngIf="customerAddress(i) || customerPhone(i)">
+								<ion-text color="medium">
+									<small>
+										<span *ngIf="customerAddress(i)">{{ customerAddress(i) }}</span>
+										<span *ngIf="customerPhone(i)"> · {{ customerPhone(i) }}</span>
+									</small>
+								</ion-text>
+							</div>
+							<div class="invoice-line" *ngIf="primaryInvoice(i)">
+								<a [href]="invoiceLink(i)" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()" title="{{ 'Search e-invoice' | translate }}">
+									<ion-icon name="document-text-outline"></ion-icon>
+									{{ invoiceLabel(i) }}
+								</a>
+								<a
+									class="invoice-share"
+									[href]="invoiceLink(i)"
+									target="_blank"
+									rel="noopener noreferrer"
+									(click)="shareInvoice(i, $event)"
+									title="Share invoice link"
+								>
+									<ion-icon name="share-outline"></ion-icon>
+								</a>
+							</div>
+						</div>
+					</ng-template>
+				</datatable-column>
+				<datatable-column class="col-code" name="Sales staff" property="Saleman" filterControlType="text">
+					<ng-template let-i="row" datatable-cell-template>
+						{{ i._Saleman?.FullName }}
+					</ng-template>
+				</datatable-column>
+				<datatable-column class="col-number bold" format="1.0-0" name="Total" property="DisplayTotal"></datatable-column>
+				<datatable-column
+					class="col-status"
+					name="Status"
+					property="Status"
+					filterControlType="ng-select"
+					[filterDataSource]="statusList"
+					filterBindValue="Code"
+					filterBindLabel="Name"
+				>
+					<ng-template let-i="row" datatable-cell-template>
+						<ion-badge [color]="i._Status?.Color" [title]="i._Status?.Name">{{ i._Status?.Name }}</ion-badge>
+						<ng-container *ngFor="let s of shipmentIds(i)">
+							<small class="clickable" [title]="'Shipment: ' + s" (click)="nav('shipment/' + s, 'forward'); $event.stopPropagation()">
+								<ion-icon name="shipping-fast"></ion-icon>
+							</small>
+						</ng-container>
+					</ng-template>
+				</datatable-column>
+			</app-data-table>
+		</div>
+		<div class="ion-padding"></div>
+	</div>
+
+	<ion-fab
+		*ngIf="view === 'list' && pageConfig.canAdd && pageConfig.ShowAdd"
+		vertical="bottom"
+		horizontal="end"
+		slot="fixed"
+		class="ion-hide-md-up"
+	>
+		<ion-fab-button color="secondary" (click)="add()">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+
+	<!-- ========== S3 CATALOG ========== -->
+	<div *ngIf="view === 'catalog'" class="view-catalog">
+		<div class="catalog-search ion-padding-horizontal ion-padding-top">
+			<ion-searchbar [(ngModel)]="productSearch" placeholder="Tìm tên / mã hàng" debounce="0"></ion-searchbar>
+		</div>
+
+		<div class="cat-chips">
+			<ion-chip *ngFor="let c of categories" [color]="segmentId === c.Id ? 'primary' : 'medium'" [outline]="segmentId !== c.Id" (click)="segmentId = c.Id">
+				{{ c.Name }}
+			</ion-chip>
+		</div>
+
+		<div class="product-grid">
+			<div class="product-card" *ngFor="let p of filteredProducts">
+				<div class="product-img" [style.background]="p.ImageColor">
+					<span *ngIf="p.Promo" class="promo-tag">KM</span>
+				</div>
+				<div class="product-body">
+					<div class="product-name">{{ p.Name }}</div>
+					<div class="product-meta">{{ formatVnd(p.Price) }} / {{ p.UoM }}</div>
+					<div class="product-actions">
+						<ng-container *ngIf="cartQty(p.Id) === 0; else stepper">
+							<ion-button size="small" fill="solid" color="primary" (click)="plus(p)">
+								<ion-icon slot="icon-only" name="add"></ion-icon>
+							</ion-button>
+						</ng-container>
+						<ng-template #stepper>
+							<div class="qty-stepper">
+								<ion-button size="small" fill="outline" (click)="minus(p)">
+									<ion-icon slot="icon-only" name="remove"></ion-icon>
+								</ion-button>
+								<span class="qty">{{ cartQty(p.Id) }}</span>
+								<ion-button size="small" fill="solid" color="primary" (click)="plus(p)">
+									<ion-icon slot="icon-only" name="add"></ion-icon>
+								</ion-button>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+			<div class="empty-cat" *ngIf="filteredProducts.length === 0">Không có sản phẩm trong nhóm này</div>
+		</div>
+
+		<div class="cart-bar" *ngIf="cartCount > 0" (click)="openCart()">
+			<div class="cart-bar-left">
+				<ion-icon name="cart-outline"></ion-icon>
+				<span>{{ cartCount }} SP</span>
+			</div>
+			<div class="cart-bar-mid">{{ formatVnd(cartSum) }}</div>
+			<div class="cart-bar-right">{{ 'Cart' | translate }} →</div>
+		</div>
+	</div>
+</ion-content>

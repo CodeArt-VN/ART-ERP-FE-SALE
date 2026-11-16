@@ -317,9 +317,9 @@
 								<div class="col-discount cell" title="{{'Discount from saleman' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
 									{{'Discount from saleman' | translate}}
 								</div>
-								<div class="col-discount cell" title="{{'Unit price before salesman discount' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
+								<div class="col-discount cell" title="{{'Unit price after salesman discount' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
 									{{'Unit price' | translate}} <br />
-									{{'(before discount from salesman)' | translate}}
+									{{'(after salesman discount)' | translate}}
 								</div>
 								<div class="col-total cell" title="{{'[Customer pays] = [Total amount] - [Discount 3]' | translate}}" *ngIf="pageConfig.canUseDiscountFromSalesman">
 									{{'Customers payable' | translate}}
