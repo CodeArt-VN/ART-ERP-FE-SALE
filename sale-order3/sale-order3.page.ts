@@ -238,7 +238,7 @@ export class SaleOrder3Page extends PageBase {
 		this.pickerFrom = from;
 		const modal = await this.modalController.create({
 			component: SaleOrder3NewOrderModalComponent,
-			cssClass: 'so3-customer-picker-modal',
+			cssClass: 'form-1column',
 			componentProps: {
 				selectedOutlet: this.selectedOutlet,
 				openedFrom: from,
@@ -338,7 +338,7 @@ export class SaleOrder3Page extends PageBase {
 		this.cartReturn = from;
 		const modal = await this.modalController.create({
 			component: SaleOrder3CartModalComponent,
-			cssClass: 'so3-cart-modal',
+			cssClass: 'form-1column',
 			componentProps: {
 				customer: this.selectedOutlet,
 				cart: this.cart,
